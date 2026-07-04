@@ -13,7 +13,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.V2.6'
+        myappid = 'yysauto.application.V2.7'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -237,6 +237,10 @@ class SettingsTab:
     def _open_update_link(self):
         import webbrowser
         webbrowser.open("https://wwbet.lanzoum.com/b00ct17efa")
+    
+    def _open_github(self):
+        import webbrowser
+        webbrowser.open("https://github.com/haixingtaohai/YYS-AUTO")
     
     def _copy_qq_group(self):
         self.parent.root.clipboard_clear()
@@ -602,7 +606,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOV2.6", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOV2.7", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -1213,7 +1217,7 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOV2.6")
+        self.root.title("YYS-AUTOV2.7")
         self.root.geometry("640x440")
         self.root.minsize(640, 440)  # 设置最小尺寸
         
@@ -1553,6 +1557,7 @@ class AutoClickerUI:
         update_menu = tk.Menu(settings_menu, tearoff=False)
         update_menu.add_command(label="复制网盘密码", command=self.settings_tab._copy_password)
         update_menu.add_command(label="更新软件", command=self.settings_tab._open_update_link)
+        update_menu.add_command(label="GitHub仓库", command=self.settings_tab._open_github)
         settings_menu.add_cascade(label="软件更新", menu=update_menu)
 
         menubar.add_cascade(label="设置(T)", menu=settings_menu, underline=3)
@@ -1629,7 +1634,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  V2.6", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  V2.7", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线

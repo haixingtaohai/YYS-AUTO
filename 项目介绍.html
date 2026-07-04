@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.6 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.7 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.6</div>
+  <div class="nav-brand">YYS-AUTO V2.7</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,7 +584,7 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.6 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.7 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
     <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、12 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
@@ -595,7 +595,7 @@
     </div>
     <div class="stats-bar">
       <div class="stat-item fade-in stagger-1">
-        <div class="stat-value">~2100</div>
+        <div class="stat-value">~2200</div>
         <div class="stat-label">总代码行数</div>
       </div>
       <div class="stat-item fade-in stagger-2">
@@ -603,7 +603,7 @@
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">95+</div>
+        <div class="stat-value">110+</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -674,7 +674,7 @@
           <div class="card-icon" style="background:rgba(6,182,212,0.15);">&#128276;</div>
           <div class="card-title">声音提醒 <span style="font-size:0.7rem;background:rgba(6,182,212,0.25);color:#06b6d4;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.4</span></div>
         </div>
-        <div class="card-desc">任务完成后自动播放 WAV 音效通知。内置 QQ 和 Steam 提示音，确保即使不在电脑前也能及时知晓任务状态。</div>
+        <div class="card-desc">任务完成后自动播放 WAV 音效通知。内置 6 种提示音（QQ、Steam、iOS 信息、iOS 通知、言灵、骄阳长明），确保即使不在电脑前也能及时知晓任务状态。</div>
         <span class="feature-tag">音效通知</span>
       </div>
       <div class="card feature-card fade-in stagger-7">
@@ -712,10 +712,18 @@
       <div class="card feature-card fade-in stagger-11">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#9776;</div>
-          <div class="card-title">菜单栏布局 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.6</span></div>
+          <div class="card-title">菜单栏布局 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.6</span></div>
         </div>
-        <div class="card-desc">V2.6 重新设计 UI 布局，部分功能从设置选项卡移入顶部菜单栏。新增文件、功能设置、日志、软件更新、标签、帮助六大菜单分类，界面更简洁专业。</div>
+        <div class="card-desc">重新设计 UI 布局，部分功能从设置选项卡移入顶部菜单栏。新增文件、功能设置、日志、软件更新、标签、帮助六大菜单分类，界面更简洁专业。</div>
         <span class="feature-tag">tkinter Menu</span>
+      </div>
+      <div class="card feature-card fade-in stagger-12">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(99,102,241,0.15);">&#9000;</div>
+          <div class="card-title">快捷键操作 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.7</span></div>
+        </div>
+        <div class="card-desc">V2.7 新增全套快捷键支持。Ctrl+T/W 管理标签，R/S 运行/停止，F5/F6 全部开始/停止，数字键快速切换标签。输入框聚焦时自动屏蔽快捷键，避免误触。帮助菜单可查看快捷键说明。</div>
+        <span class="feature-tag">Keyboard</span>
       </div>
     </div>
   </div>
@@ -738,6 +746,7 @@
 ├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 可控日志系统 (~122 行)</span>
 ├── <span class="file json">config.json</span>                    <span class="comment">-- 持久化配置文件</span>
 ├── <span class="file ico">icon.ico</span>                       <span class="comment">-- 应用程序图标</span>
+├── <span class="file lnk">运行程序.lnk</span>                    <span class="comment">-- Windows 快捷方式</span>
 │
 ├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录</span>
 │   ├── <span class="file py">yyh.py</span>                   <span class="comment">-- 业原火</span>
@@ -785,7 +794,8 @@
 │
 ├── <span class="folder">bat/</span>                              <span class="comment">-- 启动脚本</span>
 │   ├── <span class="file bat">run.bat</span>                <span class="comment">-- 运行脚本</span>
-│   └── <span class="file bat">install.bat</span>           <span class="comment">-- 安装依赖脚本</span>
+│   ├── <span class="file bat">install.bat</span>           <span class="comment">-- 安装依赖脚本</span>
+│   └── <span class="file bat">清除程序数据.bat</span>      <span class="comment">-- 清除配置与缓存</span>
 │
 ├── <span class="folder">platform-tools/</span>                    <span class="comment">-- ADB 工具包 (v37.0.0)</span>
 │   ├── adb.exe                  <span class="comment">-- Android Debug Bridge</span>
@@ -832,6 +842,7 @@
         <span class="module-tag">DeviceTab</span>
         <span class="module-tag">SettingsTab</span>
         <span class="module-tag">Menu 菜单栏</span>
+        <span class="module-tag">快捷键绑定</span>
         <span class="module-tag">多线程</span>
         <span class="module-tag">JSON 配置</span>
       </div>
@@ -1260,6 +1271,17 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.7</span>
+          <span class="changelog-date">2026-07-05</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>添加快捷键功能：Ctrl+T/W 管理标签，R/S 运行/停止，F5/F6 全部开始/停止，数字键切换标签</li>
+          <li>输入框聚焦时自动屏蔽快捷键，避免误触</li>
+          <li>帮助菜单新增「快捷键说明」弹窗，列出全部快捷键</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.6</span>
           <span class="changelog-date">2026-07-04</span>
         </div>
@@ -1328,7 +1350,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.6</div>
+  <div class="footer-brand">YYS-AUTO V2.7</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>
