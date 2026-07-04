@@ -1,0 +1,16 @@
+2026-07-05 01:20:43,124 - 命令: E:\ling\Documents\py\yys-auto\platform-tools\adb.exe devices | 返回: List of devices attached
+YHW8MB5XX4WOV8YH	device
+emulator-5554	device
+emulator-5556	device
+2026-07-05 01:20:43,264 - 命令: E:\ling\Documents\py\yys-auto\platform-tools\adb.exe devices | 返回: List of devices attached
+YHW8MB5XX4WOV8YH	device
+emulator-5554	device
+emulator-5556	device
+2026-07-05 01:20:43,286 - 命令: E:\ling\Documents\py\yys-auto\platform-tools\adb.exe devices | 返回: List of devices attached
+YHW8MB5XX4WOV8YH	device
+emulator-5554	device
+emulator-5556	device
+2026-07-05 01:20:43,307 - 命令: E:\ling\Documents\py\yys-auto\platform-tools\adb.exe devices | 返回: List of devices attached
+YHW8MB5XX4WOV8YH	device
+emulator-5554	device
+emulator-5556	device

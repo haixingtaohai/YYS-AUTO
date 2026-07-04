@@ -1,0 +1,31 @@
+{
+  "last_tab": 0,
+  "tabs": {
+    "2": {
+      "tab_name": "大号",
+      "preset": "结界突破",
+      "target_count": "200",
+      "threshold": "0.8",
+      "device": "emulator-5554"
+    },
+    "3": {
+      "tab_name": "小号",
+      "preset": "结界突破",
+      "target_count": "200",
+      "threshold": "0.8",
+      "device": "emulator-5556"
+    }
+  },
+  "link_enabled": true,
+  "close_jiacheng_enabled": true,
+  "close_jiacheng_wait": 30,
+  "huijuan_mode": false,
+  "dj_jinsheng_stop": false,
+  "adb_ip": "127.0.0.1",
+  "adb_port": "16416",
+  "window_position": "640x440+954+547",
+  "shutdown_after_all_done_enabled": true,
+  "sound_enabled": true,
+  "sound_file": "骄阳长明.wav",
+  "logging_enabled": false
+}

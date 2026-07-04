@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YYS-AUTO V2.6 - 阴阳师自动化工具 项目介绍</title>
+<style>
+  /* ========== Reset & Base ========== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-primary: #0f1117;
+    --bg-secondary: #161822;
+    --bg-card: #1a1d2e;
+    --bg-card-hover: #1f2337;
+    --border-color: #2a2d3e;
+    --border-accent: #6c5ce7;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-purple: #6c5ce7;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-pink: #ec4899;
+    --accent-green: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-red: #ef4444;
+    --gradient-1: linear-gradient(135deg, #6c5ce7, #3b82f6);
+    --gradient-2: linear-gradient(135deg, #06b6d4, #6c5ce7);
+    --gradient-3: linear-gradient(135deg, #ec4899, #6c5ce7);
+    --gradient-hero: linear-gradient(135deg, #0f1117 0%, #1a1040 40%, #0c1a3a 100%);
+    --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-glow: 0 0 30px rgba(108,92,231,0.15);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  ::selection { background: rgba(108,92,231,0.4); color: #fff; }
+  a { color: var(--accent-blue); text-decoration: none; transition: var(--transition); }
+  a:hover { color: var(--accent-cyan); }
+
+  /* ========== Scrollbar ========== */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+  /* ========== Navigation ========== */
+  .top-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(15,17,23,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    font-size: 1.15rem; font-weight: 700;
+    background: var(--gradient-1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-links { display: flex; gap: 0.25rem; list-style: none; flex-wrap: wrap; }
+  .nav-links a {
+    color: var(--text-secondary); font-size: 0.85rem; padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm); transition: var(--transition);
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--text-primary); background: rgba(108,92,231,0.15);
+  }
+
+  /* ========== Hero ========== */
+  .hero {
+    margin-top: 60px;
+    background: var(--gradient-hero);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(108,92,231,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(59,130,246,0.06) 0%, transparent 50%);
+    animation: heroGlow 8s ease-in-out infinite alternate;
+  }
+  @keyframes heroGlow {
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(2%,-2%) scale(1.05); }
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+  .hero-badge {
+    display: inline-block; padding: 0.35rem 1rem; border-radius: 20px;
+    background: rgba(108,92,231,0.2); border: 1px solid rgba(108,92,231,0.3);
+    font-size: 0.8rem; color: var(--accent-purple); margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
+    background: linear-gradient(135deg, #e2e8f0 0%, #6c5ce7 50%, #3b82f6 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 1rem; line-height: 1.2;
+  }
+  .hero p {
+    font-size: 1.1rem; color: var(--text-secondary);
+    max-width: 600px; margin: 0 auto 2rem;
+  }
+  .hero-tags { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+  .hero-tag {
+    padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.78rem;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+  }
+  .hero-tag.python { border-color: rgba(59,130,246,0.4); color: var(--accent-blue); }
+  .hero-tag.opencv { border-color: rgba(16,185,129,0.4); color: var(--accent-green); }
+  .hero-tag.adb { border-color: rgba(245,158,11,0.4); color: var(--accent-orange); }
+  .hero-tag.tkinter { border-color: rgba(236,72,153,0.4); color: var(--accent-pink); }
+
+  /* ========== Container ========== */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+  /* ========== Section ========== */
+  .section { padding: 4rem 0; }
+  .section-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .section-icon {
+    width: 40px; height: 40px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .section-icon.purple { background: rgba(108,92,231,0.15); }
+  .section-icon.blue { background: rgba(59,130,246,0.15); }
+  .section-icon.cyan { background: rgba(6,182,212,0.15); }
+  .section-icon.pink { background: rgba(236,72,153,0.15); }
+  .section-icon.green { background: rgba(16,185,129,0.15); }
+  .section-icon.orange { background: rgba(245,158,11,0.15); }
+  .section-title {
+    font-size: 1.6rem; font-weight: 700;
+    background: var(--gradient-1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .section-desc { color: var(--text-secondary); margin-top: -1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+
+  /* ========== Divider ========== */
+  .divider {
+    height: 1px; border: none;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+    margin: 0;
+  }
+
+  /* ========== Grid Layouts ========== */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  @media (max-width: 900px) { .grid-3 { grid-template-columns: repeat(2,1fr); } .grid-4 { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 600px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .nav-links { display: none; } }
+
+  /* ========== Cards ========== */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    border-color: rgba(108,92,231,0.4);
+    background: var(--bg-card-hover);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+  .card-header {
+    display: flex; align-items: center; gap: 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+  .card-icon {
+    width: 36px; height: 36px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .card-title { font-size: 1.05rem; font-weight: 600; }
+  .card-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ========== Feature Cards ========== */
+  .feature-card .card-icon { font-size: 1.3rem; }
+  .feature-card .card-title { color: var(--text-primary); }
+  .feature-tag {
+    display: inline-block; margin-top: 0.75rem; padding: 0.2rem 0.55rem;
+    font-size: 0.72rem; border-radius: 4px;
+    background: rgba(108,92,231,0.12); color: var(--accent-purple);
+    border: 1px solid rgba(108,92,231,0.2);
+  }
+
+  /* ========== File Tree ========== */
+  .file-tree {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 0.85rem;
+    line-height: 1.9;
+    overflow-x: auto;
+    max-height: 600px;
+    overflow-y: auto;
+    white-space: pre;
+  }
+  .file-tree .folder { color: var(--accent-blue); font-weight: 600; }
+  .file-tree .file { color: var(--text-secondary); }
+  .file-tree .file.py { color: var(--accent-green); }
+  .file-tree .file.json { color: var(--accent-orange); }
+  .file-tree .file.media { color: var(--accent-pink); }
+  .file-tree .file.bat { color: var(--accent-cyan); }
+  .file-tree .file.ico { color: var(--accent-orange); }
+  .file-tree .comment { color: var(--text-muted); font-style: italic; }
+  .file-tree .size { color: var(--text-muted); font-size: 0.78rem; }
+  .tree-toggle {
+    cursor: pointer; user-select: none;
+    color: var(--accent-blue);
+  }
+  /* ========== Changelog ========== */
+  .changelog-list {
+    display: flex; flex-direction: column; gap: 1.25rem;
+  }
+  .changelog-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    transition: var(--transition);
+  }
+  .changelog-item:hover {
+    border-color: rgba(108,92,231,0.3);
+    box-shadow: var(--shadow-glow);
+  }
+  .changelog-version {
+    display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;
+  }
+  .changelog-badge {
+    background: var(--gradient-1);
+    color: #fff; font-weight: 700; font-size: 0.85rem;
+    padding: 0.25rem 0.75rem; border-radius: 6px;
+  }
+  .changelog-date {
+    color: var(--text-muted); font-size: 0.82rem;
+  }
+  .changelog-changes {
+    list-style: none; padding-left: 0;
+  }
+  .changelog-changes li {
+    position: relative; padding-left: 1.25rem; margin-bottom: 0.4rem;
+    color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;
+  }
+  .changelog-changes li::before {
+    content: '';
+    position: absolute; left: 0; top: 0.6em;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-purple);
+  }
+  .tree-toggle:hover { text-decoration: underline; }
+
+  /* ========== Scene Table ========== */
+  .scene-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .scene-table {
+    width: 100%; border-collapse: collapse; font-size: 0.88rem;
+  }
+  .scene-table thead { background: rgba(108,92,231,0.1); }
+  .scene-table th {
+    padding: 0.9rem 1.2rem; text-align: left; font-weight: 600;
+    color: var(--accent-purple); font-size: 0.82rem; text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .scene-table td {
+    padding: 0.85rem 1.2rem; border-bottom: 1px solid rgba(42,45,62,0.5);
+    vertical-align: top;
+  }
+  .scene-table tbody tr { transition: var(--transition); }
+  .scene-table tbody tr:hover { background: rgba(108,92,231,0.05); }
+  .scene-table tbody tr:last-child td { border-bottom: none; }
+  .scene-name {
+    font-weight: 600; color: var(--text-primary);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .scene-module {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.8rem; color: var(--accent-cyan);
+    background: rgba(6,182,212,0.1); padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+  .scene-badge {
+    display: inline-block; padding: 0.15rem 0.45rem; border-radius: 4px;
+    font-size: 0.72rem; font-weight: 500;
+  }
+  .scene-badge.farm { background: rgba(16,185,129,0.12); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.2); }
+  .scene-badge.coop { background: rgba(59,130,246,0.12); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.2); }
+  .scene-badge.pvp { background: rgba(236,72,153,0.12); color: var(--accent-pink); border: 1px solid rgba(236,72,153,0.2); }
+  .scene-badge.tower { background: rgba(245,158,11,0.12); color: var(--accent-orange); border: 1px solid rgba(245,158,11,0.2); }
+  .scene-badge.util { background: rgba(148,163,184,0.12); color: var(--text-secondary); border: 1px solid rgba(148,163,184,0.2); }
+
+  /* ========== Architecture Diagram ========== */
+  .arch-diagram {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    color: var(--text-secondary);
+    white-space: pre;
+  }
+  .arch-diagram .highlight { color: var(--accent-purple); font-weight: 600; }
+  .arch-diagram .blue { color: var(--accent-blue); }
+  .arch-diagram .green { color: var(--accent-green); }
+  .arch-diagram .cyan { color: var(--accent-cyan); }
+  .arch-diagram .orange { color: var(--accent-orange); }
+  .arch-diagram .pink { color: var(--accent-pink); }
+  .arch-diagram .dim { color: var(--text-muted); }
+  .arch-diagram .white { color: var(--text-primary); }
+
+  /* ========== Stats Bar ========== */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem; margin-top: 2rem;
+  }
+  .stat-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem; text-align: center;
+    transition: var(--transition);
+  }
+  .stat-item:hover { border-color: rgba(108,92,231,0.4); }
+  .stat-value {
+    font-size: 1.8rem; font-weight: 800;
+    background: var(--gradient-1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+  /* ========== Module Detail ========== */
+  .module-detail {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+  }
+  .module-detail:hover {
+    border-color: rgba(108,92,231,0.3);
+    box-shadow: var(--shadow-glow);
+  }
+  .module-detail-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.8rem;
+  }
+  .module-detail-title {
+    font-size: 1rem; font-weight: 600;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .module-detail-code {
+    font-family: 'Cascadia Code', monospace;
+    font-size: 0.82rem; color: var(--accent-cyan);
+    background: rgba(6,182,212,0.1);
+    padding: 0.2rem 0.5rem; border-radius: 4px;
+  }
+  .module-detail-body { font-size: 0.88rem; color: var(--text-secondary); }
+  .module-detail-tags { display: flex; gap: 0.4rem; margin-top: 0.8rem; flex-wrap: wrap; }
+  .module-tag {
+    padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-size: 0.72rem; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted);
+  }
+
+  /* ========== Code Block ========== */
+  .code-block {
+    background: #0d0f18;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem 1.5rem;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: var(--text-secondary);
+  }
+  .code-block .kw { color: var(--accent-purple); }
+  .code-block .fn { color: var(--accent-blue); }
+  .code-block .str { color: var(--accent-green); }
+  .code-block .num { color: var(--accent-orange); }
+  .code-block .cmt { color: var(--text-muted); font-style: italic; }
+  .code-block .cls { color: var(--accent-cyan); }
+  .code-block .dec { color: var(--accent-pink); }
+
+  /* ========== Sidebar TOC (floating) ========== */
+  .toc-float {
+    position: fixed; right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    z-index: 999;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .toc-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--text-muted);
+    transition: var(--transition);
+    position: relative;
+    cursor: pointer;
+  }
+  .toc-dot:hover, .toc-dot.active {
+    background: var(--accent-purple);
+    box-shadow: 0 0 8px rgba(108,92,231,0.5);
+    transform: scale(1.3);
+  }
+  .toc-dot .toc-label {
+    position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+    white-space: nowrap; font-size: 0.75rem; color: var(--text-secondary);
+    background: var(--bg-card); padding: 0.2rem 0.6rem; border-radius: 4px;
+    border: 1px solid var(--border-color);
+    opacity: 0; pointer-events: none; transition: var(--transition);
+  }
+  .toc-dot:hover .toc-label { opacity: 1; }
+  @media (max-width: 1200px) { .toc-float { display: none; } }
+
+  /* ========== Footer ========== */
+  .footer {
+    text-align: center; padding: 3rem 2rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted); font-size: 0.85rem;
+  }
+  .footer-brand {
+    font-weight: 700; font-size: 1rem;
+    background: var(--gradient-1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-top: 0.75rem; }
+  .footer-links a { color: var(--text-muted); font-size: 0.82rem; }
+  .footer-links a:hover { color: var(--accent-purple); }
+
+  /* ========== Animations ========== */
+  .fade-in {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  .stagger-1 { transition-delay: 0.05s; }
+  .stagger-2 { transition-delay: 0.1s; }
+  .stagger-3 { transition-delay: 0.15s; }
+  .stagger-4 { transition-delay: 0.2s; }
+  .stagger-5 { transition-delay: 0.25s; }
+  .stagger-6 { transition-delay: 0.3s; }
+  .stagger-7 { transition-delay: 0.35s; }
+  .stagger-8 { transition-delay: 0.4s; }
+  .stagger-9 { transition-delay: 0.45s; }
+  .stagger-10 { transition-delay: 0.5s; }
+  .stagger-11 { transition-delay: 0.55s; }
+  .stagger-12 { transition-delay: 0.6s; }
+
+  /* ========== Quick Start Steps ========== */
+  .steps {
+    display: flex; flex-direction: column; gap: 0;
+    counter-reset: step-counter;
+  }
+  .step {
+    display: flex; gap: 1.25rem; padding: 1.25rem 0;
+    border-bottom: 1px solid rgba(42,45,62,0.5);
+    transition: var(--transition);
+  }
+  .step:last-child { border-bottom: none; }
+  .step:hover { background: rgba(108,92,231,0.02); margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; border-radius: var(--radius-sm); }
+  .step-number {
+    counter-increment: step-counter;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--gradient-1);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; color: #fff;
+    flex-shrink: 0; margin-top: 0.15rem;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 600; margin-bottom: 0.3rem; font-size: 0.95rem; }
+  .step-desc { color: var(--text-secondary); font-size: 0.85rem; }
+
+  /* ========== Tech Stack Badges ========== */
+  .tech-stack {
+    display: flex; flex-wrap: wrap; gap: 0.75rem;
+    justify-content: center; margin-top: 1.5rem;
+  }
+  .tech-badge {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 1.1rem; border-radius: var(--radius-sm);
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    font-size: 0.85rem; transition: var(--transition);
+  }
+  .tech-badge:hover { border-color: rgba(108,92,231,0.4); transform: translateY(-1px); }
+  .tech-badge-icon { font-size: 1.1rem; }
+
+  /* ========== Accent Bar ========== */
+  .accent-bar {
+    width: 50px; height: 3px; border-radius: 2px;
+    background: var(--gradient-1); margin-bottom: 0.5rem;
+  }
+
+  /* ========== Tooltip ========== */
+  .info-tip {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    color: var(--text-muted); font-size: 0.78rem;
+    cursor: help;
+  }
+
+  /* ========== Key-Value Pairs ========== */
+  .kv-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.75rem;
+  }
+  .kv-item {
+    display: flex; gap: 0.5rem; padding: 0.75rem 1rem;
+    background: var(--bg-secondary); border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color); font-size: 0.88rem;
+  }
+  .kv-key { color: var(--text-muted); flex-shrink: 0; min-width: 80px; }
+  .kv-val { color: var(--text-primary); }
+  .kv-val code {
+    font-family: 'Cascadia Code', monospace; font-size: 0.82rem;
+    background: rgba(108,92,231,0.12); padding: 0.1rem 0.4rem;
+    border-radius: 3px; color: var(--accent-cyan);
+  }
+</style>
+</head>
+<body>
+
+<!-- ======== Navigation ======== -->
+<nav class="top-nav">
+  <div class="nav-brand">YYS-AUTO V2.6</div>
+  <ul class="nav-links">
+    <li><a href="#overview" class="active">概览</a></li>
+    <li><a href="#features">功能</a></li>
+    <li><a href="#structure">结构</a></li>
+    <li><a href="#core">核心模块</a></li>
+    <li><a href="#scenes">场景</a></li>
+    <li><a href="#architecture">架构</a></li>
+    <li><a href="#tech">技术栈</a></li>
+    <li><a href="#quickstart">快速开始</a></li>
+    <li><a href="#changelog">更新日志</a></li>
+  </ul>
+</nav>
+
+<!-- ======== Floating TOC ======== -->
+<div class="toc-float">
+  <div class="toc-dot" data-section="overview"><span class="toc-label">项目概览</span></div>
+  <div class="toc-dot" data-section="features"><span class="toc-label">核心功能</span></div>
+  <div class="toc-dot" data-section="structure"><span class="toc-label">项目结构</span></div>
+  <div class="toc-dot" data-section="core"><span class="toc-label">核心模块</span></div>
+  <div class="toc-dot" data-section="scenes"><span class="toc-label">场景模块</span></div>
+  <div class="toc-dot" data-section="architecture"><span class="toc-label">系统架构</span></div>
+  <div class="toc-dot" data-section="tech"><span class="toc-label">技术栈</span></div>
+  <div class="toc-dot" data-section="quickstart"><span class="toc-label">快速开始</span></div>
+  <div class="toc-dot" data-section="changelog"><span class="toc-label">更新日志</span></div>
+</div>
+
+<!-- ======== Hero Section ======== -->
+<section class="hero" id="overview">
+  <div class="hero-content">
+    <div class="hero-badge">V2.6 &middot; Python Desktop Application</div>
+    <h1>阴阳师自动化工具</h1>
+    <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、12 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
+    <div class="hero-tags">
+      <span class="hero-tag python">Python 3.8+</span>
+      <span class="hero-tag opencv">OpenCV</span>
+      <span class="hero-tag adb">ADB</span>
+      <span class="hero-tag tkinter">Tkinter GUI</span>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item fade-in stagger-1">
+        <div class="stat-value">~2100</div>
+        <div class="stat-label">总代码行数</div>
+      </div>
+      <div class="stat-item fade-in stagger-2">
+        <div class="stat-value">12</div>
+        <div class="stat-label">场景预设</div>
+      </div>
+      <div class="stat-item fade-in stagger-3">
+        <div class="stat-value">95+</div>
+        <div class="stat-label">模板图片</div>
+      </div>
+      <div class="stat-item fade-in stagger-4">
+        <div class="stat-value">3</div>
+        <div class="stat-label">核心模块</div>
+      </div>
+      <div class="stat-item fade-in stagger-5">
+        <div class="stat-value">N</div>
+        <div class="stat-label">多设备支持</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Features Section ======== -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon purple">&#9889;</div>
+      <h2 class="section-title">核心功能</h2>
+    </div>
+    <p class="section-desc">涵盖阴阳师日常游戏所需的各种自动化操作，一站式解决重复刷图问题</p>
+    <div class="grid-3">
+      <div class="card feature-card fade-in stagger-1">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(59,130,246,0.15);">&#128241;</div>
+          <div class="card-title">多设备支持 <span style="font-size:0.7rem;background:rgba(59,130,246,0.25);color:var(--accent-blue);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.4</span></div>
+        </div>
+        <div class="card-desc">选项卡式 UI 设计，每个选项卡独立控制一个模拟器实例。支持同时管理多个设备并行运行自动化任务。</div>
+        <span class="feature-tag">Tab UI</span>
+      </div>
+      <div class="card feature-card fade-in stagger-2">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127918;</div>
+          <div class="card-title">12 场景预设 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
+        </div>
+        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、活动爬塔等 12 种游戏场景自动化方案，覆盖日常主要玩法。</div>
+        <span class="feature-tag">一键切换</span>
+      </div>
+      <div class="card feature-card fade-in stagger-3">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(108,92,231,0.15);">&#128101;</div>
+          <div class="card-title">司机-队员联动 <span style="font-size:0.7rem;background:rgba(108,92,231,0.25);color:var(--accent-purple);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.2</span></div>
+        </div>
+        <div class="card-desc">智能司机队员配对系统，自动同步组队操作。司机发起邀请后队员自动接受，无需手动协调。</div>
+        <span class="feature-tag">协同自动化</span>
+      </div>
+      <div class="card feature-card fade-in stagger-4">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,158,11,0.15);">&#128214;</div>
+          <div class="card-title">绘卷模式 <span style="font-size:0.7rem;background:rgba(245,158,11,0.25);color:var(--accent-yellow);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
+        </div>
+        <div class="card-desc">高效刷绘卷模式，自动在结界突破和困28之间智能切换。根据通关次数自动判断何时切换场景，最大化产出效率。</div>
+        <span class="feature-tag">智能切换</span>
+      </div>
+      <div class="card feature-card fade-in stagger-5">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(236,72,153,0.15);">&#127919;</div>
+          <div class="card-title">挑战计数器 <span style="font-size:0.7rem;background:rgba(236,72,153,0.25);color:#ec4899;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.1</span></div>
+        </div>
+        <div class="card-desc">精确追踪每次挑战次数，支持设置目标上限。达到目标后自动停止或触发后续操作（如关闭加成），防止过度消耗体力。</div>
+        <span class="feature-tag">精确计数</span>
+      </div>
+      <div class="card feature-card fade-in stagger-6">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(6,182,212,0.15);">&#128276;</div>
+          <div class="card-title">声音提醒 <span style="font-size:0.7rem;background:rgba(6,182,212,0.25);color:#06b6d4;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.4</span></div>
+        </div>
+        <div class="card-desc">任务完成后自动播放 WAV 音效通知。内置 QQ 和 Steam 提示音，确保即使不在电脑前也能及时知晓任务状态。</div>
+        <span class="feature-tag">音效通知</span>
+      </div>
+      <div class="card feature-card fade-in stagger-7">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(239,68,68,0.15);">&#128736;</div>
+          <div class="card-title">自动关闭加成 <span style="font-size:0.7rem;background:rgba(239,68,68,0.25);color:#ef4444;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.10</span></div>
+        </div>
+        <div class="card-desc">达到指定挑战次数后自动执行关闭加成流程：强制停止游戏进程、重新启动，彻底关闭当前生效的经验/金币加成。</div>
+        <span class="feature-tag">自动化流程</span>
+      </div>
+      <div class="card feature-card fade-in stagger-8">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(148,163,184,0.15);">&#128190;</div>
+          <div class="card-title">配置持久化 <span style="font-size:0.7rem;background:rgba(148,163,184,0.25);color:#94a3b8;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.9</span></div>
+        </div>
+        <div class="card-desc">所有设置通过 JSON 文件持久保存。包括设备连接信息、ADB 地址端口、功能开关、窗口位置等，重启后自动恢复上次配置。</div>
+        <span class="feature-tag">JSON 存储</span>
+      </div>
+      <div class="card feature-card fade-in stagger-9">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(168,85,247,0.15);">&#9889;</div>
+          <div class="card-title">模板缓存优化 <span style="font-size:0.7rem;background:rgba(168,85,247,0.25);color:var(--accent-purple);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
+        </div>
+        <div class="card-desc">模板图片一次性加载到内存缓存，避免重复磁盘读取。配合高精度匹配算法，在保证识别准确率的同时提升响应速度。</div>
+        <span class="feature-tag">性能优化</span>
+      </div>
+      <div class="card feature-card fade-in stagger-10">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#128196;</div>
+          <div class="card-title">可控日志记录 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.6</span></div>
+        </div>
+        <div class="card-desc">V2.6 日志功能升级为可开关模式（默认关闭）。启用后 ADB 命令和识图结果写入 logs 目录，通过菜单栏一键控制，支持打开日志文件夹和清空日志。</div>
+        <span class="feature-tag">logging + Filter</span>
+      </div>
+      <div class="card feature-card fade-in stagger-11">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#9776;</div>
+          <div class="card-title">菜单栏布局 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.6</span></div>
+        </div>
+        <div class="card-desc">V2.6 重新设计 UI 布局，部分功能从设置选项卡移入顶部菜单栏。新增文件、功能设置、日志、软件更新、标签、帮助六大菜单分类，界面更简洁专业。</div>
+        <span class="feature-tag">tkinter Menu</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Project Structure ======== -->
+<section class="section" id="structure">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon blue">&#128193;</div>
+      <h2 class="section-title">项目结构</h2>
+    </div>
+    <p class="section-desc">完整的文件目录树，清晰展示项目组织方式</p>
+    <div class="file-tree fade-in">
+<span class="folder">yys-auto/</span>                           <span class="comment">-- 项目根目录</span>
+├── <span class="file py">main.py</span>                          <span class="comment">-- 主程序入口 (~1600 行)</span>
+├── <span class="file py">image_recognizer.py</span>             <span class="comment">-- 图像识别引擎 (~243 行)</span>
+├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 可控日志系统 (~122 行)</span>
+├── <span class="file json">config.json</span>                    <span class="comment">-- 持久化配置文件</span>
+├── <span class="file ico">icon.ico</span>                       <span class="comment">-- 应用程序图标</span>
+│
+├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录</span>
+│   ├── <span class="file py">yyh.py</span>                   <span class="comment">-- 业原火</span>
+│   ├── <span class="file py">htdr.py</span>                  <span class="comment">-- 魂土单人</span>
+│   ├── <span class="file py">sj.py</span>                    <span class="comment">-- 司机 (Driver)</span>
+│   ├── <span class="file py">dy.py</span>                    <span class="comment">-- 队员 (Teammate)</span>
+│   ├── <span class="file py">dj.py</span>                    <span class="comment">-- 斗技 (PvP)</span>
+│   ├── <span class="file py">dg.py</span>                    <span class="comment">-- 道馆 (Dojo)</span>
+│   ├── <span class="file py">k28.py</span>                   <span class="comment">-- 困28单人</span>
+│   ├── <span class="file py">k281.py</span>                  <span class="comment">-- 困28队长</span>
+│   ├── <span class="file py">k280.py</span>                  <span class="comment">-- 困28队员</span>
+│   ├── <span class="file py">yjsl.py</span>                  <span class="comment">-- 英杰试炼</span>
+│   ├── <span class="file py">jjtp.py</span>                  <span class="comment">-- 结界突破</span>
+│   ├── <span class="file py">hdpt.py</span>                  <span class="comment">-- 活动爬塔</span>
+│   └── <span class="file py">guanbijiacheng.py</span>        <span class="comment">-- 关闭加成</span>
+│
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (95+)</span>
+│   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (6 张)</span>
+│   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (7 张)</span>
+│   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
+│   ├── <span class="file media">dy/</span>                  <span class="comment">-- 队员 (6 张)</span>
+│   ├── <span class="file media">dj/</span>                  <span class="comment">-- 斗技 (7 张)</span>
+│   ├── <span class="file media">dg/</span>                  <span class="comment">-- 道馆 (9 张)</span>
+│   ├── <span class="file media">k28/</span>                 <span class="comment">-- 困28单人 (11 张)</span>
+│   ├── <span class="file media">k281/</span>                <span class="comment">-- 困28队长 (8 张)</span>
+│   ├── <span class="file media">k280/</span>                <span class="comment">-- 困28队员 (5 张)</span>
+│   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (9 张)</span>
+│   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (17 张)</span>
+│   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (9 张)</span>
+│   ├── <span class="file media">dfw/</span>                 <span class="comment">-- 对决逢魔 (15 张)</span>
+│   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
+│   └── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
+│
+├── <span class="folder">logs/</span>                              <span class="comment">-- 详细日志目录</span>
+│   ├── adb_YYYYMMDD_HHMMSS.log     <span class="comment">-- ADB 命令日志</span>
+│   └── image_YYYYMMDD_HHMMSS.log   <span class="comment">-- 识图结果日志</span>
+│
+├── <span class="folder">wav/</span>                              <span class="comment">-- 音效文件 (6 个)</span>
+│   ├── <span class="file media">QQ.wav</span>
+│   ├── <span class="file media">Steam.wav</span>
+│   ├── <span class="file media">iOS信息.wav</span>            <span class="comment">-- (V2.6 新增)</span>
+│   ├── <span class="file media">iOS通知.wav</span>            <span class="comment">-- (V2.6 新增)</span>
+│   ├── <span class="file media">言灵.wav</span>               <span class="comment">-- (V2.6 新增)</span>
+│   └── <span class="file media">骄阳长明.wav</span>            <span class="comment">-- (V2.6 新增)</span>
+│
+├── <span class="folder">bat/</span>                              <span class="comment">-- 启动脚本</span>
+│   ├── <span class="file bat">run.bat</span>                <span class="comment">-- 运行脚本</span>
+│   └── <span class="file bat">install.bat</span>           <span class="comment">-- 安装依赖脚本</span>
+│
+├── <span class="folder">platform-tools/</span>                    <span class="comment">-- ADB 工具包 (v37.0.0)</span>
+│   ├── adb.exe                  <span class="comment">-- Android Debug Bridge</span>
+│   ├── AdbWinApi.dll
+│   ├── AdbWinUsbApi.dll
+│   └── ...
+│
+└── <span class="folder">使用文档第一次使用必看/</span>              <span class="comment">-- 用户文档</span>
+    ├── <span class="file">1前置工作文档.pdf</span>
+    ├── <span class="file">2日常使用文档.pdf</span>
+    ├── <span class="file">3结界突破说明.pdf</span>
+    ├── <span class="file">工具原理.docx</span>
+    ├── <span class="file">更新日志.txt</span>
+    ├── <span class="file">更新日志.html</span>              <span class="comment">-- 网页版更新日志</span>
+    └── <span class="folder">无Word版/</span>
+        └── <span class="file">网页版全部.html</span>        <span class="comment">-- 网页版使用文档</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Core Modules ======== -->
+<section class="section" id="core">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon cyan">&#128295;</div>
+      <h2 class="section-title">核心模块</h2>
+    </div>
+    <p class="section-desc">三大核心模块各司其职，构成完整的自动化引擎</p>
+
+    <div class="module-detail fade-in">
+      <div class="module-detail-header">
+        <div class="module-detail-title">
+          <span style="color:var(--accent-blue);">&#9632;</span> main.py -- 主程序入口
+        </div>
+        <span class="module-detail-code">~1600 行</span>
+      </div>
+      <div class="module-detail-body">
+        应用程序的核心枢纽，包含所有 GUI 逻辑和自动化调度。基于 tkinter 构建，采用选项卡架构实现多设备并行管理。
+      </div>
+      <div class="module-detail-tags">
+        <span class="module-tag">AutoClickerUI</span>
+        <span class="module-tag">DeviceTab</span>
+        <span class="module-tag">SettingsTab</span>
+        <span class="module-tag">Menu 菜单栏</span>
+        <span class="module-tag">多线程</span>
+        <span class="module-tag">JSON 配置</span>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div class="module-detail fade-in">
+        <div class="module-detail-header">
+          <div class="module-detail-title">
+          <span style="color:var(--accent-green);">&#9632;</span> image_recognizer.py
+        </div>
+        <span class="module-detail-code">~243 行</span>
+      </div>
+      <div class="module-detail-body">
+          OpenCV 模板匹配引擎。使用 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">TM_CCOEFF_NORMED</code> 归一化交叉相关算法，配合 ADB 截图和点击模拟，实现高精度游戏界面识别。内置详细日志记录，将每次识别结果（图片名称、中心坐标、置信度）写入 logs 目录。
+      </div>
+      <div class="module-detail-tags">
+        <span class="module-tag">ImageRecognizer</span>
+        <span class="module-tag">matchTemplate</span>
+        <span class="module-tag">模板缓存</span>
+        <span class="module-tag">阈值 0.90</span>
+        <span class="module-tag">日志记录</span>
+      </div>
+      </div>
+      <div class="module-detail fade-in">
+        <div class="module-detail-header">
+          <div class="module-detail-title">
+            <span style="color:var(--accent-orange);">&#9632;</span> adb.py
+          </div>
+          <span class="module-detail-code">~108 行</span>
+        </div>
+        <div class="module-detail-body">
+          ADB 设备管理层与日志基础设施。负责模拟器通信、自动发现 platform-tools 目录、验证设备分辨率（强制 1280x720）。V2.6 引入 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">_FilterDisabled</code> 过滤器类 + <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">set_logging_enabled()</code> 全局开关，日志默认关闭，用户可在菜单栏中启用。
+        </div>
+        <div class="module-detail-tags">
+          <span class="module-tag">ADBManager</span>
+          <span class="module-tag">设备发现</span>
+          <span class="module-tag">分辨率验证</span>
+          <span class="module-tag">logging</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="color:var(--text-primary); margin:2rem 0 1rem; font-size:1.1rem;">&#128196; config.json 配置结构</h3>
+    <div class="code-block fade-in">
+<span class="cmt">// config.json - 持久化配置示例</span>
+{
+    <span class="str">"tab_settings"</span>: {
+        <span class="str">"tab1"</span>: {
+            <span class="str">"device"</span>: <span class="str">"127.0.0.1:5555"</span>,          <span class="cmt">// ADB 连接地址</span>
+            <span class="str">"scene"</span>: <span class="str">"yyh"</span>,                    <span class="cmt">// 当前场景预设</span>
+            <span class="str">"challenge_count"</span>: <span class="num">100</span>,           <span class="cmt">// 目标挑战次数</span>
+            <span class="str">"scroll_mode"</span>: <span class="kw">false</span>,               <span class="cmt">// 绘卷模式开关</span>
+            <span class="str">"close_buff"</span>: <span class="kw">false</span>,                <span class="cmt">// 关闭加成开关</span>
+            <span class="str">"is_running"</span>: <span class="kw">false</span>                 <span class="cmt">// 运行状态</span>
+        }
+    },
+    <span class="str">"window_position"</span>: [<span class="num">100</span>, <span class="num">100</span>],             <span class="cmt">// 窗口位置记忆</span>
+    <span class="str">"theme"</span>: <span class="str">"dark"</span>                         <span class="cmt">// 主题设置</span>
+}
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Scene Modules ======== -->
+<section class="section" id="scenes">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon pink">&#127918;</div>
+      <h2 class="section-title">场景模块</h2>
+    </div>
+    <p class="section-desc">12 个独立场景模块，每个模块封装完整的自动化流程。统一导出 handle_scene() 和 handle_no_recognition() 接口。</p>
+
+    <div class="scene-table-wrap fade-in">
+      <table class="scene-table">
+        <thead>
+          <tr>
+            <th>场景名称</th>
+            <th>模块文件</th>
+            <th>类型</th>
+            <th>功能描述</th>
+            <th>模板数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="scene-name">&#128293; 业原火</span></td>
+            <td><span class="scene-module">yyh.py</span></td>
+            <td><span class="scene-badge farm">刷图</span></td>
+            <td>Boss 刷图模式，自动点击战斗阶段，处理锁定、挑战、奖励界面。经典的循环刷图流程。</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128128; 魂土单人</span></td>
+            <td><span class="scene-module">htdr.py</span></td>
+            <td><span class="scene-badge farm">刷图</span></td>
+            <td>魂土单人流程，包含探索页面和 Boss 阶段的自动导航，支持宝藏领取和胜利结算。</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128663; 司机</span></td>
+            <td><span class="scene-module">sj.py</span></td>
+            <td><span class="scene-badge coop">组队</span></td>
+            <td>组队司机模式，负责发起挑战、发送邀请。与队员模块联动，自动完成组队流程。</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128100; 队员</span></td>
+            <td><span class="scene-module">dy.py</span></td>
+            <td><span class="scene-badge coop">组队</span></td>
+            <td>组队队员模式，自动接受邀请、检测准备状态、追踪奖励获取。被动跟随司机操作。</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#9876; 斗技</span></td>
+            <td><span class="scene-module">dj.py</span></td>
+            <td><span class="scene-badge pvp">PvP</span></td>
+            <td>竞技场自动战斗，支持手动/自动模式切换。自动检测晋升界面和段位变化。</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#127959; 道馆</span></td>
+            <td><span class="scene-module">dg.py</span></td>
+            <td><span class="scene-badge pvp">PvP</span></td>
+            <td>道馆自动战斗，5 次点击冷却系统。智能等待状态检测，自动识别挑战和结算界面。</td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128742; 困28单人</span></td>
+            <td><span class="scene-module">k28.py</span></td>
+            <td><span class="scene-badge tower">爬塔</span></td>
+            <td>噩梦二十八层单人模式，支持屏幕滑动探索。智能识别 Boss 路线和普通敌人路线。</td>
+            <td>11</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128081; 困28队长</span></td>
+            <td><span class="scene-module">k281.py</span></td>
+            <td><span class="scene-badge coop">组队</span></td>
+            <td>困28队长版本，拥有邀请功能。负责发起挑战和招募队友，管理团队流程。</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#129309; 困28队员</span></td>
+            <td><span class="scene-module">k280.py</span></td>
+            <td><span class="scene-badge coop">组队</span></td>
+            <td>困28队员版本，被动跟随模式。自动接受邀请、追踪奖励，与队长模块协同工作。</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#127942; 英杰试炼</span></td>
+            <td><span class="scene-module">yjsl.py</span></td>
+            <td><span class="scene-badge tower">爬塔</span></td>
+            <td>多阶段挑战模式，具有特定的导航图片识别。自动通过各阶段关卡。</td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128680; 结界突破</span></td>
+            <td><span class="scene-module">jjtp.py</span></td>
+            <td><span class="scene-badge farm">刷图</span></td>
+            <td>14 步自动战斗模式（card57），复杂的多步骤流程。支持自动切换至/来自困28，绘卷模式核心。</td>
+            <td>17</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#127775; 活动爬塔</span></td>
+            <td><span class="scene-module">hdpt.py</span></td>
+            <td><span class="scene-badge tower">爬塔</span></td>
+            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算。</td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128260; 关闭加成</span></td>
+            <td><span class="scene-module">guanbijiacheng.py</span></td>
+            <td><span class="scene-badge util">工具</span></td>
+            <td>强制关闭当前加成效果。通过强制停止并重启游戏的方式，清除激活的经验/金币加成。</td>
+            <td>3</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Architecture ======== -->
+<section class="section" id="architecture">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon green">&#9881;</div>
+      <h2 class="section-title">系统架构</h2>
+    </div>
+    <p class="section-desc">模块化设计，清晰的层次结构和解耦的场景系统</p>
+
+    <div class="arch-diagram fade-in">
+<span class="dim">                    ┌─────────────────────────────────────────────────────────┐</span>
+<span class="dim">                    │</span>                   <span class="highlight">YYS-AUTO 系统架构图</span>                    <span class="dim">│</span>
+<span class="dim">                    └─────────────────────────────────────────────────────────┘</span>
+
+<span class="white">  ┌──────────────────────────────────────────────────────────────────────┐</span>
+<span class="white">  │</span>  <span class="highlight">表示层 (Presentation)</span>                                          <span class="white">│</span>
+<span class="white">  │</span>                                                                      <span class="white">│</span>
+<span class="white">  │</span>  ┌─────────────┐   ┌──────────────┐   ┌──────────────┐              <span class="white">│</span>
+<span class="white">  │</span>  │ <span class="pink">AutoClickerUI</span> │   │  <span class="pink">DeviceTab</span>  │   │ <span class="pink">SettingsTab</span> │              <span class="white">│</span>
+<span class="white">  │</span>  │  (主窗口)    │   │ (设备选项卡)   │   │ (设置选项卡)  │              <span class="white">│</span>
+<span class="white">  │</span>  └──────┬──────┘   └──────┬───────┘   └──────────────┘              <span class="white">│</span>
+<span class="white">  │</span>         │                │  (每Tab独立线程)                           <span class="white">│</span>
+<span class="white">  └─────────┼────────────────┼──────────────────────────────────────────────┘</span>
+            │                │
+            ▼                ▼
+<span class="white">  ┌──────────────────────────────────────────────────────────────────────┐</span>
+<span class="white">  │</span>  <span class="blue">业务逻辑层 (Business Logic)</span>                                   <span class="white">│</span>
+<span class="white">  │</span>                                                                      <span class="white">│</span>
+<span class="white">  │</span>  ┌────────────────────────────────────────────────────────────┐    <span class="white">│</span>
+<span class="white">  │</span>  │                    <span class="blue">自动化调度引擎</span>                           │    <span class="white">│</span>
+<span class="white">  │</span>  │                                                            │    <span class="white">│</span>
+<span class="white">  │</span>  │   <span class="green">handle_scene()</span> ──→  场景匹配 ──→  执行点击 ──→  状态检测  │    <span class="white">│</span>
+<span class="white">  │</span>  │        │                                                    │    <span class="white">│</span>
+<span class="white">  │</span>  │        ▼                                                    │    <span class="white">│</span>
+<span class="white">  │</span>  │   <span class="green">handle_no_recognition()</span> ──→  异常处理 ──→  重试/切换    │    <span class="white">│</span>
+<span class="white">  │</span>  └────────────────────────────────────────────────────────────┘    <span class="white">│</span>
+<span class="white">  │</span>                                                                      <span class="white">│</span>
+<span class="white">  │</span>  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐           <span class="white">│</span>
+<span class="white">  │</span>  │<span class="cyan">yyh.py</span>│ │<span class="cyan">htdr </span>│ │<span class="cyan">sj   </span>│ │<span class="cyan">dy   </span>│ │<span class="cyan">dj   </span>│ │<span class="cyan">dg   </span>│ ...      <span class="white">│</span>
+<span class="white">  │</span>  │业原火│ │魂土  │ │司机  │ │队员  │ │斗技  │ │道馆  │           <span class="white">│</span>
+<span class="white">  │</span>  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘           <span class="white">│</span>
+<span class="white">  └──────────────────────────┬───────────────────────────────────────────┘</span>
+                             │
+                             ▼
+<span class="white">  ┌──────────────────────────────────────────────────────────────────────┐</span>
+<span class="white">  │</span>  <span class="orange">服务层 (Service)</span>                                               <span class="white">│</span>
+<span class="white">  │</span>                                                                      <span class="white">│</span>
+<span class="white">  │</span>  ┌─────────────────────────┐  ┌─────────────────────────┐        <span class="white">│</span>
+<span class="white">  │</span>  │   <span class="orange">ImageRecognizer</span>       │  │     <span class="orange">ADBManager</span>        │        <span class="white">│</span>
+<span class="white">  │</span>  │                         │  │                         │        <span class="white">│</span>
+<span class="white">  │</span>  │  - 模板加载 & 缓存       │  │  - 设备列表管理           │        <span class="white">│</span>
+<span class="white">  │</span>  │  - matchTemplate()      │  │  - ADB 连接/断开          │        <span class="white">│</span>
+<span class="white">  │</span>  │  - 阈值匹配 (0.90)       │  │  - 分辨率验证 (720p)      │        <span class="white">│</span>
+<span class="white">  │</span>  │  - 随机偏移 ±10px        │  │  - 截图/点击/滑动          │        <span class="white">│</span>
+<span class="white">  │</span>  └───────────┬─────────────┘  └───────────┬─────────────┘        <span class="white">│</span>
+<span class="white">  └──────────────────┼──────────────────────────────┼──────────────────────┘</span>
+                     │                              │
+                     ▼                              ▼
+<span class="white">  ┌──────────────────────────────────────────────────────────────────────┐</span>
+<span class="white">  │</span>  <span class="dim">外部依赖 (External)</span>                                            <span class="white">│</span>
+<span class="white">  │</span>                                                                      <span class="white">│</span>
+<span class="white">  │</span>  ┌───────────────┐  ┌──────────────┐  ┌───────────────┐       <span class="white">│</span>
+<span class="white">  │</span>  │   <span class="dim">OpenCV</span>       │  │    <span class="dim">ADB</span>       │  │  <span class="dim">Android 模拟器</span>  │       <span class="white">│</span>
+<span class="white">  │</span>  │  模板匹配引擎   │  │  设备通信桥    │  │  (MuMu/雷电等)  │       <span class="white">│</span>
+<span class="white">  │</span>  └───────────────┘  └──────────────┘  └───────────────┘       <span class="white">│</span>
+<span class="white">  └──────────────────────────────────────────────────────────────────────┘</span>
+
+<span class="dim">                              数据流向说明</span>
+<span class="dim">  ┌──────────┐     截图      ┌───────────┐     模板匹配     ┌──────────┐</span>
+<span class="dim">  │  模拟器   │ ──────────→ │  ADB      │ ────────────→ │ OpenCV   │</span>
+<span class="dim">  │ (游戏画面) │             │  截图命令   │               │ 识别引擎  │</span>
+<span class="dim">  └──────────┘     点击      └───────────┘     匹配结果     └──────────┘</span>
+<span class="dim">      ▲          ←─────────      ▲           ←─────────        │</span>
+<span class="dim">      │          ADB 点击命令      │                        │</span>
+<span class="dim">      │                         │    ┌──────────┐         │</span>
+<span class="dim">      │                         └────│ 场景模块  │←────────┘</span>
+<span class="dim">      │                              │ 业务逻辑  │   决策: 点哪里</span>
+<span class="dim">      │                              └────┬─────┘</span>
+<span class="dim">      │                                   │</span>
+<span class="dim">      └───────────────────────────────────┘</span>
+<span class="dim">                  完整的自动化闭环</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Tech Stack ======== -->
+<section class="section" id="tech">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon orange">&#128736;</div>
+      <h2 class="section-title">技术栈</h2>
+    </div>
+    <p class="section-desc">轻量级技术选型，零外部 GUI 依赖</p>
+
+    <div class="tech-stack fade-in">
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#128013;</span>
+        <div>
+          <div style="font-weight:600;">Python 3.8+</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">核心语言 (兼容 3.11)</div>
+        </div>
+      </div>
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#127912;</span>
+        <div>
+          <div style="font-weight:600;">OpenCV</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">opencv-python</div>
+        </div>
+      </div>
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#128187;</span>
+        <div>
+          <div style="font-weight:600;">Tkinter</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">内置 GUI 框架</div>
+        </div>
+      </div>
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#128225;</span>
+        <div>
+          <div style="font-weight:600;">ADB</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">Android Debug Bridge</div>
+        </div>
+      </div>
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#128202;</span>
+        <div>
+          <div style="font-weight:600;">JSON</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">配置持久化</div>
+        </div>
+      </div>
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#128640;</span>
+        <div>
+          <div style="font-weight:600;">Threading</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">多线程 Daemon</div>
+        </div>
+      </div>
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#128196;</span>
+        <div>
+          <div style="font-weight:600;">logging</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">可控日志 (V2.6 默认关闭)</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="color:var(--text-primary); margin:2.5rem 0 1rem; font-size:1.1rem;">&#128295; 关键技术参数</h3>
+    <div class="kv-grid fade-in">
+      <div class="kv-item">
+        <span class="kv-key">匹配算法</span>
+        <span class="kv-val"><code>TM_CCOEFF_NORMED</code> (归一化交叉相关)</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">默认阈值</span>
+        <span class="kv-val"><code>0.90</code> (支持按场景自定义)</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">点击偏移</span>
+        <span class="kv-val"><code>&plusmn;10px</code> 随机偏移 (防检测)</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">分辨率要求</span>
+        <span class="kv-val"><code>1280 x 720</code> (强制)</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">通信协议</span>
+        <span class="kv-val"><code>ADB</code> via subprocess</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">线程模型</span>
+        <span class="kv-val"><code>Daemon Thread</code> (每Tab独立)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Quick Start ======== -->
+<section class="section" id="quickstart">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon green">&#128640;</div>
+      <h2 class="section-title">快速开始</h2>
+    </div>
+    <p class="section-desc">按照以下步骤快速部署和运行 YYS-AUTO</p>
+
+    <div class="steps fade-in">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">安装 Android 模拟器</div>
+          <div class="step-desc">安装 MuMu、雷电或其他支持 ADB 的 Android 模拟器。在模拟器设置中将分辨率调整为 <strong>1280x720</strong>（横屏），并开启 ADB 调试。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">安装 Python 依赖</div>
+          <div class="step-desc">确保已安装 Python 3.8 或更高版本，然后运行 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">install.bat</code> 或手动执行 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">pip install opencv-python</code>。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">连接 ADB 设备</div>
+          <div class="step-desc">在模拟器中查看 ADB 端口（通常为 5555），在 YYS-AUTO 中输入对应的 IP 和端口连接设备。程序会自动检测设备分辨率是否符合要求。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">选择场景并启动</div>
+          <div class="step-desc">在选项卡中选择需要的游戏场景预设（如业原火、魂土等），设置挑战次数和其他参数，点击启动即可开始自动化运行。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <div class="step-title">等待完成</div>
+          <div class="step-desc">程序会在后台自动运行。任务完成后播放音效通知。可随时通过界面停止或调整参数。所有设置自动保存，下次启动无需重新配置。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======== Changelog ======== -->
+<section class="section" id="changelog">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon purple">&#128220;</div>
+      <h2 class="section-title">更新日志</h2>
+    </div>
+    <p class="section-desc">项目版本迭代记录，持续优化和适配新活动内容</p>
+    <div class="changelog-list fade-in">
+      <div class="changelog-item">
+        <div class="changelog-version">
+          <span class="changelog-badge">V2.6</span>
+          <span class="changelog-date">2026-07-04</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>更改 UI 布局，部分功能移入顶部菜单栏（文件、功能设置、日志、软件更新、标签、帮助）</li>
+          <li>日志记录功能改为可调整开关，默认关闭，通过菜单栏「设置 > 日志」控制</li>
+          <li>新增更多提示音（iOS 信息、iOS 通知、言灵、骄阳长明），音效库从 2 个扩展到 6 个</li>
+          <li>新增「关于 YYS-AUTO」对话框和「打开使用说明文档」快捷入口</li>
+          <li>adb.py 引入 _FilterDisabled 过滤器类和 set_logging_enabled() 全局开关</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
+          <span class="changelog-badge">V2.5.1</span>
+          <span class="changelog-date">2026-07-02</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>添加记录详细日志文件功能，ADB 命令和识图结果分别写入 logs 目录，按时间戳命名</li>
+          <li>adb.py 重构：引入 logging 模块，新增 LOG_SUFFIX / get_log_dir() / get_adb_logger() 基础设施</li>
+          <li>image_recognizer.py 重构：新增 get_image_logger()，记录每次识别的图片名称、中心坐标和置信度</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
+          <span class="changelog-badge">V2.5</span>
+          <span class="changelog-date">2026-07-02</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>优化道馆逻辑</li>
+          <li>优化提高拒绝悬赏优先级</li>
+          <li>适配活动爬塔（6月24毗沙门天）长线部分</li>
+          <li>ADB 版本更新为 37.0.0-14910828（2026年2月）</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
+          <span class="changelog-badge">V2.4</span>
+          <span class="changelog-date">2026-06-09</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>提高拒绝悬赏优先级</li>
+          <li>增加任务结束提示音，只能使用 wav 格式音频</li>
+          <li>恢复重启程序自动选择设备</li>
+          <li>更新结界突破 0 突破券图片</li>
+          <li>添加一键全部开始，一键全部停止按钮</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
+          <span class="changelog-badge">V2.0</span>
+          <span class="changelog-date">2026-04-14</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>优化识图性能</li>
+          <li>优化结界突破，正式命名为结界突破</li>
+          <li>添加困28队长、困28队员</li>
+          <li>添加绘卷模式，启用后根据突破券在结界突破和困28单人切换</li>
+          <li>添加斗技段位晋升结束程序</li>
+          <li>更新 UI 布局，添加程序图标</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<footer class="footer">
+  <div class="footer-brand">YYS-AUTO V2.6</div>
+  <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
+  <div class="footer-links">
+    <a href="#overview">项目概览</a>
+    <a href="#features">核心功能</a>
+    <a href="#structure">项目结构</a>
+    <a href="#core">核心模块</a>
+    <a href="#scenes">场景模块</a>
+    <a href="#architecture">系统架构</a>
+    <a href="#tech">技术栈</a>
+    <a href="#changelog">更新日志</a>
+  </div>
+  <p style="margin-top:1.5rem; font-size:0.75rem; color:var(--text-muted);">Built with Python &middot; OpenCV &middot; ADB &middot; Tkinter</p>
+</footer>
+
+<!-- ======== JavaScript ======== -->
+<script>
+(function() {
+  // Intersection Observer for fade-in animations
+  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -40px 0px' };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Active nav link tracking on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const tocDots = document.querySelectorAll('.toc-dot');
+
+  function updateActiveSection() {
+    const scrollPos = window.scrollY + 120;
+    let currentSection = '';
+    sections.forEach(section => {
+      if (section.offsetTop <= scrollPos) {
+        currentSection = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection);
+    });
+    tocDots.forEach(dot => {
+      dot.classList.toggle('active', dot.dataset.section === currentSection);
+    });
+  }
+  window.addEventListener('scroll', updateActiveSection);
+  updateActiveSection();
+
+  // TOC dot click navigation
+  tocDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const target = document.getElementById(dot.dataset.section);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
