@@ -5,7 +5,7 @@ import os
 import sys
 import time
 import logging
-from adb import LOG_SUFFIX, get_log_dir, get_adb_logger, _FilterDisabled
+from adb import LOG_SUFFIX, get_log_dir, get_adb_logger, get_gui_logger, _FilterDisabled
 
 def get_image_logger():
     """获取识图日志记录器，只写入本地文件，不输出到终端"""
@@ -45,6 +45,7 @@ class ImageRecognizer:
 
         self.logger = get_adb_logger()
         self.image_logger = get_image_logger()
+        self.gui_logger = get_gui_logger()
 
     def connect_device(self):
         try:
@@ -90,9 +91,11 @@ class ImageRecognizer:
             cmd = [self.adb_path, "-s", self.device, "shell", "input", "tap", str(x), str(y)]
             result = subprocess.run(cmd, capture_output=True, timeout=5)
             self.logger.info(f"命令: {' '.join(cmd)} | 返回码: {result.returncode}")
+            self.gui_logger.info(f"发送点击指令: tap ({x}, {y}) | 设备: {self.device}")
             return True
         except Exception as e:
             self.logger.error(f"命令: {' '.join(cmd)} | 异常: {e}")
+            self.gui_logger.error(f"点击指令失败: tap ({x}, {y}) | 异常: {e}")
             return False
 
     def _get_cached_template(self, template_path):
@@ -238,7 +241,11 @@ class ImageRecognizer:
                 for r in results
             )
             self.image_logger.info(f"识别到 {len(results)} 项: {detail}")
+            # GUI日志记录识别分析
+            names = [r['name'].replace('.png', '') for r in results]
+            self.gui_logger.info(f"识别到 {len(results)} 项图片: {', '.join(names)} | 设备: {self.device}")
         else:
             self.image_logger.info("未识别到任何图片")
+            self.gui_logger.info(f"未识别到任何图片 | 设备: {self.device}")
 
         return results

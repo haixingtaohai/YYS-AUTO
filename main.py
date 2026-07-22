@@ -13,7 +13,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.V2.7'
+        myappid = 'yysauto.application.v2.8'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -110,7 +110,7 @@ def _recheck_ime_on_focus(widget):
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from image_recognizer import ImageRecognizer
-from adb import ADBManager
+from adb import ADBManager, get_gui_logger
 
 
 
@@ -129,6 +129,9 @@ import yjsl
 import jjtp
 import hdpt
 import guanbijiacheng
+
+# GUI逻辑日志记录器
+gui_logger = get_gui_logger()
 
 class SettingsTab:
     def __init__(self, parent):
@@ -214,6 +217,7 @@ class SettingsTab:
         self.parent.save_config()
     
     def _set_port(self, port):
+        gui_logger.info(f"[设置] 点击按钮: 设置端口 {port}")
         self.settings_port_var.set(port)
         self.save_settings()
     
@@ -222,61 +226,138 @@ class SettingsTab:
         port = self.settings_port_var.get().strip()
         if not ip or not port:
             return
-        try:
-            ir = ImageRecognizer()
-            ir.device = f"{ip}:{port}"
-            ir.connect_device()
-        except:
-            pass
+        gui_logger.info(f"[设置] 点击按钮: 连接设备 {ip}:{port}")
+        self.connect_btn.config(state=tk.DISABLED, text="连接中...")
+        def _worker():
+            try:
+                ir = ImageRecognizer()
+                ir.device = f"{ip}:{port}"
+                ir.connect_device()
+            except:
+                pass
+            finally:
+                self.parent.root.after(0, lambda: self.connect_btn.config(state=tk.NORMAL, text="连接"))
+        threading.Thread(target=_worker, daemon=True).start()
+    
+    def _restart_adb(self):
+        """重启ADB服务"""
+        gui_logger.info("[设置] 点击按钮: 重启ADB")
+        import subprocess
+        # 停止所有标签运行
+        self.parent.stop_all_tabs()
+        # 锁定UI
+        self.parent.settings_tab.lock_adb_section()
+        for tab in self.parent.tabs:
+            tab.lock_for_adb_starting()
+            tab.log("正在重启ADB，请稍候...")
+        # 子线程执行重启
+        def _worker():
+            try:
+                ir = ImageRecognizer()
+                subprocess.run([ir.adb_path, "kill-server"], capture_output=True, timeout=10)
+                subprocess.run([ir.adb_path, "start-server"], capture_output=True, timeout=10)
+            except:
+                pass
+            # 刷新设备列表
+            try:
+                for tab in self.parent.tabs:
+                    tab.refresh_devices()
+            except:
+                pass
+            # 回到主线程解锁并提示
+            self.parent.root.after(0, self._on_adb_restarted)
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _on_adb_restarted(self):
+        """ADB重启完成后的回调"""
+        gui_logger.info("[设置] ADB重启完成")
+        self.parent.settings_tab.unlock_adb_section()
+        for tab in self.parent.tabs:
+            tab.unlock_after_adb_started()
+            tab.log("ADB已重启")
     
     def _copy_password(self):
+        gui_logger.info("[设置] 点击按钮: 复制网盘密码")
         self.parent.root.clipboard_clear()
         self.parent.root.clipboard_append("62m8")
         self.parent.root.update()
-    
+
     def _open_update_link(self):
+        gui_logger.info("[设置] 点击按钮: 更新软件")
         import webbrowser
         webbrowser.open("https://wwbet.lanzoum.com/b00ct17efa")
-    
+
     def _open_github(self):
+        gui_logger.info("[设置] 点击按钮: 打开GitHub仓库")
         import webbrowser
         webbrowser.open("https://github.com/haixingtaohai/YYS-AUTO")
-    
+
     def _copy_qq_group(self):
+        gui_logger.info("[设置] 点击按钮: 复制QQ群号")
         self.parent.root.clipboard_clear()
         self.parent.root.clipboard_append("647871264")
         self.parent.root.update()
-    
+
     def _copy_email(self):
+        gui_logger.info("[设置] 点击按钮: 复制作者邮箱")
         self.parent.root.clipboard_clear()
         self.parent.root.clipboard_append("haixingtaohai@163.com")
         self.parent.root.update()
     
     def _create_adb_section(self, parent_frame):
-        group_frame1 = ttk.LabelFrame(parent_frame, text="ADB设备连接", padding="8")
-        group_frame1.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
-        
-        ip_port_frame = ttk.Frame(group_frame1)
+        self.adb_group_frame = ttk.LabelFrame(parent_frame, text="ADB设备连接", padding="8")
+        self.adb_group_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+
+        ip_port_frame = ttk.Frame(self.adb_group_frame)
         ip_port_frame.pack(fill=tk.X, pady=2)
         ttk.Label(ip_port_frame, text="IP:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-        ip_entry = ttk.Entry(ip_port_frame, textvariable=self.settings_ip_var, width=12)
-        ip_entry.pack(side=tk.LEFT, padx=2)
-        ip_entry.bind('<FocusOut>', lambda e: self.save_settings())
-        
+        self.ip_entry = ttk.Entry(ip_port_frame, textvariable=self.settings_ip_var, width=12)
+        self.ip_entry.pack(side=tk.LEFT, padx=2)
+        self.ip_entry.bind('<FocusOut>', lambda e: self.save_settings())
+
         ttk.Label(ip_port_frame, text="端口:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-        port_entry = ttk.Entry(ip_port_frame, textvariable=self.settings_port_var, width=6)
-        port_entry.pack(side=tk.LEFT, padx=2)
-        port_entry.bind('<FocusOut>', lambda e: self.save_settings())
-        
-        port_btn_frame = ttk.Frame(group_frame1)
-        port_btn_frame.pack(fill=tk.X, pady=2)
-        ttk.Button(port_btn_frame, text="16384", command=lambda: self._set_port("16384"), width=6).pack(side=tk.LEFT, padx=1)
-        ttk.Button(port_btn_frame, text="16416", command=lambda: self._set_port("16416"), width=6).pack(side=tk.LEFT, padx=1)
-        
-        tk.Button(group_frame1, text="连接", command=self._connect_device, width=12, height=2).pack(fill=tk.X, pady=2)
+        self.port_entry = ttk.Entry(ip_port_frame, textvariable=self.settings_port_var, width=6)
+        self.port_entry.pack(side=tk.LEFT, padx=2)
+        self.port_entry.bind('<FocusOut>', lambda e: self.save_settings())
+
+        self.port_btn_frame = ttk.Frame(self.adb_group_frame)
+        self.port_btn_frame.pack(fill=tk.X, pady=2)
+        self.port_btn_1 = ttk.Button(self.port_btn_frame, text="16384", command=lambda: self._set_port("16384"), width=6)
+        self.port_btn_1.pack(side=tk.LEFT, padx=1)
+        self.port_btn_2 = ttk.Button(self.port_btn_frame, text="16416", command=lambda: self._set_port("16416"), width=6)
+        self.port_btn_2.pack(side=tk.LEFT, padx=1)
+
+        btn_frame = tk.Frame(self.adb_group_frame)
+        btn_frame.pack(fill=tk.X, pady=2)
+        self.connect_btn = tk.Button(btn_frame, text="连接", command=self._connect_device, width=8, height=2)
+        self.connect_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 1))
+        self.restart_adb_btn = tk.Button(btn_frame, text="重启ADB", command=self._restart_adb, width=8, height=2)
+        self.restart_adb_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(1, 0))
+
+        # ADB启动状态控件列表
+        self._adb_controls = [
+            self.ip_entry, self.port_entry, self.port_btn_1, self.port_btn_2,
+            self.connect_btn, self.restart_adb_btn
+        ]
+
+    def lock_adb_section(self):
+        """ADB启动期间锁定设置页ADB连接区域"""
+        for ctrl in self._adb_controls:
+            ctrl.config(state=tk.DISABLED)
+
+    def unlock_adb_section(self):
+        """ADB启动完成后解锁设置页ADB连接区域"""
+        self.ip_entry.config(state=tk.NORMAL)
+        self.port_entry.config(state=tk.NORMAL)
+        self.port_btn_1.config(state=tk.NORMAL)
+        self.port_btn_2.config(state=tk.NORMAL)
+        self.connect_btn.config(state=tk.NORMAL, text="连接")
+        self.restart_adb_btn.config(state=tk.NORMAL, text="重启ADB")
 
     def _set_close_jiacheng_wait(self):
         """弹窗设置关闭加成等待时间"""
+        gui_logger.info("[设置] 点击按钮: 设置关闭加成等待秒数")
         dialog = tk.Toplevel(self.parent.root)
         dialog.title("设置等待秒数")
         dialog.resizable(False, False)
@@ -367,6 +448,7 @@ class SettingsTab:
 
     def _add_sound_file(self):
         """添加音效文件"""
+        gui_logger.info("[设置] 点击按钮: 添加音效文件")
         from tkinter import filedialog
         wav_folder = self._get_wav_folder()
         os.makedirs(wav_folder, exist_ok=True)
@@ -388,6 +470,7 @@ class SettingsTab:
 
     def _delete_sound_file(self):
         """删除选中的音效文件"""
+        gui_logger.info("[设置] 点击按钮: 删除音效文件")
         filename = self.settings_sound_file_var.get()
         if not filename:
             return
@@ -403,6 +486,7 @@ class SettingsTab:
 
     def _preview_sound(self):
         """试听选中的音效文件"""
+        gui_logger.info("[设置] 点击按钮: 试听音效")
         filename = self.settings_sound_file_var.get()
         if not filename or not filename.lower().endswith('.wav'):
             return
@@ -416,6 +500,7 @@ class SettingsTab:
                 pass
 
     def _open_log_folder(self):
+        gui_logger.info("[设置] 点击按钮: 打开日志文件夹")
         from adb import get_log_dir
         import subprocess
         log_dir = get_log_dir()
@@ -429,6 +514,7 @@ class SettingsTab:
                 self.parent.tabs[0].log(f"打开日志文件夹失败: {e}")
 
     def _clear_logs(self):
+        gui_logger.info("[设置] 点击按钮: 清空日志")
         from adb import get_log_dir
         log_dir = get_log_dir()
         cleared = 0
@@ -473,6 +559,7 @@ class DeviceTab:
         self.current_count = 0
         self.tab_index = 0  # 标签索引
         self.saved_device = None  # 保存的设备（用于初始化）
+        self.preset_thresholds = {}  # 每个场景记住用户设置的阈值
         
         # 队员准备状态（仅用于队员场景）
         self.is_ready = False
@@ -490,6 +577,7 @@ class DeviceTab:
             "preset": self.current_preset,
             "target_count": self.target_count_var.get(),
             "threshold": self.threshold_entry.get(),
+            "preset_thresholds": self.preset_thresholds,
             "device": current_device
         }
         self.parent.saved_config.setdefault("tabs", {})[str(self.tab_index)] = config
@@ -518,6 +606,8 @@ class DeviceTab:
         if config.get("threshold"):
             self.threshold_entry.delete(0, tk.END)
             self.threshold_entry.insert(0, config["threshold"])
+        if config.get("preset_thresholds"):
+            self.preset_thresholds = config["preset_thresholds"]
     
     def _set_tab_name(self, tab_name):
         # 设置标签名称
@@ -561,6 +651,7 @@ class DeviceTab:
         def confirm_rename():
             new_name = entry.get().strip()
             if new_name:
+                gui_logger.info(f"[{self.tab_name}] 标签重命名为: {new_name}")
                 self.tab_name = new_name
                 try:
                     self.parent.notebook.tab(self.frame, text=new_name)
@@ -606,7 +697,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOV2.7", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOv2.8", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -716,28 +807,49 @@ class DeviceTab:
         self.stop_btn = ttk.Button(control_frame, text="停止", command=self.stop_loop, width=10, state=tk.DISABLED)
         self.stop_btn.pack(side=tk.LEFT, padx=3)
 
-        ttk.Button(control_frame, text="全部开始", command=self.parent.start_all_tabs, width=10).pack(side=tk.LEFT, padx=3)
+        self.start_all_btn = ttk.Button(control_frame, text="全部开始", command=self.parent.start_all_tabs, width=10)
+        self.start_all_btn.pack(side=tk.LEFT, padx=3)
         ttk.Button(control_frame, text="全部停止", command=self.parent.stop_all_tabs, width=10).pack(side=tk.LEFT, padx=3)
 
         self.on_preset_change(None)
-        self.refresh_devices()
     
     def reset_defaults(self):
         # 重置默认值
+        gui_logger.info(f"[{self.tab_name}] 点击按钮: 重置默认")
         self.target_count_var.set("200")
-        self.on_preset_change()
-        self.log("已重置默认参数")
-    
-    def on_preset_change(self, event=None):
-        self.current_preset = self.current_preset_var.get()
+        self.preset_thresholds = {}  # 清除所有场景的阈值记忆
+        # 直接用预设默认值设置阈值，避开on_preset_change的保存恢复逻辑
         preset = self.presets[self.current_preset]
         self.threshold_entry.delete(0, tk.END)
         self.threshold_entry.insert(0, str(preset["threshold"]))
+        self.save_tab_config()
+        self.log("已重置默认参数")
+    
+    def on_preset_change(self, event=None):
+        # 保存当前场景的阈值到记忆
+        try:
+            current_threshold = self.threshold_entry.get().strip()
+            self.preset_thresholds[self.current_preset] = current_threshold
+        except:
+            pass
+        
+        self.current_preset = self.current_preset_var.get()
+        gui_logger.info(f"[{self.tab_name}] 切换场景: {self.current_preset}")
+        preset = self.presets[self.current_preset]
+        
+        # 优先使用用户之前为该场景设置的阈值，否则使用预设默认值
+        saved_threshold = self.preset_thresholds.get(self.current_preset, "")
+        self.threshold_entry.delete(0, tk.END)
+        if saved_threshold:
+            self.threshold_entry.insert(0, saved_threshold)
+        else:
+            self.threshold_entry.insert(0, str(preset["threshold"]))
         # 场景选择变化时保存配置
         self.save_tab_config()
     
     def refresh_all_devices(self):
         # 刷新所有标签的设备列表
+        gui_logger.info(f"[{self.tab_name}] 点击按钮: 刷新设备")
         for tab in self.parent.tabs:
             tab.refresh_devices()
     
@@ -745,6 +857,7 @@ class DeviceTab:
         # 设备选择变化时，更新 saved_device 并刷新所有标签的设备列表
         if hasattr(self, 'device_combo'):
             self.saved_device = self.device_combo.get()
+            gui_logger.info(f"[{self.tab_name}] 选择设备: {self.saved_device}")
         # 设备选择变化时保存配置
         self.save_tab_config()
         self.refresh_all_devices()
@@ -786,12 +899,40 @@ class DeviceTab:
         if hasattr(self, 'preset_radiobuttons'):
             for rb in self.preset_radiobuttons:
                 rb.config(state=tk.NORMAL)
+
+    def lock_for_adb_starting(self):
+        """ADB启动期间锁定设备管理和运行控制"""
+        if hasattr(self, 'device_combo'):
+            self.device_combo.config(state=tk.DISABLED)
+        if hasattr(self, 'refresh_btn'):
+            self.refresh_btn.config(state=tk.DISABLED)
+        if hasattr(self, 'clear_device_btn'):
+            self.clear_device_btn.config(state=tk.DISABLED)
+        if hasattr(self, 'start_btn'):
+            self.start_btn.config(state=tk.DISABLED)
+        if hasattr(self, 'start_all_btn'):
+            self.start_all_btn.config(state=tk.DISABLED)
+
+    def unlock_after_adb_started(self):
+        """ADB启动完成后解锁设备管理和运行控制"""
+        if hasattr(self, 'device_combo'):
+            self.device_combo.config(state="normal")
+        if hasattr(self, 'refresh_btn'):
+            self.refresh_btn.config(state=tk.NORMAL)
+        if hasattr(self, 'clear_device_btn'):
+            self.clear_device_btn.config(state=tk.NORMAL)
+        if hasattr(self, 'start_btn'):
+            self.start_btn.config(state=tk.NORMAL)
+        if hasattr(self, 'start_all_btn'):
+            self.start_all_btn.config(state=tk.NORMAL)
     
     def log(self, message):
         self.log_text.config(state=tk.NORMAL)
         self.log_text.insert(tk.END, message + "\n")
         self.log_text.see(tk.END)
         self.log_text.config(state=tk.DISABLED)
+        # 同步记录到GUI日志（场景分析输出）
+        gui_logger.info(f"[{self.tab_name}] {message}")
 
     def play_sound(self):
         """播放提示音（非手动停止时调用）"""
@@ -820,6 +961,7 @@ class DeviceTab:
     
     def clear_device(self):
         # 清除当前标签选择的设备
+        gui_logger.info(f"[{self.tab_name}] 点击按钮: 清除设备")
         if self.recognizer:
             self.recognizer.device = None
         # 清空选择框和 saved_device
@@ -892,6 +1034,7 @@ class DeviceTab:
     
     def start_loop(self):
         device = self.device_combo.get()
+        gui_logger.info(f"[{self.tab_name}] 点击按钮: 开始 | 设备: {device} | 场景: {self.current_preset}")
         if not device:
             self.log("请选择设备")
             return
@@ -942,13 +1085,15 @@ class DeviceTab:
     def run_loop_thread(self):
         preset = self.presets[self.current_preset]
         count_challenge = preset.get("count_challenge", True)
-        
+
         # 获取目标挑战次数
         try:
             target_count = int(self.target_count_var.get().strip())
         except ValueError:
             target_count = 200  # 默认200次
-        
+
+        gui_logger.info(f"[{self.tab_name}] 开始运行循环 | 场景: {self.current_preset} | 目标次数: {target_count}")
+
         consecutive_challenge = 0
         self.current_count = 0
         last_clicked_tiaozhan = False  # 记录上一次是否点击了tiaozhan
@@ -1188,13 +1333,15 @@ class DeviceTab:
                     jjtp.handle_no_recognition(self.recognizer, self.log, self.recognizer.device)
                 
                 time.sleep(1)
-        
+
         # 自然结束时也需要解锁控件
+        gui_logger.info(f"[{self.tab_name}] 运行循环结束 | 场景: {self.current_preset} | 手动停止: {self.manual_stop}")
         self.start_btn.config(state=tk.NORMAL)
         self.stop_btn.config(state=tk.DISABLED)
         self.unlock_controls()
     
     def stop_loop(self):
+        gui_logger.info(f"[{self.tab_name}] 点击按钮: 停止")
         self.manual_stop = True  # 标记为手动停止
         self.running = False
         if self.recognizer:
@@ -1217,10 +1364,10 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOV2.7")
+        self.root.title("YYS-AUTOv2.8")
         self.root.geometry("640x440")
         self.root.minsize(640, 440)  # 设置最小尺寸
-        
+
         # 初始化标志
         self.initialized = False
         
@@ -1353,9 +1500,14 @@ class AutoClickerUI:
         # 加载保存的配置
         self.config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
         self.saved_config = self.load_config()
-        
+
+        # 恢复窗口位置（延迟到窗口显示后执行，避免被窗口管理器覆盖）
+        if "window_geometry" in self.saved_config:
+            saved_geometry = self.saved_config["window_geometry"]
+            self.root.after(0, lambda g=saved_geometry: self.root.geometry(g))
+
         self.setup_ui()
-        
+
         # 输入法控制：默认禁用，仅输入框获得焦点时启用
         _init_ime(self.root.winfo_id())
         self.root.bind('<FocusIn>', _on_root_focus_in, add='+')
@@ -1370,33 +1522,13 @@ class AutoClickerUI:
         self.root.bind_class('TCombobox', '<FocusOut>', _on_entry_focus_out, add='+')
 
         self.restore_tab_selection()
-        
+
         # 绑定窗口关闭事件
         self.root.protocol("WM_DELETE_WINDOW", self.on_window_close)
-        
-        # 恢复窗口位置（延迟到mainloop启动后，确保窗口已映射）
-        self.root.after(50, self._restore_window_position)
-        
+
         # 标记初始化完成
         self.initialized = True
 
-    def _restore_window_position(self):
-        """恢复保存的窗口位置"""
-        saved_pos = self.saved_config.get("window_position", "")
-        if saved_pos:
-            try:
-                self.root.geometry(saved_pos)
-            except:
-                pass
-        else:
-            # 没有保存的位置，窗口居中显示
-            self.root.update_idletasks()
-            width = self.root.winfo_width()
-            height = self.root.winfo_height()
-            x = (self.root.winfo_screenwidth() // 2) - (width // 2)
-            y = (self.root.winfo_screenheight() // 2) - (height // 2)
-            self.root.geometry(f"{width}x{height}+{x}+{y}")
-    
     def load_config(self):
         # 加载保存的配置
         if os.path.exists(self.config_file):
@@ -1459,7 +1591,7 @@ class AutoClickerUI:
             self.saved_config["adb_port"] = self.adb_port
             # 保存窗口位置
             try:
-                self.saved_config["window_position"] = self.root.geometry()
+                self.saved_config["window_geometry"] = self.root.geometry()
             except:
                 pass
             # 保存当前选中的标签索引
@@ -1473,6 +1605,23 @@ class AutoClickerUI:
         except Exception as e:
             pass
     
+    def _kill_adb_and_exit(self):
+        """关闭ADB进程并退出程序"""
+        gui_logger.info("点击菜单: 关闭ADB并退出")
+        import subprocess
+        # 先停止所有标签任务
+        self.stop_all_tabs()
+        # 关闭ADB服务进程
+        try:
+            adb_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "platform-tools", "adb.exe")
+            if not os.path.exists(adb_path):
+                adb_path = "adb"
+            subprocess.run([adb_path, "kill-server"], capture_output=True, timeout=10)
+        except:
+            pass
+        # 退出程序
+        self.on_window_close()
+
     def on_window_close(self):
         # 窗口关闭时恢复输入法并保存配置
         _do_enable_ime()
@@ -1517,6 +1666,8 @@ class AutoClickerUI:
 
         # 文件菜单
         file_menu = tk.Menu(menubar, tearoff=False)
+        file_menu.add_command(label="关闭ADB并退出", command=self._kill_adb_and_exit)
+        file_menu.add_separator()
         file_menu.add_command(label="退出程序 (Alt+F4)", command=self.on_window_close)
         menubar.add_cascade(label="文件(F)", menu=file_menu, underline=3)
 
@@ -1584,6 +1735,7 @@ class AutoClickerUI:
         help_menu = tk.Menu(menubar, tearoff=False)
         help_menu.add_command(label="打开使用说明文档", command=self._open_doc_folder)
         help_menu.add_command(label="快捷键说明", command=self._show_shortcuts)
+        help_menu.add_command(label="UU远程官网", command=self._open_uu_remote)
         # Bug反馈二级菜单
         bug_menu = tk.Menu(help_menu, tearoff=False)
         bug_menu.add_command(label="复制QQ交流群号", command=self.settings_tab._copy_qq_group)
@@ -1627,6 +1779,7 @@ class AutoClickerUI:
 
     def _show_about(self):
         """显示关于对话框，居中于主窗口"""
+        gui_logger.info("点击菜单: 关于")
         top = tk.Toplevel(self.root)
         top.title("关于")
         top.resizable(False, False)
@@ -1634,7 +1787,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  V2.7", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  v2.8", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线
@@ -1670,6 +1823,7 @@ class AutoClickerUI:
 
     def _show_shortcuts(self):
         """显示快捷键说明窗口，居中于主窗口"""
+        gui_logger.info("点击菜单: 快捷键说明")
         top = tk.Toplevel(self.root)
         top.title("快捷键说明")
         top.resizable(False, False)
@@ -1714,8 +1868,15 @@ class AutoClickerUI:
         y = main_y + (main_h - top_h) // 2
         top.geometry(f"+{x}+{y}")
 
+    def _open_uu_remote(self):
+        """打开UU远程官网"""
+        gui_logger.info("点击菜单: UU远程官网")
+        import webbrowser
+        webbrowser.open("https://uuyc.163.com/")
+
     def _open_doc_folder(self):
         """打开使用说明文档文件夹"""
+        gui_logger.info("点击菜单: 打开使用说明文档")
         doc_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "使用文档第一次使用必看")
         try:
             if os.path.exists(doc_folder):
@@ -1733,6 +1894,7 @@ class AutoClickerUI:
 
     def _menu_start_current(self):
         """菜单栏：开始当前标签"""
+        gui_logger.info("点击菜单/快捷键: 开始当前标签")
         current_idx = self.notebook.index("current")
         tab_idx = current_idx - 1  # 第一个标签是设置页
         if 0 <= tab_idx < len(self.tabs):
@@ -1740,6 +1902,7 @@ class AutoClickerUI:
 
     def _menu_stop_current(self):
         """菜单栏：停止当前标签"""
+        gui_logger.info("点击菜单/快捷键: 停止当前标签")
         current_idx = self.notebook.index("current")
         tab_idx = current_idx - 1  # 第一个标签是设置页
         if 0 <= tab_idx < len(self.tabs):
@@ -1747,6 +1910,7 @@ class AutoClickerUI:
 
     def _switch_to_tab(self, num):
         """数字键切换标签：1→设置，2-9→设备标签"""
+        gui_logger.info(f"快捷键: 切换到标签 {num}")
         if num == 1:
             self.notebook.select(0)  # 设置页
         else:
@@ -1771,26 +1935,26 @@ class AutoClickerUI:
 
         # 创建菜单栏（在settings_tab创建之后，因为菜单需要引用settings_tab的变量）
         self._create_menubar()
-        
+
         # 从配置中动态加载标签
         saved_tabs = self.saved_config.get("tabs", {})
-        
+
         if saved_tabs:
             # 有保存的配置，按索引顺序加载标签（跳过索引0）
             # 先将tab索引转换为整数并排序
             tab_indices = sorted([int(k) for k in saved_tabs.keys() if int(k) > 0])
             self.tab_count = 0
-            
+
             for tab_idx in tab_indices:
                 self.tab_count = tab_idx
                 tab_config = saved_tabs.get(str(tab_idx), {})
                 tab_name = tab_config.get("tab_name", f"设备{tab_idx}")
-                
+
                 device_tab = DeviceTab(self, tab_name, self.png_base_folder, self.presets)
                 device_tab.tab_index = tab_idx
                 self.notebook.add(device_tab.frame, text=tab_name)
                 self.tabs.append(device_tab)
-                
+
                 # 加载标签配置
                 if tab_config:
                     device_tab.load_tab_config(tab_config)
@@ -1801,29 +1965,49 @@ class AutoClickerUI:
             device_tab.tab_index = 1
             self.notebook.add(device_tab.frame, text="设备1")
             self.tabs.append(device_tab)
-        
+
         # 恢复上次选择的标签
         self.restore_tab_selection()
-        
-        # 统一处理所有标签的设备选择
+
+        # 统一处理所有标签的设备选择（子线程，不阻塞UI）
         self._setup_all_devices()
 
-        # 禁用窗口大小调整
+        # 禁用窗口大小调整（放在setup_ui末尾，所有widget布局完毕后设置，
+        # 避免在__init__开头设置时改变窗口框架样式干扰Notebook初始渲染）
         self.root.resizable(False, False)
     
     def _setup_all_devices(self):
-        # 统一设置所有标签的设备选择
-        try:
-            # 刷新所有标签的设备列表（会自动应用设备排除逻辑）
-            for tab in self.tabs:
-                try:
-                    tab.refresh_devices()
-                except Exception as e:
-                    pass
-        except Exception as e:
-            pass
+        # 锁定UI并提示ADB正在启动
+        self.settings_tab.lock_adb_section()
+        for tab in self.tabs:
+            tab.lock_for_adb_starting()
+            tab.log("ADB正在启动中，请稍候...")
+
+        # 在子线程中执行ADB设备刷新，避免阻塞主线程
+        def _worker():
+            try:
+                for tab in self.tabs:
+                    try:
+                        tab.refresh_devices()
+                    except Exception as e:
+                        pass
+            except Exception as e:
+                pass
+            # 回到主线程解锁UI并提示
+            self.root.after(0, self._on_adb_started)
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _on_adb_started(self):
+        """ADB启动完成后的回调"""
+        gui_logger.info("ADB启动完成")
+        self.settings_tab.unlock_adb_section()
+        for tab in self.tabs:
+            tab.unlock_after_adb_started()
+            tab.log("ADB已启动")
     
     def add_new_tab(self):
+        gui_logger.info("点击按钮: 新建标签")
         self.tab_count += 1
         # 先检查配置中是否有标签名称（注意设置标签占了第0位，tab_count从1开始）
         tab_config = self.saved_config.get("tabs", {}).get(str(self.tab_count), {})
@@ -1846,6 +2030,7 @@ class AutoClickerUI:
             pass
 
     def clear_all_devices(self):
+        gui_logger.info("点击按钮: 清除全部标签设备")
         try:
             # 先清空所有标签的设备选择
             for tab in self.tabs:
@@ -1873,6 +2058,7 @@ class AutoClickerUI:
 
     def start_all_tabs(self):
         """一键开始所有标签任务"""
+        gui_logger.info("点击按钮: 全部开始")
         for tab in self.tabs:
             if hasattr(tab, 'device_combo') and tab.device_combo.get() and not tab.running:
                 try:
@@ -1884,6 +2070,7 @@ class AutoClickerUI:
 
     def stop_all_tabs(self):
         """一键停止所有标签任务"""
+        gui_logger.info("点击按钮: 全部停止")
         for tab in self.tabs:
             if tab.running:
                 try:
@@ -1894,6 +2081,7 @@ class AutoClickerUI:
             self.tabs[0].log("已停止全部标签")
     
     def delete_current_tab(self):
+        gui_logger.info("点击按钮: 删除当前标签")
         try:
             # 获取当前选中的标签索引（注意：第0位是设置标签）
             current_index = self.notebook.index(self.notebook.select())
@@ -1941,6 +2129,7 @@ class AutoClickerUI:
             pass
     
     def rename_current_tab(self):
+        gui_logger.info("点击按钮: 修改标签名字")
         try:
             # 获取当前选中的标签索引（注意：第0位是设置标签）
             current_index = self.notebook.index(self.notebook.select())

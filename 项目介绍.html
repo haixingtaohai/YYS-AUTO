@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.7 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.8 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.7</div>
+  <div class="nav-brand">YYS-AUTO V2.8</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,7 +584,7 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.7 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.8 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
     <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、12 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
@@ -595,7 +595,7 @@
     </div>
     <div class="stats-bar">
       <div class="stat-item fade-in stagger-1">
-        <div class="stat-value">~2200</div>
+        <div class="stat-value">~2300</div>
         <div class="stat-label">总代码行数</div>
       </div>
       <div class="stat-item fade-in stagger-2">
@@ -603,7 +603,7 @@
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">110+</div>
+        <div class="stat-value">115+</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -720,10 +720,26 @@
       <div class="card feature-card fade-in stagger-12">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(99,102,241,0.15);">&#9000;</div>
-          <div class="card-title">快捷键操作 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.7</span></div>
+          <div class="card-title">快捷键操作 <span style="font-size:0.7rem;background:rgba(99,102,241,0.25);color:#6366f1;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.7</span></div>
         </div>
-        <div class="card-desc">V2.7 新增全套快捷键支持。Ctrl+T/W 管理标签，R/S 运行/停止，F5/F6 全部开始/停止，数字键快速切换标签。输入框聚焦时自动屏蔽快捷键，避免误触。帮助菜单可查看快捷键说明。</div>
+        <div class="card-desc">全套快捷键支持：Ctrl+T/W 管理标签，R/S 运行/停止，F5/F6 全部开始/停止，数字键快速切换标签。输入框聚焦时自动屏蔽快捷键，避免误触。</div>
         <span class="feature-tag">Keyboard</span>
+      </div>
+      <div class="card feature-card fade-in stagger-13">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(20,184,166,0.15);">&#128301;</div>
+          <div class="card-title">阈值独立记忆 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.8</span></div>
+        </div>
+        <div class="card-desc">V2.8 修复阈值自动重置问题。每个场景独立记忆用户设置的识别阈值，切换场景时自动恢复上次设置。重置默认按钮一键清除所有场景的阈值记忆。</div>
+        <span class="feature-tag">preset_thresholds</span>
+      </div>
+      <div class="card feature-card fade-in stagger-14">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(239,68,68,0.15);">&#9211;</div>
+          <div class="card-title">安全退出机制 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.8</span></div>
+        </div>
+        <div class="card-desc">V2.8 新增「关闭ADB并退出」按钮。一键停止所有设备任务、关闭 ADB 服务进程、保存配置并退出程序，避免 ADB 进程残留。</div>
+        <span class="feature-tag">adb kill-server</span>
       </div>
     </div>
   </div>
@@ -775,7 +791,7 @@
 │   ├── <span class="file media">k280/</span>                <span class="comment">-- 困28队员 (5 张)</span>
 │   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (9 张)</span>
 │   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (17 张)</span>
-│   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (9 张)</span>
+│   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (12 张)</span>
 │   ├── <span class="file media">dfw/</span>                 <span class="comment">-- 对决逢魔 (15 张)</span>
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
 │   └── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
@@ -1011,8 +1027,8 @@
             <td><span class="scene-name">&#127775; 活动爬塔</span></td>
             <td><span class="scene-module">hdpt.py</span></td>
             <td><span class="scene-badge tower">爬塔</span></td>
-            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算。</td>
-            <td>9</td>
+            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算，持续适配新活动（V2.8 适配 7/22 不相狐禅）。</td>
+            <td>12</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#128260; 关闭加成</span></td>
@@ -1271,6 +1287,17 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.8</span>
+          <span class="changelog-date">2026-07-22</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>适配活动爬塔（7月22日 不相狐禅），新增入口、奖励等模板图片</li>
+          <li>添加「关闭ADB并退出」按钮，一键停止所有任务、关闭ADB服务并退出程序</li>
+          <li>修复 V2.7 阈值自动重置 bug，每个场景独立记忆用户设置的识别阈值</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.7</span>
           <span class="changelog-date">2026-07-05</span>
         </div>
@@ -1350,7 +1377,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.7</div>
+  <div class="footer-brand">YYS-AUTO V2.8</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

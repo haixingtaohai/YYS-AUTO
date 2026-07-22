@@ -34,6 +34,20 @@ def get_adb_logger():
     logger.propagate = False
     return logger
 
+def get_gui_logger():
+    """获取GUI逻辑日志记录器，记录按钮点击、图片识别分析和点击指令，只写入本地文件"""
+    logger = logging.getLogger("gui")
+    logger.setLevel(logging.INFO)
+    # 防止重复添加handler导致日志重复写入
+    if not logger.handlers:
+        log_file = os.path.join(get_log_dir(), f"GUIlog_{LOG_SUFFIX}.log")
+        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(message)s'))
+        file_handler.addFilter(_FilterDisabled())
+        logger.addHandler(file_handler)
+    logger.propagate = False
+    return logger
+
 def set_logging_enabled(enabled):
     """设置全局日志开关"""
     global enable_logging
