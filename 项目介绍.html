@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.8 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.9 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.8</div>
+  <div class="nav-brand">YYS-AUTO V2.9</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,7 +584,7 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.8 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.9 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
     <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、12 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
@@ -595,7 +595,7 @@
     </div>
     <div class="stats-bar">
       <div class="stat-item fade-in stagger-1">
-        <div class="stat-value">~2300</div>
+        <div class="stat-value">~2800</div>
         <div class="stat-label">总代码行数</div>
       </div>
       <div class="stat-item fade-in stagger-2">
@@ -603,18 +603,18 @@
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">115+</div>
+        <div class="stat-value">129</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
-        <div class="stat-value">3</div>
+        <div class="stat-value">4</div>
         <div class="stat-label">核心模块</div>
       </div>
       <div class="stat-item fade-in stagger-5">
         <div class="stat-value">N</div>
         <div class="stat-label">多设备支持</div>
+        </div>
       </div>
-    </div>
   </div>
 </section>
 
@@ -714,7 +714,7 @@
           <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#9776;</div>
           <div class="card-title">菜单栏布局 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.6</span></div>
         </div>
-        <div class="card-desc">重新设计 UI 布局，部分功能从设置选项卡移入顶部菜单栏。新增文件、功能设置、日志、软件更新、标签、帮助六大菜单分类，界面更简洁专业。</div>
+        <div class="card-desc">重新设计 UI 布局，部分功能从设置选项卡移入顶部菜单栏。V2.9 将「文件(F)」改名为「程序(P)」，新增重启程序、重启ADB并重启程序按钮。界面更简洁专业。</div>
         <span class="feature-tag">tkinter Menu</span>
       </div>
       <div class="card feature-card fade-in stagger-12">
@@ -736,10 +736,42 @@
       <div class="card feature-card fade-in stagger-14">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(239,68,68,0.15);">&#9211;</div>
-          <div class="card-title">安全退出机制 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.8</span></div>
+          <div class="card-title">安全退出机制 <span style="font-size:0.7rem;background:rgba(239,68,68,0.25);color:#ef4444;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.8</span></div>
         </div>
-        <div class="card-desc">V2.8 新增「关闭ADB并退出」按钮。一键停止所有设备任务、关闭 ADB 服务进程、保存配置并退出程序，避免 ADB 进程残留。</div>
+        <div class="card-desc">一键停止所有设备任务、关闭 ADB 服务进程、保存配置并退出程序，避免 ADB 进程残留。</div>
         <span class="feature-tag">adb kill-server</span>
+      </div>
+      <div class="card feature-card fade-in stagger-15">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(59,130,246,0.15);">&#128276;</div>
+          <div class="card-title">系统级通知 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
+        </div>
+        <div class="card-desc">V2.9 新增 Windows Toast 通知推送。任务完成或异常停止时发送系统通知，即使程序在后台也能及时知晓。优先使用 winotify，未安装自动回退 PowerShell 托盘通知。</div>
+        <span class="feature-tag">winotify / Toast</span>
+      </div>
+      <div class="card feature-card fade-in stagger-16">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,158,11,0.15);">&#128683;</div>
+          <div class="card-title">被顶号自动处理 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
+        </div>
+        <div class="card-desc">V2.9 全局最高优先级检测。被顶号后自动关闭游戏、等待可配置秒数（默认30秒）、重启并进入游戏。支持第三方自动寄养场景，可在菜单栏设置等待时间。</div>
+        <span class="feature-tag">dinghao.py</span>
+      </div>
+      <div class="card feature-card fade-in stagger-17">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127969;</div>
+          <div class="card-title">多庭院识别 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
+        </div>
+        <div class="card-desc">V2.9 支持从庭院自动进入场景，识别 5 种庭院探索页：茨心乐园、织梦莲庭、枫色秋庭（100天送）、默认庭、默认焕新庭。适用场景：结界突破、困28单人、英杰试炼、魂土单人。</div>
+        <span class="feature-tag">庭院模板</span>
+      </div>
+      <div class="card feature-card fade-in stagger-18">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(168,85,247,0.15);">&#128260;</div>
+          <div class="card-title">一键应用所有 <span style="font-size:0.7rem;background:var(--gradient-3);color:#fff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
+        </div>
+        <div class="card-desc">V2.9 控制页新增「一键应用到所有」按钮，点击后将当前标签页的运行参数和场景选择同步应用到所有设备标签页，省去逐个设置的麻烦。</div>
+        <span class="feature-tag">批量配置</span>
       </div>
     </div>
   </div>
@@ -757,9 +789,10 @@
     <p class="section-desc">完整的文件目录树，清晰展示项目组织方式</p>
     <div class="file-tree fade-in">
 <span class="folder">yys-auto/</span>                           <span class="comment">-- 项目根目录</span>
-├── <span class="file py">main.py</span>                          <span class="comment">-- 主程序入口 (~1600 行)</span>
+├── <span class="file py">main.py</span>                          <span class="comment">-- 主程序入口 (~2050 行)</span>
 ├── <span class="file py">image_recognizer.py</span>             <span class="comment">-- 图像识别引擎 (~243 行)</span>
 ├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 可控日志系统 (~122 行)</span>
+├── <span class="file py">notification.py</span>                <span class="comment">-- 系统通知模块 (~170 行)</span>
 ├── <span class="file json">config.json</span>                    <span class="comment">-- 持久化配置文件</span>
 ├── <span class="file ico">icon.ico</span>                       <span class="comment">-- 应用程序图标</span>
 ├── <span class="file lnk">运行程序.lnk</span>                    <span class="comment">-- Windows 快捷方式</span>
@@ -777,23 +810,25 @@
 │   ├── <span class="file py">yjsl.py</span>                  <span class="comment">-- 英杰试炼</span>
 │   ├── <span class="file py">jjtp.py</span>                  <span class="comment">-- 结界突破</span>
 │   ├── <span class="file py">hdpt.py</span>                  <span class="comment">-- 活动爬塔</span>
-│   └── <span class="file py">guanbijiacheng.py</span>        <span class="comment">-- 关闭加成</span>
+│   ├── <span class="file py">guanbijiacheng.py</span>        <span class="comment">-- 关闭加成</span>
+│   └── <span class="file py">dinghao.py</span>              <span class="comment">-- 被顶号处理</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (95+)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (129 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (6 张)</span>
-│   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (7 张)</span>
+│   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
 │   ├── <span class="file media">dy/</span>                  <span class="comment">-- 队员 (6 张)</span>
 │   ├── <span class="file media">dj/</span>                  <span class="comment">-- 斗技 (7 张)</span>
 │   ├── <span class="file media">dg/</span>                  <span class="comment">-- 道馆 (9 张)</span>
-│   ├── <span class="file media">k28/</span>                 <span class="comment">-- 困28单人 (11 张)</span>
+│   ├── <span class="file media">k28/</span>                 <span class="comment">-- 困28单人 (16 张)</span>
 │   ├── <span class="file media">k281/</span>                <span class="comment">-- 困28队长 (8 张)</span>
 │   ├── <span class="file media">k280/</span>                <span class="comment">-- 困28队员 (5 张)</span>
-│   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (9 张)</span>
-│   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (17 张)</span>
+│   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (14 张)</span>
+│   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (23 张)</span>
 │   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (12 张)</span>
 │   ├── <span class="file media">dfw/</span>                 <span class="comment">-- 对决逢魔 (15 张)</span>
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
+│   ├── <span class="file media">dinghao.png</span>             <span class="comment">-- 顶号识别</span>
 │   └── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
 │
 ├── <span class="folder">logs/</span>                              <span class="comment">-- 详细日志目录</span>
@@ -859,6 +894,8 @@
         <span class="module-tag">SettingsTab</span>
         <span class="module-tag">Menu 菜单栏</span>
         <span class="module-tag">快捷键绑定</span>
+        <span class="module-tag">系统通知</span>
+        <span class="module-tag">被顶号检测</span>
         <span class="module-tag">多线程</span>
         <span class="module-tag">JSON 配置</span>
       </div>
@@ -898,6 +935,23 @@
           <span class="module-tag">设备发现</span>
           <span class="module-tag">分辨率验证</span>
           <span class="module-tag">logging</span>
+        </div>
+      </div>
+      <div class="module-detail fade-in">
+        <div class="module-detail-header">
+          <div class="module-detail-title">
+            <span style="color:var(--accent-cyan);">&#9632;</span> notification.py
+          </div>
+          <span class="module-detail-code">~170 行</span>
+        </div>
+        <div class="module-detail-body">
+          V2.9 新增系统通知模块。使用 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">winotify</code> (Windows Toast API) 发送系统级通知，若未安装则自动回退到 PowerShell 托盘通知。支持完成/错误两种通知类型，可在设置中开关和测试。自动注册开始菜单快捷方式以确保通知来源名称正确显示。
+        </div>
+        <div class="module-detail-tags">
+          <span class="module-tag">Toast 通知</span>
+          <span class="module-tag">winotify</span>
+          <span class="module-tag">PowerShell 回退</span>
+          <span class="module-tag">可开关</span>
         </div>
       </div>
     </div>
@@ -957,8 +1011,8 @@
             <td><span class="scene-name">&#128128; 魂土单人</span></td>
             <td><span class="scene-module">htdr.py</span></td>
             <td><span class="scene-badge farm">刷图</span></td>
-            <td>魂土单人流程，包含探索页面和 Boss 阶段的自动导航，支持宝藏领取和胜利结算。</td>
-            <td>7</td>
+            <td>魂土单人流程，包含探索页面和 Boss 阶段的自动导航。支持 5 种庭院探索页识别（V2.9），宝藏领取和胜利结算。</td>
+            <td>12</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#128663; 司机</span></td>
@@ -992,8 +1046,8 @@
             <td><span class="scene-name">&#128742; 困28单人</span></td>
             <td><span class="scene-module">k28.py</span></td>
             <td><span class="scene-badge tower">爬塔</span></td>
-            <td>噩梦二十八层单人模式，支持屏幕滑动探索。智能识别 Boss 路线和普通敌人路线。</td>
-            <td>11</td>
+            <td>噩梦二十八层单人模式，支持屏幕滑动探索。支持 5 种庭院识别（V2.9），智能识别 Boss 路线和普通敌人路线。</td>
+            <td>16</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#128081; 困28队长</span></td>
@@ -1013,15 +1067,15 @@
             <td><span class="scene-name">&#127942; 英杰试炼</span></td>
             <td><span class="scene-module">yjsl.py</span></td>
             <td><span class="scene-badge tower">爬塔</span></td>
-            <td>多阶段挑战模式，具有特定的导航图片识别。自动通过各阶段关卡。</td>
-            <td>9</td>
+            <td>多阶段挑战模式，具有特定的导航图片识别。支持 5 种庭院探索页识别（V2.9），自动通过各阶段关卡。</td>
+            <td>14</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#128680; 结界突破</span></td>
             <td><span class="scene-module">jjtp.py</span></td>
             <td><span class="scene-badge farm">刷图</span></td>
-            <td>14 步自动战斗模式（card57），复杂的多步骤流程。支持自动切换至/来自困28，绘卷模式核心。</td>
-            <td>17</td>
+            <td>14 步自动战斗模式（card57），复杂的多步骤流程。V2.9 优化步骤提升清券速度。支持自动切换至/来自困28，绘卷模式核心。</td>
+            <td>23</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#127775; 活动爬塔</span></td>
@@ -1036,6 +1090,13 @@
             <td><span class="scene-badge util">工具</span></td>
             <td>强制关闭当前加成效果。通过强制停止并重启游戏的方式，清除激活的经验/金币加成。</td>
             <td>3</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#128683; 被顶号处理</span></td>
+            <td><span class="scene-module">dinghao.py</span></td>
+            <td><span class="scene-badge util">工具</span></td>
+            <td>全局最高优先级。检测到顶号弹窗后自动关闭游戏、等待可配置秒数、重启游戏并点击进入。支持第三方自动寄养场景。</td>
+            <td>1</td>
           </tr>
         </tbody>
       </table>
@@ -1191,6 +1252,13 @@
           <div style="font-size:0.75rem;color:var(--text-muted);">可控日志 (V2.6 默认关闭)</div>
         </div>
       </div>
+      <div class="tech-badge">
+        <span class="tech-badge-icon">&#128276;</span>
+        <div>
+          <div style="font-weight:600;">winotify</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">系统通知 (V2.9)</div>
+        </div>
+      </div>
     </div>
 
     <h3 style="color:var(--text-primary); margin:2.5rem 0 1rem; font-size:1.1rem;">&#128295; 关键技术参数</h3>
@@ -1287,6 +1355,21 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.9</span>
+          <span class="changelog-date">2026-07-22</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>添加系统级通知推送（winotify Toast / PowerShell 回退），任务完成或异常停止时发送通知，可在设置中开关和测试</li>
+          <li>添加被顶号后自动重新进入游戏功能，可配置等待秒数，支持第三方自动寄养场景</li>
+          <li>新增多庭院识别，支持从庭院自动进入场景：茨心乐园、织梦莲庭、枫色秋庭、默认庭、默认焕新庭</li>
+          <li>适用庭院进入的场景：结界突破、困28单人、英杰试炼、魂土单人</li>
+          <li>优化结界突破步骤，提升清突破券速度节省时间</li>
+          <li>控制页添加「一键应用到所有」按钮，点击后将当前参数/场景应用到所有设备标签页</li>
+          <li>菜单栏「文件(F)」改名为「程序(P)」，新增重启程序、重启ADB并重启程序按钮</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.8</span>
           <span class="changelog-date">2026-07-22</span>
         </div>
@@ -1377,7 +1460,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.8</div>
+  <div class="footer-brand">YYS-AUTO V2.9</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

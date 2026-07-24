@@ -7,13 +7,15 @@ import sys
 import random
 import json
 
+from notification import send_complete_notification, send_error_notification, set_notify_enabled, test_complete, test_error
+
 # 在最开始就设置 Windows AppUserModelID，确保任务栏显示自定义图标
 ICON_PATH = None
 if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.v2.8'
+        myappid = 'yysauto.application.v2.9'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -129,9 +131,37 @@ import yjsl
 import jjtp
 import hdpt
 import guanbijiacheng
+import dinghao
 
 # GUI逻辑日志记录器
 gui_logger = get_gui_logger()
+
+class ToolTip:
+    """鼠标悬停时显示提示文字"""
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tip_window = None
+        widget.bind('<Enter>', self._show)
+        widget.bind('<Leave>', self._hide)
+
+    def _show(self, event=None):
+        if self.tip_window:
+            return
+        x = self.widget.winfo_rootx() + 20
+        y = self.widget.winfo_rooty() + self.widget.winfo_height() + 5
+        self.tip_window = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(tw, text=self.text, justify=tk.LEFT,
+                         background="#ffffe0", relief=tk.SOLID, borderwidth=1,
+                         font=('Microsoft YaHei', 9), wraplength=300)
+        label.pack()
+
+    def _hide(self, event=None):
+        if self.tip_window:
+            self.tip_window.destroy()
+            self.tip_window = None
 
 class SettingsTab:
     def __init__(self, parent):
@@ -146,11 +176,13 @@ class SettingsTab:
         self.settings_link_var = tk.BooleanVar(value=self.parent.link_enabled)
         self.settings_close_jiacheng_var = tk.BooleanVar(value=self.parent.close_jiacheng_enabled)
         self.settings_close_jiacheng_wait_var = tk.StringVar(value=str(self.parent.close_jiacheng_wait))
+        self.settings_dinghao_wait_var = tk.StringVar(value=str(self.parent.dinghao_wait))
         self.settings_huijuan_mode_var = tk.BooleanVar(value=self.parent.huijuan_mode)
         self.settings_dj_jinsheng_stop_var = tk.BooleanVar(value=self.parent.dj_jinsheng_stop)
         self.settings_sound_var = tk.BooleanVar(value=self.parent.sound_enabled)
         self.settings_sound_file_var = tk.StringVar(value=getattr(self.parent, 'sound_file', ''))
         self.settings_logging_var = tk.BooleanVar(value=self.parent.logging_enabled)
+        self.settings_notify_var = tk.BooleanVar(value=self.parent.notify_enabled)
     
     def _log_change(self, old_value, new_value, enabled_msg, disabled_msg):
         if old_value != new_value and len(self.parent.tabs) > 0:
@@ -179,6 +211,14 @@ class SettingsTab:
             wait_time = int(self.settings_close_jiacheng_wait_var.get())
             if wait_time >= 0:
                 self.parent.close_jiacheng_wait = wait_time
+        except:
+            pass
+        
+        # 同步顶号等待时间
+        try:
+            wait_time = int(self.settings_dinghao_wait_var.get())
+            if wait_time >= 0:
+                self.parent.dinghao_wait = wait_time
         except:
             pass
         
@@ -213,6 +253,13 @@ class SettingsTab:
             set_logging_enabled(self.parent.logging_enabled)
             self._log_change(old_logging_enabled, self.parent.logging_enabled,
                             "日志记录已开启", "日志记录已关闭")
+
+        # 系统通知设置
+        old_notify_enabled = self.parent.notify_enabled
+        self.parent.notify_enabled = self.settings_notify_var.get()
+        set_notify_enabled(self.parent.notify_enabled)
+        self._log_change(old_notify_enabled, self.parent.notify_enabled,
+                        "系统通知已开启", "系统通知已关闭")
         
         self.parent.save_config()
     
@@ -305,6 +352,28 @@ class SettingsTab:
         self.parent.root.clipboard_append("haixingtaohai@163.com")
         self.parent.root.update()
     
+    def _test_notify_complete(self):
+        gui_logger.info("[设置] 点击按钮: 测试完成通知")
+        test_complete()
+
+    def _test_notify_error(self):
+        gui_logger.info("[设置] 点击按钮: 测试错误通知")
+        test_error()
+
+    def _create_notify_section(self, parent_frame):
+        notify_group = ttk.LabelFrame(parent_frame, text="系统通知", padding="8")
+        notify_group.pack(fill=tk.X, pady=(0, 10))
+
+        top_row = ttk.Frame(notify_group)
+        top_row.pack(fill=tk.X, pady=2)
+        ttk.Checkbutton(top_row, text="启用系统通知", variable=self.settings_notify_var,
+                        command=self.save_settings).pack(side=tk.LEFT)
+
+        btn_row = ttk.Frame(notify_group)
+        btn_row.pack(fill=tk.X, pady=2)
+        ttk.Button(btn_row, text="完成提示", command=self._test_notify_complete, width=10).pack(side=tk.LEFT, padx=(0, 5))
+        ttk.Button(btn_row, text="错误提示", command=self._test_notify_error, width=10).pack(side=tk.LEFT)
+
     def _create_adb_section(self, parent_frame):
         self.adb_group_frame = ttk.LabelFrame(parent_frame, text="ADB设备连接", padding="8")
         self.adb_group_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
@@ -376,6 +445,48 @@ class SettingsTab:
                 val = int(entry_var.get())
                 if val >= 0:
                     self.settings_close_jiacheng_wait_var.set(str(val))
+                    self.save_settings()
+            except:
+                pass
+            dialog.destroy()
+
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack(pady=(5, 15))
+        ttk.Button(btn_frame, text="确定", command=on_ok, width=8).pack(side=tk.LEFT, padx=5)
+        ttk.Button(btn_frame, text="取消", command=dialog.destroy, width=8).pack(side=tk.LEFT, padx=5)
+
+        dialog.update_idletasks()
+        main_x = self.parent.root.winfo_x()
+        main_y = self.parent.root.winfo_y()
+        main_w = self.parent.root.winfo_width()
+        main_h = self.parent.root.winfo_height()
+        d_w = dialog.winfo_width()
+        d_h = dialog.winfo_height()
+        x = main_x + (main_w - d_w) // 2
+        y = main_y + (main_h - d_h) // 2
+        dialog.geometry(f"+{x}+{y}")
+    
+    def _set_dinghao_wait(self):
+        """弹窗设置被顶号后等待进入游戏时间"""
+        gui_logger.info("[设置] 点击按钮: 设置被顶号后等待秒数")
+        dialog = tk.Toplevel(self.parent.root)
+        dialog.title("设置等待秒数")
+        dialog.resizable(False, False)
+        dialog.transient(self.parent.root)
+        dialog.grab_set()
+
+        ttk.Label(dialog, text="被顶号后等待进入游戏秒数:", font=('Microsoft YaHei', 9)).pack(padx=20, pady=(15, 5))
+
+        entry_var = tk.StringVar(value=self.settings_dinghao_wait_var.get())
+        entry = ttk.Entry(dialog, textvariable=entry_var, width=10)
+        entry.pack(padx=20, pady=5)
+        entry.focus_set()
+
+        def on_ok():
+            try:
+                val = int(entry_var.get())
+                if val >= 0:
+                    self.settings_dinghao_wait_var.set(str(val))
                     self.save_settings()
             except:
                 pass
@@ -541,6 +652,9 @@ class SettingsTab:
         self._create_adb_section(groups_container)
         self._create_sound_section(groups_container)
 
+        # 系统通知区
+        self._create_notify_section(main_frame)
+
 class DeviceTab:
     def __init__(self, parent, tab_name, png_base_folder, presets):
         self.parent = parent  # 现在parent是AutoClickerUI实例
@@ -697,7 +811,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOv2.8", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOv2.9", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -735,6 +849,12 @@ class DeviceTab:
         threshold_frame = ttk.Frame(device_card)
         threshold_frame.pack(fill=tk.X, pady=2)
         ttk.Label(threshold_frame, text="识别阈值：", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+        q_btn = ttk.Label(threshold_frame, text="❓", font=('Microsoft YaHei', 9), cursor="hand2")
+        q_btn.pack(side=tk.LEFT, padx=0)
+        ToolTip(q_btn, "识别阈值控制图片匹配的严格程度。\n"
+                       "阈值越低，匹配越宽松（容易误识别）；\n"
+                       "阈值越高，匹配越严格（可能漏识别）。\n"
+                       "建议范围：0.7 ~ 0.9，默认 0.8。")
         self.threshold_entry = ttk.Entry(threshold_frame, width=6)
         self.threshold_entry.pack(side=tk.LEFT, padx=2)
         self.threshold_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
@@ -743,6 +863,10 @@ class DeviceTab:
         count_frame = ttk.Frame(device_card)
         count_frame.pack(fill=tk.X, pady=2)
         ttk.Label(count_frame, text="运行次数：", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+        q_btn2 = ttk.Label(count_frame, text="❓", font=('Microsoft YaHei', 9), cursor="hand2")
+        q_btn2.pack(side=tk.LEFT, padx=0)
+        ToolTip(q_btn2, "当前设备标签页脚本的循环执行次数。\n"
+                        "设为 0 表示无限循环，直到手动停止。")
         self.target_count_entry = ttk.Entry(count_frame, width=6, textvariable=self.target_count_var)
         self.target_count_entry.pack(side=tk.LEFT, padx=2)
         self.target_count_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
@@ -750,6 +874,10 @@ class DeviceTab:
         # 重置默认按钮
         self.reset_btn = ttk.Button(device_card, text="重置默认", command=self.reset_defaults, width=18)
         self.reset_btn.pack(fill=tk.X, padx=2, pady=5)
+        
+        # 复制运行参数按钮
+        self.copy_params_btn = ttk.Button(device_card, text="一键应用到所有", command=self.copy_run_params, width=18)
+        self.copy_params_btn.pack(fill=tk.X, padx=2, pady=(0, 5))
         
         # 第二列：场景选择
         scene_card = ttk.LabelFrame(middle_frame, text="🎮 场景选择", padding="5")
@@ -783,6 +911,10 @@ class DeviceTab:
                                 command=self.on_preset_change)
             rb.pack(anchor=tk.W, padx=2, pady=1)
             self.preset_radiobuttons.append(rb)
+        
+        # 复制场景选择按钮
+        self.copy_scene_btn = ttk.Button(scene_card, text="一键应用到所有", command=self.copy_scene_selection)
+        self.copy_scene_btn.pack(fill=tk.X, padx=2, pady=(5, 0))
         
         # 第三列：日志
         log_card = ttk.LabelFrame(middle_frame, text="📋 运行日志", padding="5")
@@ -824,6 +956,39 @@ class DeviceTab:
         self.threshold_entry.insert(0, str(preset["threshold"]))
         self.save_tab_config()
         self.log("已重置默认参数")
+    
+    def copy_run_params(self):
+        """将当前标签的运行参数（识别阈值、运行次数）复制到所有设备控制标签"""
+        gui_logger.info(f"[{self.tab_name}] 点击按钮: 复制运行参数")
+        threshold = self.threshold_entry.get().strip()
+        target_count = self.target_count_var.get()
+        for tab in self.parent.tabs:
+            if tab is self:
+                continue
+            tab.threshold_entry.delete(0, tk.END)
+            tab.threshold_entry.insert(0, threshold)
+            tab.target_count_var.set(target_count)
+            tab.save_tab_config()
+            tab.log(f"运行参数已同步：阈值={threshold}，次数={target_count}")
+        self.log(f"已将运行参数复制到 {len(self.parent.tabs) - 1} 个标签")
+
+    def copy_scene_selection(self):
+        """将当前标签的场景选择复制到所有设备控制标签"""
+        gui_logger.info(f"[{self.tab_name}] 点击按钮: 复制场景选择")
+        current_preset = self.current_preset_var.get()
+        current_threshold = self.threshold_entry.get().strip()
+        for tab in self.parent.tabs:
+            if tab is self:
+                continue
+            tab.current_preset_var.set(current_preset)
+            tab.on_preset_change(None)
+            # 同步当前阈值到目标标签
+            tab.threshold_entry.delete(0, tk.END)
+            tab.threshold_entry.insert(0, current_threshold)
+            tab.preset_thresholds[current_preset] = current_threshold
+            tab.save_tab_config()
+            tab.log(f"场景已同步为：{current_preset}")
+        self.log(f"已将场景选择复制到 {len(self.parent.tabs) - 1} 个标签")
     
     def on_preset_change(self, event=None):
         # 保存当前场景的阈值到记忆
@@ -876,6 +1041,10 @@ class DeviceTab:
             self.clear_device_btn.config(state=tk.DISABLED)
         if hasattr(self, 'reset_btn'):
             self.reset_btn.config(state=tk.DISABLED)
+        if hasattr(self, 'copy_params_btn'):
+            self.copy_params_btn.config(state=tk.DISABLED)
+        if hasattr(self, 'copy_scene_btn'):
+            self.copy_scene_btn.config(state=tk.DISABLED)
         # 锁定所有场景选择Radiobutton
         if hasattr(self, 'preset_radiobuttons'):
             for rb in self.preset_radiobuttons:
@@ -895,6 +1064,10 @@ class DeviceTab:
             self.clear_device_btn.config(state=tk.NORMAL)
         if hasattr(self, 'reset_btn'):
             self.reset_btn.config(state=tk.NORMAL)
+        if hasattr(self, 'copy_params_btn'):
+            self.copy_params_btn.config(state=tk.NORMAL)
+        if hasattr(self, 'copy_scene_btn'):
+            self.copy_scene_btn.config(state=tk.NORMAL)
         # 解锁所有场景选择Radiobutton
         if hasattr(self, 'preset_radiobuttons'):
             for rb in self.preset_radiobuttons:
@@ -958,6 +1131,21 @@ class DeviceTab:
                 winsound.PlaySound(wav_path, winsound.SND_FILENAME | winsound.SND_ASYNC)
         except Exception as e:
             pass
+    
+    def send_notification(self, reason):
+        """发送系统通知（非手动停止时调用）
+        reason: "count"=次数达成, "anomaly"=连续点击异常, "image"=识别到特定图片
+        """
+        if reason == "anomaly":
+            send_error_notification(
+                f"异常停止 - {self.tab_name}",
+                f"[{self.tab_name}] {self.current_preset} 连续点击异常，已停止运行"
+            )
+        else:
+            send_complete_notification(
+                f"任务完成 - {self.tab_name}",
+                f"[{self.tab_name}] {self.current_preset} 任务已完成"
+            )
     
     def clear_device(self):
         # 清除当前标签选择的设备
@@ -1136,6 +1324,15 @@ class DeviceTab:
             results = self.recognizer.run_once()
             
             if results:
+                # 全局最高优先级：检测到顶号弹窗
+                dinghao_result = next((r for r in results if 'dinghao' in r['name'].lower()), None)
+                if dinghao_result:
+                    device = None
+                    if hasattr(self.recognizer, 'device'):
+                        device = self.recognizer.device
+                    dinghao.handle_dinghao(self.recognizer, self.log, self.parent.dinghao_wait, device)
+                    continue
+
                 # 根据当前场景调用对应的处理函数
                 stop_flag = False
                 need_wait = False
@@ -1246,9 +1443,11 @@ class DeviceTab:
                     )
                 
                 if stop_flag:
-                    # 非手动停止时播放提示音
+                    # 非手动停止时播放提示音和发送系统通知
                     if not self.manual_stop:
                         self.play_sound()
+                        if hasattr(self.recognizer, 'stop_reason') and self.recognizer.stop_reason:
+                            self.send_notification(self.recognizer.stop_reason)
                     self.running = False
                     # 检查是否需要关闭加成
                     if hasattr(self.parent, 'close_jiacheng_enabled') and self.parent.close_jiacheng_enabled:
@@ -1308,8 +1507,9 @@ class DeviceTab:
                     # 困28单人和困28队长点击boss或putong后等待3秒
                     time.sleep(3)
                 elif hasattr(self.recognizer, 'skip_sleep') and self.recognizer.skip_sleep:
+                    sleep_time = self.recognizer.skip_sleep if isinstance(self.recognizer.skip_sleep, (int, float)) else 1
                     self.recognizer.skip_sleep = False
-                    time.sleep(1)
+                    time.sleep(sleep_time)
                 else:
                     time.sleep(2)
             else:
@@ -1364,7 +1564,7 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOv2.8")
+        self.root.title("YYS-AUTOv2.9")
         self.root.geometry("640x440")
         self.root.minsize(640, 440)  # 设置最小尺寸
 
@@ -1480,6 +1680,9 @@ class AutoClickerUI:
         self.close_jiacheng_enabled = False
         self.close_jiacheng_wait = 30  # 默认30秒
         
+        # 被顶号后等待进入游戏设置
+        self.dinghao_wait = 30  # 默认30秒
+        
         # 绘卷模式设置
         self.huijuan_mode = False
         
@@ -1492,6 +1695,9 @@ class AutoClickerUI:
         
         # 日志设置
         self.logging_enabled = False
+        
+        # 系统通知设置
+        self.notify_enabled = True
         
         # ADB设置
         self.adb_ip = "127.0.0.1"
@@ -1543,6 +1749,9 @@ class AutoClickerUI:
                         self.close_jiacheng_enabled = config["close_jiacheng_enabled"]
                     if "close_jiacheng_wait" in config:
                         self.close_jiacheng_wait = config["close_jiacheng_wait"]
+                    # 加载顶号等待设置
+                    if "dinghao_wait" in config:
+                        self.dinghao_wait = config["dinghao_wait"]
                     # 加载绘卷模式设置
                     if "huijuan_mode" in config:
                         self.huijuan_mode = config["huijuan_mode"]
@@ -1559,6 +1768,10 @@ class AutoClickerUI:
                         self.logging_enabled = config["logging_enabled"]
                         from adb import set_logging_enabled
                         set_logging_enabled(self.logging_enabled)
+                    # 加载系统通知设置
+                    if "notify_enabled" in config:
+                        self.notify_enabled = config["notify_enabled"]
+                        set_notify_enabled(self.notify_enabled)
                     # 加载ADB设置
                     if "adb_ip" in config:
                         self.adb_ip = config["adb_ip"]
@@ -1577,6 +1790,8 @@ class AutoClickerUI:
             # 保存关闭加成设置
             self.saved_config["close_jiacheng_enabled"] = self.close_jiacheng_enabled
             self.saved_config["close_jiacheng_wait"] = self.close_jiacheng_wait
+            # 保存顶号等待设置
+            self.saved_config["dinghao_wait"] = self.dinghao_wait
             # 保存绘卷模式设置
             self.saved_config["huijuan_mode"] = self.huijuan_mode
             # 保存斗技段位晋升结束程序设置
@@ -1586,6 +1801,8 @@ class AutoClickerUI:
             self.saved_config["sound_file"] = self.sound_file
             # 保存日志设置
             self.saved_config["logging_enabled"] = self.logging_enabled
+            # 保存系统通知设置
+            self.saved_config["notify_enabled"] = self.notify_enabled
             # 保存ADB设置
             self.saved_config["adb_ip"] = self.adb_ip
             self.saved_config["adb_port"] = self.adb_port
@@ -1605,6 +1822,32 @@ class AutoClickerUI:
         except Exception as e:
             pass
     
+    def _restart_adb_and_app(self):
+        """重启ADB并重启程序"""
+        gui_logger.info("点击菜单: 重启ADB并重启程序")
+        self.stop_all_tabs()
+        self.save_config()
+        _do_enable_ime()
+        import subprocess
+        try:
+            adb_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "platform-tools", "adb.exe")
+            if not os.path.exists(adb_path):
+                adb_path = "adb"
+            subprocess.run([adb_path, "kill-server"], capture_output=True, timeout=10)
+        except:
+            pass
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
+    def _restart_app(self):
+        """重启工具"""
+        gui_logger.info("点击菜单: 重启工具")
+        self.stop_all_tabs()
+        self.save_config()
+        _do_enable_ime()
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
     def _kill_adb_and_exit(self):
         """关闭ADB进程并退出程序"""
         gui_logger.info("点击菜单: 关闭ADB并退出")
@@ -1664,12 +1907,15 @@ class AutoClickerUI:
         """创建菜单栏"""
         menubar = tk.Menu(self.root)
 
-        # 文件菜单
+        # 程序菜单
         file_menu = tk.Menu(menubar, tearoff=False)
+        file_menu.add_command(label="重启工具", command=self._restart_app)
+        file_menu.add_separator()
+        file_menu.add_command(label="重启ADB并重启程序", command=self._restart_adb_and_app)
         file_menu.add_command(label="关闭ADB并退出", command=self._kill_adb_and_exit)
         file_menu.add_separator()
         file_menu.add_command(label="退出程序 (Alt+F4)", command=self.on_window_close)
-        menubar.add_cascade(label="文件(F)", menu=file_menu, underline=3)
+        menubar.add_cascade(label="程序(P)", menu=file_menu, underline=3)
 
         # 设置菜单
         settings_menu = tk.Menu(menubar, tearoff=False)
@@ -1691,6 +1937,8 @@ class AutoClickerUI:
         func_menu.add_separator()
         func_menu.add_command(label="设置关闭加成等待秒数",
                               command=self.settings_tab._set_close_jiacheng_wait)
+        func_menu.add_command(label="设置被顶号后等待秒数",
+                              command=self.settings_tab._set_dinghao_wait)
         settings_menu.add_cascade(label="功能设置", menu=func_menu)
 
         # 日志二级菜单
@@ -1707,7 +1955,7 @@ class AutoClickerUI:
         # 软件更新二级菜单
         update_menu = tk.Menu(settings_menu, tearoff=False)
         update_menu.add_command(label="复制网盘密码", command=self.settings_tab._copy_password)
-        update_menu.add_command(label="更新软件", command=self.settings_tab._open_update_link)
+        update_menu.add_command(label="跳转网盘更新软件", command=self.settings_tab._open_update_link)
         update_menu.add_command(label="GitHub仓库", command=self.settings_tab._open_github)
         settings_menu.add_cascade(label="软件更新", menu=update_menu)
 
@@ -1787,7 +2035,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  v2.8", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  v2.9", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线

@@ -57,8 +57,9 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
                     # 显示当前次数/目标次数
                     log(f"  挑战次数: {current_count}/{target_count}")
                     # 检查是否达到目标次数
-                    if current_count >= target_count:
+                    if target_count > 0 and current_count >= target_count:
                         log(f"达到目标挑战次数 {target_count}，结束脚本")
+                        recognizer.stop_reason = "count"
                         stop_flag = True
                         break
                 else:
@@ -68,6 +69,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
             consecutive_challenge += 1
             if consecutive_challenge >= 4:
                 log("挑战失败：连续点击4次未识别到奖励")
+                recognizer.stop_reason = "anomaly"
                 stop_flag = True
                 break
         elif 'jiangli' in name_lower or 'shengli' in name_lower:

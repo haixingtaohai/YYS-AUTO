@@ -35,6 +35,7 @@ class ImageRecognizer:
         self.click_x = 785
         self.click_y = 672
         self.tiaozhan_count = 0
+        self.stop_reason = ""  # 停止原因: "count"=次数达成, "anomaly"=连续点击异常, "image"=识别到特定图片
         self.template_filter = None
         self.skip_sleep = False
         self.pg0_threshold = 0.99

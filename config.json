@@ -1,23 +1,38 @@
 {
-  "last_tab": 2,
+  "last_tab": 0,
   "tabs": {
     "1": {
       "tab_name": "大号",
-      "preset": "活动爬塔",
-      "target_count": "200",
+      "preset": "结界突破",
+      "target_count": "300",
       "threshold": "0.8",
       "preset_thresholds": {
-        "结界突破": "0.8"
+        "业原火": "0.8",
+        "活动爬塔": "0.8",
+        "结界突破": "0.8",
+        "队员": "0.8",
+        "困28单人": "0.8"
       },
       "device": "emulator-5554"
     },
     "2": {
       "tab_name": "小号",
-      "preset": "活动爬塔",
-      "target_count": "200",
+      "preset": "结界突破",
+      "target_count": "300",
       "threshold": "0.8",
       "preset_thresholds": {
-        "结界突破": "0.8"
+        "结界突破": "0.8",
+        "活动爬塔": "0.8",
+        "道馆": "0.8",
+        "困28队长": "0.8",
+        "困28单人": "0.8",
+        "司机": "0.8",
+        "英杰试炼": "0.8",
+        "业原火": "0.8",
+        "魂土单人": "0.8",
+        "困28队员": "0.8",
+        "队员": "0.8",
+        "斗技": "0.8"
       },
       "device": "emulator-5556"
     }
@@ -27,10 +42,12 @@
   "close_jiacheng_wait": 30,
   "huijuan_mode": false,
   "dj_jinsheng_stop": false,
-  "sound_enabled": true,
-  "sound_file": "QQ.wav",
+  "sound_enabled": false,
+  "sound_file": "骄阳长明.wav",
   "logging_enabled": true,
   "adb_ip": "127.0.0.1",
   "adb_port": "16384",
-  "window_geometry": "640x420+134+781"
+  "window_geometry": "640x420+-757+909",
+  "notify_enabled": true,
+  "dinghao_wait": 30
 }

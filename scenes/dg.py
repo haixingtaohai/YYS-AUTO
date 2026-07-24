@@ -58,6 +58,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
             consecutive_challenge = 0
         elif 'yxnjc' in name_lower:
             log("识别到yxnjc，任务完成，停止运行")
+            recognizer.stop_reason = "image"
             stop_flag = True
             return stop_flag, current_count, consecutive_challenge, False
         elif 'shengli' in name_lower or 'jiangli' in name_lower or 'shibai' in name_lower or 'jiesuan' in name_lower:

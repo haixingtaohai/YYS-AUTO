@@ -32,6 +32,7 @@ def _handle_0q(has_0q, huijuan_mode, log, recognizer):
     if huijuan_mode:
         log("切换困28")
         return True, False, True
+    recognizer.stop_reason = "image"
     recognizer.stop()
     return True, True, False
 
@@ -95,28 +96,22 @@ def _handle_card57_step_2(recognizer, log, results, has_tuichu):
     time.sleep(0.5)
     log("(749, 422)")
     recognizer.click(749, 422)
+    time.sleep(1.5)
+    _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
     recognizer.jjtp_card57_step = 3
     return True
 
-def _handle_card57_step_3(recognizer, log, has_shibai):
-    if not has_shibai:
-        return False
-    _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
-    time.sleep(1)
-    recognizer.jjtp_card57_step = 4
-    return True
-
-def _handle_card57_step_4(recognizer, log, round_configs):
+def _handle_card57_step_3(recognizer, log, round_configs):
     config = round_configs[1]
     log(f"{config['click1']}")
     recognizer.click(config['click1'][0], config['click1'][1])
     time.sleep(0.5)
     log(f"{config['click2']}")
     recognizer.click(config['click2'][0], config['click2'][1])
-    recognizer.jjtp_card57_step = 5
+    recognizer.jjtp_card57_step = 4
     return True
 
-def _handle_card57_step_5(recognizer, log, results, has_tuichu):
+def _handle_card57_step_4(recognizer, log, results, has_tuichu):
     if not has_tuichu:
         return False
     _click_random_center(recognizer, results, 'tuichu')
@@ -124,19 +119,36 @@ def _handle_card57_step_5(recognizer, log, results, has_tuichu):
     time.sleep(0.5)
     log("(749, 422)")
     recognizer.click(749, 422)
+    time.sleep(1.5)
+    _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
+    recognizer.jjtp_card57_step = 5
+    return True
+
+def _handle_card57_step_5(recognizer, log, round_configs):
+    config = round_configs[2]
+    log(f"{config['click1']}")
+    recognizer.click(config['click1'][0], config['click1'][1])
+    time.sleep(0.5)
+    log(f"{config['click2']}")
+    recognizer.click(config['click2'][0], config['click2'][1])
     recognizer.jjtp_card57_step = 6
     return True
 
-def _handle_card57_step_6(recognizer, log, has_shibai):
-    if not has_shibai:
+def _handle_card57_step_6(recognizer, log, results, has_tuichu):
+    if not has_tuichu:
         return False
+    _click_random_center(recognizer, results, 'tuichu')
+    _click_random_center(recognizer, results, 'tuichu2')
+    time.sleep(0.5)
+    log("(749, 422)")
+    recognizer.click(749, 422)
+    time.sleep(1.5)
     _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
-    time.sleep(1)
     recognizer.jjtp_card57_step = 7
     return True
 
 def _handle_card57_step_7(recognizer, log, round_configs):
-    config = round_configs[2]
+    config = round_configs[3]
     log(f"{config['click1']}")
     recognizer.click(config['click1'][0], config['click1'][1])
     time.sleep(0.5)
@@ -153,47 +165,12 @@ def _handle_card57_step_8(recognizer, log, results, has_tuichu):
     time.sleep(0.5)
     log("(749, 422)")
     recognizer.click(749, 422)
+    time.sleep(1.5)
+    _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
     recognizer.jjtp_card57_step = 9
     return True
 
-def _handle_card57_step_9(recognizer, log, has_shibai):
-    if not has_shibai:
-        return False
-    _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
-    time.sleep(1)
-    recognizer.jjtp_card57_step = 10
-    return True
-
-def _handle_card57_step_10(recognizer, log, round_configs):
-    config = round_configs[3]
-    log(f"{config['click1']}")
-    recognizer.click(config['click1'][0], config['click1'][1])
-    time.sleep(0.5)
-    log(f"{config['click2']}")
-    recognizer.click(config['click2'][0], config['click2'][1])
-    recognizer.jjtp_card57_step = 11
-    return True
-
-def _handle_card57_step_11(recognizer, log, results, has_tuichu):
-    if not has_tuichu:
-        return False
-    _click_random_center(recognizer, results, 'tuichu')
-    _click_random_center(recognizer, results, 'tuichu2')
-    time.sleep(0.5)
-    log("(749, 422)")
-    recognizer.click(749, 422)
-    recognizer.jjtp_card57_step = 12
-    return True
-
-def _handle_card57_step_12(recognizer, log, has_shibai):
-    if not has_shibai:
-        return False
-    _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
-    time.sleep(1.5)
-    recognizer.jjtp_card57_step = 13
-    return True
-
-def _handle_card57_step_13(recognizer, log):
+def _handle_card57_step_9(recognizer, log):
     log("(831, 597)")
     recognizer.click(831, 597)
     time.sleep(0.5)
@@ -207,24 +184,20 @@ def _handle_card57_step_13(recognizer, log):
     recognizer.jjtp_card57_round = 0
     return True
 
-def _handle_card57_mode(recognizer, log, results, has_tuichu, has_shibai):
+def _handle_card57_mode(recognizer, log, results, has_tuichu):
     round_configs = _get_round_configs()
     
     step_handlers = {
         0: lambda: _handle_card57_step_0(recognizer, log),
         1: lambda: _handle_card57_step_1(recognizer, log, round_configs),
         2: lambda: _handle_card57_step_2(recognizer, log, results, has_tuichu),
-        3: lambda: _handle_card57_step_3(recognizer, log, has_shibai),
-        4: lambda: _handle_card57_step_4(recognizer, log, round_configs),
-        5: lambda: _handle_card57_step_5(recognizer, log, results, has_tuichu),
-        6: lambda: _handle_card57_step_6(recognizer, log, has_shibai),
+        3: lambda: _handle_card57_step_3(recognizer, log, round_configs),
+        4: lambda: _handle_card57_step_4(recognizer, log, results, has_tuichu),
+        5: lambda: _handle_card57_step_5(recognizer, log, round_configs),
+        6: lambda: _handle_card57_step_6(recognizer, log, results, has_tuichu),
         7: lambda: _handle_card57_step_7(recognizer, log, round_configs),
         8: lambda: _handle_card57_step_8(recognizer, log, results, has_tuichu),
-        9: lambda: _handle_card57_step_9(recognizer, log, has_shibai),
-        10: lambda: _handle_card57_step_10(recognizer, log, round_configs),
-        11: lambda: _handle_card57_step_11(recognizer, log, results, has_tuichu),
-        12: lambda: _handle_card57_step_12(recognizer, log, has_shibai),
-        13: lambda: _handle_card57_step_13(recognizer, log),
+        9: lambda: _handle_card57_step_9(recognizer, log),
     }
     
     step = recognizer.jjtp_card57_step
@@ -247,6 +220,12 @@ def _handle_card57_mode(recognizer, log, results, has_tuichu, has_shibai):
 def _handle_normal_mode(results, recognizer, has_tansuo, has_suoding, has_numbers, has_jingong, has_jiangli, has_queren, consecutive_challenge, last_clicked_tiaozhan):
     if _click_random_center(recognizer, results, 'jujue'):
         return 0, False, False
+    
+    # 特定tansuo系列图片：点击图片中心坐标
+    tansuo_names = ['cixinleyuan-tansuo', 'huanxin-tansuo', 'moren-tansuo', '100-tansuo', 'zhimenglianting-tansuo']
+    for t in tansuo_names:
+        if _click_random_center(recognizer, results, t):
+            return 0, False, True
     
     if has_tansuo:
         recognizer.click(30, 37)
@@ -299,8 +278,6 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
     stop_flag = False
     switch_to_k28 = False
 
-    recognizer.skip_sleep = True
-
     _initialize_card57_mode(recognizer, log)
 
     if not hasattr(recognizer, 'jjtp_consecutive_jingong'):
@@ -313,6 +290,10 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
 
     has_suoding, has_jiangli, has_numbers, has_tansuo, has_pg0, has_jingong, has_queren, has_0q, has_tuichu, has_shibai = _check_has_images(results)
 
+    # 识别到数字0-5时，使用0.7秒间隔
+    if has_numbers:
+        recognizer.skip_sleep = 0.7
+
     should_return, stop_flag, switch_to_k28 = _handle_0q(has_0q, huijuan_mode, log, recognizer)
     if should_return:
         return stop_flag, current_count, consecutive_challenge, last_clicked_tiaozhan, switch_to_k28
@@ -320,7 +301,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
     _enter_card57_mode(has_pg0, recognizer, log)
 
     if recognizer.jjtp_card57_mode:
-        handled = _handle_card57_mode(recognizer, log, results, has_tuichu, has_shibai)
+        handled = _handle_card57_mode(recognizer, log, results, has_tuichu)
         if handled:
             return stop_flag, current_count, consecutive_challenge, last_clicked_tiaozhan, switch_to_k28
 
@@ -331,6 +312,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
 
     if recognizer.jjtp_consecutive_jingong >= 4:
         log("连续点击jingong四次，异常停止")
+        recognizer.stop_reason = "anomaly"
         recognizer.stop()
         return True, current_count, consecutive_challenge, last_clicked_tiaozhan, switch_to_k28
 

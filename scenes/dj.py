@@ -26,6 +26,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
     if has_jinsheng:
         if dj_jinsheng_stop:
             log("识别到jinsheng，斗技段位晋升结束程序")
+            recognizer.stop_reason = "image"
             stop_flag = True
             return stop_flag, current_count, consecutive_challenge, False
         else:
@@ -55,8 +56,9 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
             recognizer.tiaozhan_count += 1
             current_count = recognizer.tiaozhan_count
             log(f"  挑战次数: {current_count}/{target_count}")
-            if current_count >= target_count:
+            if target_count > 0 and current_count >= target_count:
                 log(f"达到目标挑战次数 {target_count}，结束脚本")
+                recognizer.stop_reason = "count"
                 stop_flag = True
                 break
         

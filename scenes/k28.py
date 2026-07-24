@@ -86,8 +86,9 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
                     recognizer.tiaozhan_count += 1
                     current_count = recognizer.tiaozhan_count
                     log(f"  挑战次数: {current_count}/{target_count}")
-                    if current_count >= target_count:
+                    if target_count > 0 and current_count >= target_count:
                         log(f"达到目标挑战次数 {target_count}，结束脚本")
+                        recognizer.stop_reason = "count"
                         stop_flag = True
                         break
                 else:
@@ -96,6 +97,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
                 consecutive_putong_boss += 1
                 if consecutive_putong_boss >= 4:
                     log("挑战失败：连续点击4次未识别到奖励")
+                    recognizer.stop_reason = "anomaly"
                     stop_flag = True
                     break
                 if 'putong' in name_lower or 'boss' in name_lower:
