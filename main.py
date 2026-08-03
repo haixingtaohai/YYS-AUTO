@@ -15,7 +15,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.v2.9'
+        myappid = 'yysauto.application.v2.10'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -128,6 +128,7 @@ import k28
 import k281
 import k280
 import yjsl
+import yl
 import jjtp
 import hdpt
 import guanbijiacheng
@@ -811,7 +812,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOv2.9", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOv2.10", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -962,23 +963,37 @@ class DeviceTab:
         gui_logger.info(f"[{self.tab_name}] 点击按钮: 复制运行参数")
         threshold = self.threshold_entry.get().strip()
         target_count = self.target_count_var.get()
+        applied = 0
+        skipped = 0
         for tab in self.parent.tabs:
             if tab is self:
+                continue
+            if tab.running:
+                skipped += 1
                 continue
             tab.threshold_entry.delete(0, tk.END)
             tab.threshold_entry.insert(0, threshold)
             tab.target_count_var.set(target_count)
             tab.save_tab_config()
             tab.log(f"运行参数已同步：阈值={threshold}，次数={target_count}")
-        self.log(f"已将运行参数复制到 {len(self.parent.tabs) - 1} 个标签")
+            applied += 1
+        msg = f"已将运行参数应用到 {applied} 个标签"
+        if skipped:
+            msg += f"（{skipped} 个运行中标签已跳过）"
+        self.log(msg)
 
     def copy_scene_selection(self):
         """将当前标签的场景选择复制到所有设备控制标签"""
         gui_logger.info(f"[{self.tab_name}] 点击按钮: 复制场景选择")
         current_preset = self.current_preset_var.get()
         current_threshold = self.threshold_entry.get().strip()
+        applied = 0
+        skipped = 0
         for tab in self.parent.tabs:
             if tab is self:
+                continue
+            if tab.running:
+                skipped += 1
                 continue
             tab.current_preset_var.set(current_preset)
             tab.on_preset_change(None)
@@ -988,7 +1003,11 @@ class DeviceTab:
             tab.preset_thresholds[current_preset] = current_threshold
             tab.save_tab_config()
             tab.log(f"场景已同步为：{current_preset}")
-        self.log(f"已将场景选择复制到 {len(self.parent.tabs) - 1} 个标签")
+            applied += 1
+        msg = f"已将场景选择应用到 {applied} 个标签"
+        if skipped:
+            msg += f"（{skipped} 个运行中标签已跳过）"
+        self.log(msg)
     
     def on_preset_change(self, event=None):
         # 保存当前场景的阈值到记忆
@@ -1406,6 +1425,10 @@ class DeviceTab:
                     stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan = yjsl.handle_scene(
                         results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan
                     )
+                elif self.current_preset == "御灵":
+                    stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan = yl.handle_scene(
+                        results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan
+                    )
                 elif self.current_preset == "结界突破":
                     stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan, switch_to_k28 = jjtp.handle_scene(
                         results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan, 
@@ -1564,7 +1587,7 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOv2.9")
+        self.root.title("YYS-AUTOv2.10")
         self.root.geometry("640x440")
         self.root.minsize(640, 440)  # 设置最小尺寸
 
@@ -1649,6 +1672,13 @@ class AutoClickerUI:
             },
             "英杰试炼": {
                 "folder": "yjsl",
+                "click_x": 777,
+                "click_y": 666,
+                "threshold": 0.80,
+                "count_challenge": True
+            },
+            "御灵": {
+                "folder": "yl",
                 "click_x": 777,
                 "click_y": 666,
                 "threshold": 0.80,
@@ -2035,7 +2065,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  v2.9", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  v2.10", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线

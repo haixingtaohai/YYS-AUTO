@@ -64,7 +64,14 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
             consecutive_challenge = 0
             continue
         
-        clickable = ['baozang', 'boss', 'jinru', 'putong', 'yaoqing']
+        if 'baozang' in name_lower:
+            _click_random_center(recognizer, r)
+            time.sleep(0.5)
+            _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
+            consecutive_challenge = 0
+            continue
+        
+        clickable = ['boss', 'jinru', 'putong', 'yaoqing']
         if any(x in name_lower for x in clickable):
             _click_random_center(recognizer, r)
             consecutive_challenge = 0
