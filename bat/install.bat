@@ -2,4 +2,5 @@
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple/
 pip install --upgrade pip
 pip install opencv-python numpy winotify
+pip install numba PyTurboJPEG
 pause
