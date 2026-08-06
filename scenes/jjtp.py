@@ -292,7 +292,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
 
     # 识别到数字0-5时，使用0.7秒间隔
     if has_numbers:
-        recognizer.skip_sleep = 0.7
+        recognizer.skip_sleep = 0.55
 
     should_return, stop_flag, switch_to_k28 = _handle_0q(has_0q, huijuan_mode, log, recognizer)
     if should_return:

@@ -15,7 +15,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.v2.10'
+        myappid = 'yysauto.application.v2.11'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -129,6 +129,7 @@ import k281
 import k280
 import yjsl
 import yl
+import ql
 import jjtp
 import hdpt
 import guanbijiacheng
@@ -180,11 +181,25 @@ class SettingsTab:
         self.settings_dinghao_wait_var = tk.StringVar(value=str(self.parent.dinghao_wait))
         self.settings_huijuan_mode_var = tk.BooleanVar(value=self.parent.huijuan_mode)
         self.settings_dj_jinsheng_stop_var = tk.BooleanVar(value=self.parent.dj_jinsheng_stop)
+        self.settings_ql_fangqi_var = tk.BooleanVar(value=self.parent.ql_fangqi)
+        self.settings_ql_zaici_var = tk.BooleanVar(value=self.parent.ql_zaici)
         self.settings_sound_var = tk.BooleanVar(value=self.parent.sound_enabled)
         self.settings_sound_file_var = tk.StringVar(value=getattr(self.parent, 'sound_file', ''))
         self.settings_logging_var = tk.BooleanVar(value=self.parent.logging_enabled)
         self.settings_notify_var = tk.BooleanVar(value=self.parent.notify_enabled)
     
+    def _toggle_ql_fangqi(self):
+        if self.settings_ql_fangqi_var.get():
+            self.settings_ql_zaici_var.set(False)
+        else:
+            self.settings_ql_zaici_var.set(True)
+
+    def _toggle_ql_zaici(self):
+        if self.settings_ql_zaici_var.get():
+            self.settings_ql_fangqi_var.set(False)
+        else:
+            self.settings_ql_fangqi_var.set(True)
+
     def _log_change(self, old_value, new_value, enabled_msg, disabled_msg):
         if old_value != new_value and len(self.parent.tabs) > 0:
             msg = enabled_msg if new_value else disabled_msg
@@ -239,6 +254,9 @@ class SettingsTab:
         self.parent.dj_jinsheng_stop = self.settings_dj_jinsheng_stop_var.get()
         self._log_change(old_dj_jinsheng_stop, self.parent.dj_jinsheng_stop,
                         "斗技段位晋升结束程序已启用", "斗技段位晋升结束程序已关闭")
+
+        self.parent.ql_fangqi = self.settings_ql_fangqi_var.get()
+        self.parent.ql_zaici = self.settings_ql_zaici_var.get()
 
         old_sound_enabled = self.parent.sound_enabled
         self.parent.sound_enabled = self.settings_sound_var.get()
@@ -679,6 +697,9 @@ class DeviceTab:
         # 队员准备状态（仅用于队员场景）
         self.is_ready = False
         
+        # 场景使用计时
+        self.scene_start_time = None
+        
         self.setup_ui(tab_name)
     
     def save_tab_config(self):
@@ -812,7 +833,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOv2.10", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOv2.11", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -1284,6 +1305,7 @@ class DeviceTab:
         # 锁定所有控件
         self.lock_controls()
         
+        self.scene_start_time = time.time()
         self.thread = threading.Thread(target=self.run_loop_thread, daemon=True)
         self.thread.start()
         
@@ -1391,6 +1413,12 @@ class DeviceTab:
                     
                     # 检查是否需要切换到结界突破场景
                     if switch_to_jjtp:
+                        # 记录困28单人使用时长
+                        if self.scene_start_time is not None:
+                            elapsed = int(time.time() - self.scene_start_time)
+                            if hasattr(self.parent, 'record_usage'):
+                                self.parent.record_usage("困28单人", elapsed)
+                            self.scene_start_time = time.time()
                         self.log("切换到结界突破场景")
                         # 直接设置变量并调用on_preset_change来切换场景
                         self.current_preset_var.set("结界突破")
@@ -1429,6 +1457,12 @@ class DeviceTab:
                     stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan = yl.handle_scene(
                         results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan
                     )
+                elif self.current_preset == "契灵":
+                    stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan = ql.handle_scene(
+                        results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan,
+                        hasattr(self.parent, 'ql_fangqi') and self.parent.ql_fangqi,
+                        hasattr(self.parent, 'ql_zaici') and self.parent.ql_zaici
+                    )
                 elif self.current_preset == "结界突破":
                     stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan, switch_to_k28 = jjtp.handle_scene(
                         results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan, 
@@ -1437,6 +1471,12 @@ class DeviceTab:
                     
                     # 检查是否需要切换到困28单人场景
                     if switch_to_k28:
+                        # 记录结界突破使用时长
+                        if self.scene_start_time is not None:
+                            elapsed = int(time.time() - self.scene_start_time)
+                            if hasattr(self.parent, 'record_usage'):
+                                self.parent.record_usage("结界突破", elapsed)
+                            self.scene_start_time = time.time()
                         self.log("切换到困28单人场景")
                         # 直接设置变量并调用on_preset_change来切换场景
                         self.current_preset_var.set("困28单人")
@@ -1558,6 +1598,12 @@ class DeviceTab:
                 time.sleep(1)
 
         # 自然结束时也需要解锁控件
+        # 记录使用时长
+        if self.scene_start_time is not None:
+            elapsed = int(time.time() - self.scene_start_time)
+            if hasattr(self.parent, 'record_usage'):
+                self.parent.record_usage(self.current_preset, elapsed)
+            self.scene_start_time = None
         gui_logger.info(f"[{self.tab_name}] 运行循环结束 | 场景: {self.current_preset} | 手动停止: {self.manual_stop}")
         self.start_btn.config(state=tk.NORMAL)
         self.stop_btn.config(state=tk.DISABLED)
@@ -1567,6 +1613,13 @@ class DeviceTab:
         gui_logger.info(f"[{self.tab_name}] 点击按钮: 停止")
         self.manual_stop = True  # 标记为手动停止
         self.running = False
+        
+        # 记录使用时长
+        if self.scene_start_time is not None:
+            elapsed = int(time.time() - self.scene_start_time)
+            if hasattr(self.parent, 'record_usage'):
+                self.parent.record_usage(self.current_preset, elapsed)
+            self.scene_start_time = None
         if self.recognizer:
             self.recognizer.running = False
         
@@ -1587,7 +1640,7 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOv2.10")
+        self.root.title("YYS-AUTOv2.11")
         self.root.geometry("640x440")
         self.root.minsize(640, 440)  # 设置最小尺寸
 
@@ -1684,6 +1737,13 @@ class AutoClickerUI:
                 "threshold": 0.80,
                 "count_challenge": True
             },
+            "契灵": {
+                "folder": "ql",
+                "click_x": 777,
+                "click_y": 666,
+                "threshold": 0.80,
+                "count_challenge": True
+            },
             "结界突破": {
                 "folder": "jjtp",
                 "click_x": 777,
@@ -1719,6 +1779,10 @@ class AutoClickerUI:
         # 斗技段位晋升结束程序设置
         self.dj_jinsheng_stop = False
 
+        # 契灵结契选择
+        self.ql_fangqi = True
+        self.ql_zaici = False
+
         # 提示音设置
         self.sound_enabled = False
         self.sound_file = ""  # 选中的音效文件名
@@ -1735,6 +1799,8 @@ class AutoClickerUI:
         
         # 加载保存的配置
         self.config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+        self.usage_records_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "usage_records.json")
+        self.usage_records = self._load_usage_records()
         self.saved_config = self.load_config()
 
         # 恢复窗口位置（延迟到窗口显示后执行，避免被窗口管理器覆盖）
@@ -1788,6 +1854,11 @@ class AutoClickerUI:
                     # 加载斗技段位晋升结束程序设置
                     if "dj_jinsheng_stop" in config:
                         self.dj_jinsheng_stop = config["dj_jinsheng_stop"]
+                    # 加载契灵结契选择
+                    if "ql_fangqi" in config:
+                        self.ql_fangqi = config["ql_fangqi"]
+                    if "ql_zaici" in config:
+                        self.ql_zaici = config["ql_zaici"]
                     # 加载提示音设置
                     if "sound_enabled" in config:
                         self.sound_enabled = config["sound_enabled"]
@@ -1826,6 +1897,9 @@ class AutoClickerUI:
             self.saved_config["huijuan_mode"] = self.huijuan_mode
             # 保存斗技段位晋升结束程序设置
             self.saved_config["dj_jinsheng_stop"] = self.dj_jinsheng_stop
+            # 保存契灵结契选择
+            self.saved_config["ql_fangqi"] = self.ql_fangqi
+            self.saved_config["ql_zaici"] = self.ql_zaici
             # 保存提示音设置
             self.saved_config["sound_enabled"] = self.sound_enabled
             self.saved_config["sound_file"] = self.sound_file
@@ -1851,6 +1925,33 @@ class AutoClickerUI:
                 json.dump(self.saved_config, f, ensure_ascii=False, indent=2)
         except Exception as e:
             pass
+    
+    def _load_usage_records(self):
+        """加载运行时长记录"""
+        try:
+            if os.path.exists(self.usage_records_file):
+                with open(self.usage_records_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except:
+            pass
+        return {}
+    
+    def _save_usage_records(self):
+        """保存运行时长记录"""
+        try:
+            with open(self.usage_records_file, 'w', encoding='utf-8') as f:
+                json.dump(self.usage_records, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            pass
+    
+    def record_usage(self, preset_name, seconds):
+        """记录场景使用时长（累加）"""
+        if seconds <= 0:
+            return
+        if preset_name not in self.usage_records:
+            self.usage_records[preset_name] = 0
+        self.usage_records[preset_name] += seconds
+        self._save_usage_records()
     
     def _restart_adb_and_app(self):
         """重启ADB并重启程序"""
@@ -1961,6 +2062,14 @@ class AutoClickerUI:
         func_menu.add_checkbutton(label="斗技段位晋升结束程序",
                                   variable=self.settings_tab.settings_dj_jinsheng_stop_var,
                                   command=self.settings_tab.save_settings)
+        func_menu.add_separator()
+        func_menu.add_checkbutton(label="契灵放弃结契",
+                                  variable=self.settings_tab.settings_ql_fangqi_var,
+                                  command=lambda: [self.settings_tab._toggle_ql_fangqi(), self.settings_tab.save_settings()])
+        func_menu.add_checkbutton(label="契灵再次结契",
+                                  variable=self.settings_tab.settings_ql_zaici_var,
+                                  command=lambda: [self.settings_tab._toggle_ql_zaici(), self.settings_tab.save_settings()])
+        func_menu.add_separator()
         func_menu.add_checkbutton(label="挑战结束后关闭御魂加成",
                                   variable=self.settings_tab.settings_close_jiacheng_var,
                                   command=self.settings_tab.save_settings)
@@ -2007,6 +2116,8 @@ class AutoClickerUI:
         run_menu.add_separator()
         run_menu.add_command(label="全部开始 (F5)", command=self.start_all_tabs)
         run_menu.add_command(label="全部停止 (F6)", command=self.stop_all_tabs)
+        run_menu.add_separator()
+        run_menu.add_command(label="运行时长记录", command=self._show_usage_records)
         menubar.add_cascade(label="运行(R)", menu=run_menu, underline=3)
 
         # 帮助菜单
@@ -2065,7 +2176,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  v2.10", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  v2.11", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线
@@ -2145,6 +2256,156 @@ class AutoClickerUI:
         x = main_x + (main_w - top_w) // 2
         y = main_y + (main_h - top_h) // 2
         top.geometry(f"+{x}+{y}")
+
+    def _show_usage_records(self):
+        """显示运行时长记录排行榜窗口"""
+        gui_logger.info("点击菜单: 运行时长记录")
+        top = tk.Toplevel(self.root)
+        top.title("运行时长记录")
+        top.transient(self.root)
+        top.minsize(480, 320)
+
+        # 重新加载最新记录
+        self.usage_records = self._load_usage_records()
+
+        # 图标
+        if ICON_PATH:
+            try:
+                top.iconbitmap(ICON_PATH)
+            except:
+                pass
+
+        # 标题
+        header = ttk.Frame(top, padding="8")
+        header.pack(fill=tk.X)
+        ttk.Label(header, text="运行时长记录", font=('Microsoft YaHei', 12, 'bold')).pack(side=tk.LEFT)
+        
+        total_seconds = sum(self.usage_records.values())
+        if total_seconds > 0:
+            th = total_seconds // 3600
+            tm = (total_seconds % 3600) // 60
+            ttk.Label(header, text=f"总计: {th:02d}:{tm:02d}", font=('Microsoft YaHei', 9)).pack(side=tk.RIGHT)
+
+        if not self.usage_records:
+            ttk.Label(top, text="暂无运行时长记录", font=('Microsoft YaHei', 11)).pack(expand=True, pady=60)
+        else:
+            # 表头
+            col_frame = ttk.Frame(top, padding="0")
+            col_frame.pack(fill=tk.X, padx=15, pady=(8, 2))
+            ttk.Label(col_frame, text="排名", width=5, font=('Microsoft YaHei', 9, 'bold')).pack(side=tk.LEFT)
+            ttk.Label(col_frame, text="场景", width=12, font=('Microsoft YaHei', 9, 'bold')).pack(side=tk.LEFT)
+            ttk.Label(col_frame, text="使用时长", width=10, font=('Microsoft YaHei', 9, 'bold')).pack(side=tk.LEFT)
+            ttk.Label(col_frame, text="", width=2).pack(side=tk.LEFT)
+            ttk.Label(col_frame, text="占比", font=('Microsoft YaHei', 9, 'bold')).pack(side=tk.LEFT)
+
+            # 分隔线
+            sep = ttk.Frame(top, height=1, style="TSeparator")
+            sep.pack(fill=tk.X, padx=12)
+
+            # 排行列表（可滚动区域）
+            canvas_frame = ttk.Frame(top)
+            canvas_frame.pack(fill=tk.BOTH, expand=True, padx=8, pady=4)
+
+            canvas = tk.Canvas(canvas_frame, highlightthickness=0, bd=0)
+            scrollbar = ttk.Scrollbar(canvas_frame, orient=tk.VERTICAL, command=canvas.yview)
+            scrollable_frame = ttk.Frame(canvas)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", tags="inner")
+            canvas.configure(yscrollcommand=scrollbar.set)
+            
+            # 绑定鼠标滚轮
+            def _on_mousewheel(event):
+                canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+            canvas.bind("<MouseWheel>", _on_mousewheel)
+            
+            # Canvas尺寸跟随scrolledFrame
+            def _on_canvas_configure(event):
+                canvas.itemconfig("inner", width=event.width)
+            canvas.bind("<Configure>", _on_canvas_configure)
+
+            canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+            sorted_records = sorted(self.usage_records.items(), key=lambda x: x[1], reverse=True)
+            max_seconds = sorted_records[0][1] if sorted_records else 1
+
+            for i, (scene_name, seconds) in enumerate(sorted_records, 1):
+                row_frame = ttk.Frame(scrollable_frame)
+                row_frame.pack(fill=tk.X, padx=8, pady=2)
+
+                # 排名
+                if i == 1:
+                    rank_color = "#eab308"
+                elif i == 2:
+                    rank_color = "#94a3b8"
+                elif i == 3:
+                    rank_color = "#cd853f"
+                else:
+                    rank_color = "#64748b"
+                ttk.Label(row_frame, text=f"#{i}", width=5, foreground=rank_color,
+                          font=('Microsoft YaHei', 9, 'bold')).pack(side=tk.LEFT)
+
+                # 场景名
+                ttk.Label(row_frame, text=scene_name, width=12,
+                          font=('Microsoft YaHei', 9)).pack(side=tk.LEFT)
+
+                # 时长 H:M:S
+                h = seconds // 3600
+                m = (seconds % 3600) // 60
+                s = seconds % 60
+                duration_str = f"{h:02d}:{m:02d}:{s:02d}"
+                ttk.Label(row_frame, text=duration_str, width=10,
+                          font=('Microsoft YaHei', 9)).pack(side=tk.LEFT)
+
+                # 间距
+                ttk.Label(row_frame, text="", width=2).pack(side=tk.LEFT)
+
+                # 百分比标签
+                pct = f"{seconds / max_seconds * 100:.1f}%"
+                ttk.Label(row_frame, text=pct, width=7,
+                          font=('Microsoft YaHei', 8)).pack(side=tk.LEFT)
+
+                # 数据条（Canvas）
+                bar_frame = tk.Frame(row_frame, height=16)
+                bar_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 0))
+                bar_frame.pack_propagate(False)
+
+                bar_canvas = tk.Canvas(bar_frame, height=16, highlightthickness=0, bd=0)
+                bar_canvas.pack(fill=tk.BOTH, expand=True)
+
+                bar_width = int((seconds / max_seconds) * 180) if max_seconds > 0 else 0
+                if bar_width > 0:
+                    if i == 1:
+                        color = "#6c5ce7"
+                    elif i == 2:
+                        color = "#3b82f6"
+                    elif i == 3:
+                        color = "#10b981"
+                    else:
+                        color = "#4a5568"
+                    bar_canvas.create_rectangle(0, 1, bar_width, 15, fill=color, outline="")
+
+        # 关闭按钮
+        btn_frame = ttk.Frame(top, padding="8")
+        btn_frame.pack(fill=tk.X)
+        ttk.Button(btn_frame, text="关闭", command=top.destroy, width=10).pack(side=tk.RIGHT, padx=5)
+
+        # 居中于主窗口
+        top.update_idletasks()
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_w = self.root.winfo_width()
+        main_h = self.root.winfo_height()
+        top_w = 520
+        top_h = 420
+        x = main_x + (main_w - top_w) // 2
+        y = main_y + (main_h - top_h) // 2
+        top.geometry(f"{top_w}x{top_h}+{x}+{y}")
 
     def _open_uu_remote(self):
         """打开UU远程官网"""
