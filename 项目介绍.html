@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.11 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.12 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.11</div>
+  <div class="nav-brand">YYS-AUTO V2.12</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,9 +584,9 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.11 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.12 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
-    <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、14 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
+    <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、15 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
       <span class="hero-tag python">Python 3.8+</span>
       <span class="hero-tag opencv">OpenCV</span>
@@ -595,15 +595,15 @@
     </div>
     <div class="stats-bar">
       <div class="stat-item fade-in stagger-1">
-        <div class="stat-value">~5400</div>
+        <div class="stat-value">~5500</div>
         <div class="stat-label">总代码行数</div>
       </div>
       <div class="stat-item fade-in stagger-2">
-        <div class="stat-value">14</div>
+        <div class="stat-value">15</div>
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">144</div>
+        <div class="stat-value">149</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -672,9 +672,9 @@
       <div class="card feature-card fade-in stagger-6">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127918;</div>
-          <div class="card-title">14 场景预设 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
+          <div class="card-title">15 场景预设 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
         </div>
-        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、活动爬塔、御灵、契灵等 14 种游戏场景自动化方案，覆盖日常主要玩法。</div>
+        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、活动爬塔、御灵、契灵、武道日常等 15 种游戏场景自动化方案，覆盖日常主要玩法。</div>
         <span class="feature-tag">一键切换</span>
       </div>
       <div class="card feature-card fade-in stagger-7">
@@ -805,6 +805,22 @@
         <div class="card-desc">V2.11 新增使用时长统计。按场景累计记录脚本运行时长，持久化保存到 usage_records.json，通过运行菜单栏「运行时长记录」查看各场景累计使用时间。</div>
         <span class="feature-tag">usage_records.json</span>
       </div>
+      <div class="card feature-card fade-in stagger-23">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#9876;&#65039;</div>
+          <div class="card-title">武道日常场景 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.12</span></div>
+        </div>
+        <div class="card-desc">V2.12 新增武道日常挑战自动化。识别挑战、锁定、奖励、胜利等节点，支持连续挑战，适配活动 200 次。</div>
+        <span class="feature-tag">wdrc.py</span>
+      </div>
+      <div class="card feature-card fade-in stagger-24">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#9881;&#65039;</div>
+          <div class="card-title">多线程匹配 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.12</span></div>
+        </div>
+        <div class="card-desc">V2.12 新增模板匹配多线程并行。主页可自行选择匹配线程数（1~8），利用 OpenCV 模板匹配释放 GIL 的特性实现真正并行，显著提升识别速度。</div>
+        <span class="feature-tag">并行匹配</span>
+      </div>
     </div>
   </div>
 </section>
@@ -821,7 +837,7 @@
     <p class="section-desc">完整的文件目录树，清晰展示项目组织方式</p>
     <div class="file-tree fade-in">
 <span class="folder">yys-auto/</span>                           <span class="comment">-- 项目根目录</span>
-├── <span class="file py">main.py</span>                          <span class="comment">-- 主程序入口 (~2714 行)</span>
+├── <span class="file py">main.py</span>                          <span class="comment">-- 主程序入口 (~2762 行)</span>
 ├── <span class="file py">image_recognizer.py</span>             <span class="comment">-- 图像识别引擎 (~444 行)</span>
 ├── <span class="file py">image_accelerator.py</span>           <span class="comment">-- 识别加速模块 (~333 行, V2.10)</span>
 ├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 日志系统 (~136 行)</span>
@@ -832,7 +848,7 @@
 ├── <span class="file lnk">运行程序.lnk</span>                    <span class="comment">-- Windows 快捷方式</span>
 ├── <span class="file bat">清除程序数据.bat</span>              <span class="comment">-- 清除配置与缓存</span>
 │
-├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录 (16 个)</span>
+├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录 (17 个)</span>
 │   ├── <span class="file py">yyh.py</span>                   <span class="comment">-- 业原火</span>
 │   ├── <span class="file py">htdr.py</span>                  <span class="comment">-- 魂土单人</span>
 │   ├── <span class="file py">sj.py</span>                    <span class="comment">-- 司机 (Driver)</span>
@@ -848,9 +864,10 @@
 │   ├── <span class="file py">guanbijiacheng.py</span>        <span class="comment">-- 关闭加成</span>
 │   ├── <span class="file py">dinghao.py</span>              <span class="comment">-- 被顶号处理</span>
 │   ├── <span class="file py">yl.py</span>                    <span class="comment">-- 御灵 (V2.10)</span>
-│   └── <span class="file py">ql.py</span>                    <span class="comment">-- 契灵 (V2.11)</span>
+│   ├── <span class="file py">ql.py</span>                    <span class="comment">-- 契灵 (V2.11)</span>
+│   └── <span class="file py">wdrc.py</span>                  <span class="comment">-- 武道日常 (V2.12)</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (144 张)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (149 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (7 张)</span>
 │   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
@@ -866,6 +883,7 @@
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
 │   ├── <span class="file media">yl/</span>                   <span class="comment">-- 御灵 (5 张, V2.10)</span>
 │   ├── <span class="file media">ql/</span>                   <span class="comment">-- 契灵 (9 张, V2.11)</span>
+│   ├── <span class="file media">wdrc/</span>                 <span class="comment">-- 武道日常 (5 张, V2.12)</span>
 │   ├── <span class="file media">dinghao.png</span>             <span class="comment">-- 顶号识别</span>
 │   └── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
 │
@@ -925,10 +943,10 @@
         <div class="module-detail-title">
           <span style="color:var(--accent-blue);">&#9632;</span> main.py -- 主程序入口
         </div>
-        <span class="module-detail-code">~2714 行</span>
+        <span class="module-detail-code">~2762 行</span>
       </div>
       <div class="module-detail-body">
-        应用程序的核心枢纽，包含所有 GUI 逻辑和自动化调度。基于 tkinter 构建，采用选项卡架构实现多设备并行管理。V2.11 新增各场景使用时长累计统计，保存至 usage_records.json。
+        应用程序的核心枢纽，包含所有 GUI 逻辑和自动化调度。基于 tkinter 构建，采用选项卡架构实现多设备并行管理。V2.11 新增各场景使用时长累计统计，保存至 usage_records.json；V2.12 新增模板匹配多线程并行（主页可选线程数）。
       </div>
       <div class="module-detail-tags">
         <span class="module-tag">AutoClickerUI</span>
@@ -939,6 +957,7 @@
         <span class="module-tag">系统通知</span>
         <span class="module-tag">被顶号检测</span>
         <span class="module-tag">使用时长记录</span>
+        <span class="module-tag">多线程匹配</span>
         <span class="module-tag">多线程</span>
         <span class="module-tag">JSON 配置</span>
       </div>
@@ -1048,7 +1067,7 @@
       <div class="section-icon pink">&#127918;</div>
       <h2 class="section-title">场景模块</h2>
     </div>
-    <p class="section-desc">16 个独立场景模块，每个模块封装完整的自动化流程。统一导出 handle_scene() 和 handle_no_recognition() 接口。</p>
+    <p class="section-desc">17 个独立场景模块，每个模块封装完整的自动化流程。统一导出 handle_scene() 和 handle_no_recognition() 接口。</p>
 
     <div class="scene-table-wrap fade-in">
       <table class="scene-table">
@@ -1173,6 +1192,13 @@
             <td><span class="scene-badge farm">刷图</span></td>
             <td>V2.11 新增。契灵结契自动化，识别挑战、锁定、奖励等节点，支持放弃结契/再次结契两种模式（功能设置中切换，默认放弃结契）。</td>
             <td>9</td>
+          </tr>
+          <tr>
+            <td><span class="scene-name">&#9876;&#65039; 武道日常</span></td>
+            <td><span class="scene-module">wdrc.py</span></td>
+            <td><span class="scene-badge farm">刷图</span></td>
+            <td>V2.12 新增。武道日常挑战自动化，识别挑战、锁定、奖励、胜利等节点，支持连续挑战，适配活动 200 次。</td>
+            <td>5</td>
           </tr>
         </tbody>
       </table>
@@ -1445,6 +1471,16 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.12</span>
+          <span class="changelog-date">2026-08-14</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>添加武道日常场景，只适配活动 200 次，新增 5 张武道日常模板图片</li>
+          <li>添加多线程匹配，在主页可自行选择匹配线程数（1~8），利用 OpenCV 释放 GIL 特性实现并行，提升识别速度</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.11</span>
           <span class="changelog-date">2026-08-07</span>
         </div>
@@ -1573,7 +1609,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.11</div>
+  <div class="footer-brand">YYS-AUTO V2.12</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

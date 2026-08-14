@@ -77,7 +77,7 @@ class ImageRecognizer:
         self.log_detail = True
 
         # 模板匹配并行线程数（OpenCV matchTemplate 释放 GIL，多线程加速明显）
-        self.match_workers = min(8, max(1, (os.cpu_count() or 1)))
+        self.match_workers = min(4, max(1, (os.cpu_count() or 1)))
 
         # 性能统计记录（供 run_once 汇总日志使用）
         self._last_screenshot_mode = "unknown"  # 截图方式: raw / png / raw(失败) 等

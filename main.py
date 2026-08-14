@@ -15,7 +15,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.v2.11'
+        myappid = 'yysauto.application.V2.12'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -130,6 +130,7 @@ import k280
 import yjsl
 import yl
 import ql
+import wdrc
 import jjtp
 import hdpt
 import guanbijiacheng
@@ -689,6 +690,7 @@ class DeviceTab:
         self.current_preset_var = tk.StringVar(value="业原火")
         self.current_preset = "业原火"
         self.target_count_var = tk.StringVar(value="200")  # 默认挑战200次
+        self.match_workers_var = tk.StringVar(value="1")   # 默认1线程
         self.current_count = 0
         self.tab_index = 0  # 标签索引
         self.saved_device = None  # 保存的设备（用于初始化）
@@ -712,6 +714,7 @@ class DeviceTab:
             "tab_name": self.tab_name if hasattr(self, 'tab_name') else "",
             "preset": self.current_preset,
             "target_count": self.target_count_var.get(),
+            "match_workers": self.match_workers_var.get(),
             "threshold": self.threshold_entry.get(),
             "preset_thresholds": self.preset_thresholds,
             "device": current_device
@@ -739,6 +742,8 @@ class DeviceTab:
             self.parent.root.after(100, lambda: self._set_preset_combo(config["preset"]))
         if config.get("target_count"):
             self.target_count_var.set(config["target_count"])
+        if config.get("match_workers"):
+            self.match_workers_var.set(config["match_workers"])
         if config.get("threshold"):
             self.threshold_entry.delete(0, tk.END)
             self.threshold_entry.insert(0, config["threshold"])
@@ -833,7 +838,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOv2.11", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOV2.12", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -893,13 +898,29 @@ class DeviceTab:
         self.target_count_entry.pack(side=tk.LEFT, padx=2)
         self.target_count_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
         
-        # 重置默认按钮
-        self.reset_btn = ttk.Button(device_card, text="重置默认", command=self.reset_defaults, width=18)
-        self.reset_btn.pack(fill=tk.X, padx=2, pady=5)
+        # 匹配线程数
+        workers_frame = ttk.Frame(device_card)
+        workers_frame.pack(fill=tk.X, pady=2)
+        ttk.Label(workers_frame, text="匹配线程：", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+        q_btn3 = ttk.Label(workers_frame, text="❓", font=('Microsoft YaHei', 9), cursor="hand2")
+        q_btn3.pack(side=tk.LEFT, padx=0)
+        ToolTip(q_btn3, "模板匹配的并行线程数。\n"
+                        "1 = 单线程（默认，兼容性最好）；\n"
+                        "2~8 = 多线程并行匹配，显著提升识别速度。\n"
+                        "OpenCV 的模板匹配会释放 GIL，多线程可真正并行。\n"
+                        "建议：CPU 核心多时设 4~8，老设备保持 1。\n"
+                        f"当前 CPU 核心数：{os.cpu_count() or '未知'}")
+        self.match_workers_entry = ttk.Entry(workers_frame, width=6, textvariable=self.match_workers_var)
+        self.match_workers_entry.pack(side=tk.LEFT, padx=2)
+        self.match_workers_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
         
-        # 复制运行参数按钮
-        self.copy_params_btn = ttk.Button(device_card, text="一键应用到所有", command=self.copy_run_params, width=18)
-        self.copy_params_btn.pack(fill=tk.X, padx=2, pady=(0, 5))
+        # 重置默认 & 一键应用按钮（同一行）
+        btn_frame = ttk.Frame(device_card)
+        btn_frame.pack(fill=tk.X, padx=2, pady=5)
+        self.reset_btn = ttk.Button(btn_frame, text="重置默认", command=self.reset_defaults)
+        self.reset_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 2))
+        self.copy_params_btn = ttk.Button(btn_frame, text="一键应用到所有", command=self.copy_run_params)
+        self.copy_params_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(2, 0))
         
         # 第二列：场景选择
         scene_card = ttk.LabelFrame(middle_frame, text="🎮 场景选择", padding="5")
@@ -971,6 +992,7 @@ class DeviceTab:
         # 重置默认值
         gui_logger.info(f"[{self.tab_name}] 点击按钮: 重置默认")
         self.target_count_var.set("200")
+        self.match_workers_var.set("1")
         self.preset_thresholds = {}  # 清除所有场景的阈值记忆
         # 直接用预设默认值设置阈值，避开on_preset_change的保存恢复逻辑
         preset = self.presets[self.current_preset]
@@ -984,6 +1006,7 @@ class DeviceTab:
         gui_logger.info(f"[{self.tab_name}] 点击按钮: 复制运行参数")
         threshold = self.threshold_entry.get().strip()
         target_count = self.target_count_var.get()
+        match_workers = self.match_workers_var.get()
         applied = 0
         skipped = 0
         for tab in self.parent.tabs:
@@ -995,8 +1018,9 @@ class DeviceTab:
             tab.threshold_entry.delete(0, tk.END)
             tab.threshold_entry.insert(0, threshold)
             tab.target_count_var.set(target_count)
+            tab.match_workers_var.set(match_workers)
             tab.save_tab_config()
-            tab.log(f"运行参数已同步：阈值={threshold}，次数={target_count}")
+            tab.log(f"运行参数已同步：阈值={threshold}，次数={target_count}，线程={match_workers}")
             applied += 1
         msg = f"已将运行参数应用到 {applied} 个标签"
         if skipped:
@@ -1075,6 +1099,8 @@ class DeviceTab:
             self.threshold_entry.config(state=tk.DISABLED)
         if hasattr(self, 'target_count_entry'):
             self.target_count_entry.config(state=tk.DISABLED)
+        if hasattr(self, 'match_workers_entry'):
+            self.match_workers_entry.config(state=tk.DISABLED)
         if hasattr(self, 'refresh_btn'):
             self.refresh_btn.config(state=tk.DISABLED)
         if hasattr(self, 'clear_device_btn'):
@@ -1098,6 +1124,8 @@ class DeviceTab:
             self.threshold_entry.config(state=tk.NORMAL)
         if hasattr(self, 'target_count_entry'):
             self.target_count_entry.config(state=tk.NORMAL)
+        if hasattr(self, 'match_workers_entry'):
+            self.match_workers_entry.config(state=tk.NORMAL)
         if hasattr(self, 'refresh_btn'):
             self.refresh_btn.config(state=tk.NORMAL)
         if hasattr(self, 'clear_device_btn'):
@@ -1281,6 +1309,15 @@ class DeviceTab:
         self.recognizer.click_y = preset["click_y"]
         self.recognizer.threshold = float(self.threshold_entry.get().strip())
         
+        # 设置模板匹配并行线程数
+        try:
+            workers = int(self.match_workers_var.get().strip())
+            workers = max(1, min(8, workers))
+        except (ValueError, AttributeError):
+            workers = 1
+        self.recognizer.match_workers = workers
+        self.log(f"匹配线程数: {workers}")
+        
         # 选择框中显示的设备已经是已连接状态，不再执行连接操作
         self.log(f"设备连接成功: {device}")
         
@@ -1463,6 +1500,10 @@ class DeviceTab:
                         hasattr(self.parent, 'ql_fangqi') and self.parent.ql_fangqi,
                         hasattr(self.parent, 'ql_zaici') and self.parent.ql_zaici
                     )
+                elif self.current_preset == "武道日常":
+                    stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan = wdrc.handle_scene(
+                        results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan
+                    )
                 elif self.current_preset == "结界突破":
                     stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan, switch_to_k28 = jjtp.handle_scene(
                         results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan, 
@@ -1640,9 +1681,9 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOv2.11")
-        self.root.geometry("640x440")
-        self.root.minsize(640, 440)  # 设置最小尺寸
+        self.root.title("YYS-AUTOV2.12")
+        self.root.geometry("640x460")
+        self.root.minsize(640, 460)  # 设置最小尺寸
 
         # 初始化标志
         self.initialized = False
@@ -1739,6 +1780,13 @@ class AutoClickerUI:
             },
             "契灵": {
                 "folder": "ql",
+                "click_x": 777,
+                "click_y": 666,
+                "threshold": 0.80,
+                "count_challenge": True
+            },
+            "武道日常": {
+                "folder": "wdrc",
                 "click_x": 777,
                 "click_y": 666,
                 "threshold": 0.80,
@@ -2176,7 +2224,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  v2.11", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  V2.12", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线
