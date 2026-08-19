@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.12 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.13 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.12</div>
+  <div class="nav-brand">YYS-AUTO V2.13</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,7 +584,7 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.12 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.13 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
     <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、15 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
@@ -595,7 +595,7 @@
     </div>
     <div class="stats-bar">
       <div class="stat-item fade-in stagger-1">
-        <div class="stat-value">~5500</div>
+        <div class="stat-value">~5600</div>
         <div class="stat-label">总代码行数</div>
       </div>
       <div class="stat-item fade-in stagger-2">
@@ -603,7 +603,7 @@
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">149</div>
+        <div class="stat-value">162</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -674,7 +674,7 @@
           <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127918;</div>
           <div class="card-title">15 场景预设 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
         </div>
-        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、活动爬塔、御灵、契灵、武道日常等 15 种游戏场景自动化方案，覆盖日常主要玩法。</div>
+        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、活动爬塔、御灵、契灵、大富翁等 15 种游戏场景自动化方案，覆盖日常主要玩法。</div>
         <span class="feature-tag">一键切换</span>
       </div>
       <div class="card feature-card fade-in stagger-7">
@@ -807,11 +807,11 @@
       </div>
       <div class="card feature-card fade-in stagger-23">
         <div class="card-header">
-          <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#9876;&#65039;</div>
-          <div class="card-title">武道日常场景 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.12</span></div>
+          <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#127922;</div>
+          <div class="card-title">大富翁场景 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.13</span></div>
         </div>
-        <div class="card-desc">V2.12 新增武道日常挑战自动化。识别挑战、锁定、奖励、胜利等节点，支持连续挑战，适配活动 200 次。</div>
-        <span class="feature-tag">wdrc.py</span>
+        <div class="card-desc">V2.13 新增大富翁活动自动化。识别出发、投掷、抢夺、挑战、奖励等节点自动游玩。升级大富翁等级需手动升级，第一次打怪前需配置阵容，此场景不计挑战次数。</div>
+        <span class="feature-tag">dfw.py</span>
       </div>
       <div class="card feature-card fade-in stagger-24">
         <div class="card-header">
@@ -837,7 +837,7 @@
     <p class="section-desc">完整的文件目录树，清晰展示项目组织方式</p>
     <div class="file-tree fade-in">
 <span class="folder">yys-auto/</span>                           <span class="comment">-- 项目根目录</span>
-├── <span class="file py">main.py</span>                          <span class="comment">-- 主程序入口 (~2762 行)</span>
+├── <span class="file py">main.py</span>                          <span class="comment">-- 主程序入口 (~2765 行)</span>
 ├── <span class="file py">image_recognizer.py</span>             <span class="comment">-- 图像识别引擎 (~444 行)</span>
 ├── <span class="file py">image_accelerator.py</span>           <span class="comment">-- 识别加速模块 (~333 行, V2.10)</span>
 ├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 日志系统 (~136 行)</span>
@@ -865,9 +865,9 @@
 │   ├── <span class="file py">dinghao.py</span>              <span class="comment">-- 被顶号处理</span>
 │   ├── <span class="file py">yl.py</span>                    <span class="comment">-- 御灵 (V2.10)</span>
 │   ├── <span class="file py">ql.py</span>                    <span class="comment">-- 契灵 (V2.11)</span>
-│   └── <span class="file py">wdrc.py</span>                  <span class="comment">-- 武道日常 (V2.12)</span>
+│   └── <span class="file py">dfw.py</span>                   <span class="comment">-- 大富翁 (V2.13)</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (149 张)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (162 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (7 张)</span>
 │   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
@@ -879,11 +879,11 @@
 │   ├── <span class="file media">k280/</span>                <span class="comment">-- 困28队员 (5 张)</span>
 │   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (14 张)</span>
 │   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (23 张)</span>
-│   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (12 张)</span>
+│   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (14 张)</span>
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
 │   ├── <span class="file media">yl/</span>                   <span class="comment">-- 御灵 (5 张, V2.10)</span>
 │   ├── <span class="file media">ql/</span>                   <span class="comment">-- 契灵 (9 张, V2.11)</span>
-│   ├── <span class="file media">wdrc/</span>                 <span class="comment">-- 武道日常 (5 张, V2.12)</span>
+│   ├── <span class="file media">dfw/</span>                   <span class="comment">-- 大富翁 (16 张, V2.13)</span>
 │   ├── <span class="file media">dinghao.png</span>             <span class="comment">-- 顶号识别</span>
 │   └── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
 │
@@ -943,7 +943,7 @@
         <div class="module-detail-title">
           <span style="color:var(--accent-blue);">&#9632;</span> main.py -- 主程序入口
         </div>
-        <span class="module-detail-code">~2762 行</span>
+        <span class="module-detail-code">~2765 行</span>
       </div>
       <div class="module-detail-body">
         应用程序的核心枢纽，包含所有 GUI 逻辑和自动化调度。基于 tkinter 构建，采用选项卡架构实现多设备并行管理。V2.11 新增各场景使用时长累计统计，保存至 usage_records.json；V2.12 新增模板匹配多线程并行（主页可选线程数）。
@@ -1162,8 +1162,8 @@
             <td><span class="scene-name">&#127775; 活动爬塔</span></td>
             <td><span class="scene-module">hdpt.py</span></td>
             <td><span class="scene-badge tower">爬塔</span></td>
-            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算，持续适配新活动（V2.8 适配 7/22 不相狐禅）。</td>
-            <td>12</td>
+            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算，持续适配新活动（V2.13 适配 8/19 洛天依）。</td>
+            <td>14</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#128260; 关闭加成</span></td>
@@ -1194,11 +1194,11 @@
             <td>9</td>
           </tr>
           <tr>
-            <td><span class="scene-name">&#9876;&#65039; 武道日常</span></td>
-            <td><span class="scene-module">wdrc.py</span></td>
+            <td><span class="scene-name">&#127922; 大富翁</span></td>
+            <td><span class="scene-module">dfw.py</span></td>
             <td><span class="scene-badge farm">刷图</span></td>
-            <td>V2.12 新增。武道日常挑战自动化，识别挑战、锁定、奖励、胜利等节点，支持连续挑战，适配活动 200 次。</td>
-            <td>5</td>
+            <td>V2.13 新增（8月19日洛天依活动）。识别出发、投掷、抢夺、挑战、奖励等节点自动游玩。升级大富翁等级需手动升级，第一次打怪前需配置阵容，此场景不计挑战次数。</td>
+            <td>16</td>
           </tr>
         </tbody>
       </table>
@@ -1471,6 +1471,17 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.13</span>
+          <span class="changelog-date">2026-08-19</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>删除武道日常场景</li>
+          <li>新增大富翁场景（dfw.py，16 张模板）：识别出发、投掷、抢夺、挑战等节点自动游玩；升级大富翁等级需手动升级，第一次打怪前需配置阵容，此场景不计挑战次数</li>
+          <li>更新活动爬塔场景，适配 8 月 19 日洛天依活动，模板图片 12 张增至 14 张</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.12</span>
           <span class="changelog-date">2026-08-14</span>
         </div>
@@ -1609,7 +1620,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.12</div>
+  <div class="footer-brand">YYS-AUTO V2.13</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

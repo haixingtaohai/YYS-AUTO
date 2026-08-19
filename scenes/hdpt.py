@@ -69,8 +69,14 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
                 stop_flag = True
                 break
         
-        # rukou1-4：点击图片坐标
-        elif any(f'rukou{i}' in name_lower for i in range(1, 5)):
+         # dfwrk/hdrk/tiaozhan/tiaozhan2：点击图片坐标，不记录次数
+        elif any(x in name_lower for x in ['dfwrk', 'hdrk', 'tiaozhan', 'pt']):
+            _click_random_center(recognizer, r)
+            consecutive_challenge = 0
+            last_clicked_chufa = False
+            continue
+        # hdrk：点击图片坐标
+        elif any(f'hdrk{i}' in name_lower for i in range(1, 5)):
             _click_random_center(recognizer, r)
             consecutive_challenge = 0
             last_clicked_tiaozhan = False
@@ -88,7 +94,13 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
             recognizer.click(random_x, random_y)
             consecutive_challenge = 0
             last_clicked_tiaozhan = False
-    
+
+         # rkjl/jiangli/jiangli2/jiangli3/shengli：点击通用坐标
+        elif any(x in name_lower for x in ['rkjl', 'jiangli', 'shengli']):
+            _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
+            consecutive_challenge = 0
+            last_clicked_chufa = False
+            continue
     return stop_flag, current_count, consecutive_challenge, last_clicked_tiaozhan
 
 def handle_no_recognition():

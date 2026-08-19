@@ -15,7 +15,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.V2.12'
+        myappid = 'yysauto.application.V2.13'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -130,7 +130,7 @@ import k280
 import yjsl
 import yl
 import ql
-import wdrc
+import dfw
 import jjtp
 import hdpt
 import guanbijiacheng
@@ -838,7 +838,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOV2.12", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOV2.13", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -1500,8 +1500,8 @@ class DeviceTab:
                         hasattr(self.parent, 'ql_fangqi') and self.parent.ql_fangqi,
                         hasattr(self.parent, 'ql_zaici') and self.parent.ql_zaici
                     )
-                elif self.current_preset == "武道日常":
-                    stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan = wdrc.handle_scene(
+                elif self.current_preset == "大富翁":
+                    stop_flag, self.current_count, consecutive_challenge, last_clicked_tiaozhan, need_wait = dfw.handle_scene(
                         results, self.recognizer, self.log, self.current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan
                     )
                 elif self.current_preset == "结界突破":
@@ -1608,8 +1608,11 @@ class DeviceTab:
                 
                 # 识别到图片执行点击后等待
                 if need_wait:
-                    # 困28单人和困28队长点击boss或putong后等待3秒
-                    time.sleep(3)
+                    # 困28单人和困28队长点击boss或putong后等待3秒，大富翁点击chufa后等待4秒
+                    if self.current_preset == "大富翁":
+                        time.sleep(5)
+                    else:
+                        time.sleep(3)
                 elif hasattr(self.recognizer, 'skip_sleep') and self.recognizer.skip_sleep:
                     sleep_time = self.recognizer.skip_sleep if isinstance(self.recognizer.skip_sleep, (int, float)) else 1
                     self.recognizer.skip_sleep = False
@@ -1681,7 +1684,7 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOV2.12")
+        self.root.title("YYS-AUTOV2.13")
         self.root.geometry("640x460")
         self.root.minsize(640, 460)  # 设置最小尺寸
 
@@ -1785,12 +1788,12 @@ class AutoClickerUI:
                 "threshold": 0.80,
                 "count_challenge": True
             },
-            "武道日常": {
-                "folder": "wdrc",
+            "大富翁": {
+                "folder": "dfw",
                 "click_x": 777,
                 "click_y": 666,
                 "threshold": 0.80,
-                "count_challenge": True
+                "count_challenge": False
             },
             "结界突破": {
                 "folder": "jjtp",
@@ -2224,7 +2227,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  V2.12", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  V2.13", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线
