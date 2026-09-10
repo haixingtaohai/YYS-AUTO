@@ -16,9 +16,10 @@ def _check_has_images(results):
     has_jingong = any('jingong' in r['name'].lower() for r in results)
     has_queren = any('queren' in r['name'].lower() for r in results)
     has_0q = any('0q' in r['name'].lower() for r in results)
+    has_exit = any('exit' in r['name'].lower() for r in results)
     has_tuichu = any('tuichu' in r['name'].lower() or 'tuichu2' in r['name'].lower() for r in results)
     has_shibai = any('shibai' in r['name'].lower() for r in results)
-    return has_suoding, has_jiangli, has_numbers, has_tansuo, has_pg0, has_jingong, has_queren, has_0q, has_tuichu, has_shibai
+    return has_suoding, has_jiangli, has_numbers, has_tansuo, has_pg0, has_jingong, has_queren, has_0q, has_exit, has_tuichu, has_shibai
 
 def _log_results(results, log):
     if results:
@@ -26,8 +27,8 @@ def _log_results(results, log):
             name_without_ext = r['name'].replace('.png', '')
             log(name_without_ext)
 
-def _handle_0q(has_0q, huijuan_mode, log, recognizer):
-    if not has_0q:
+def _handle_0q(has_0q, has_exit, huijuan_mode, log, recognizer):
+    if not has_0q and not has_exit:
         return False, None, None
     if huijuan_mode:
         log("切换困28")
@@ -288,13 +289,13 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
 
     _log_results(results, log)
 
-    has_suoding, has_jiangli, has_numbers, has_tansuo, has_pg0, has_jingong, has_queren, has_0q, has_tuichu, has_shibai = _check_has_images(results)
+    has_suoding, has_jiangli, has_numbers, has_tansuo, has_pg0, has_jingong, has_queren, has_0q, has_exit, has_tuichu, has_shibai = _check_has_images(results)
 
     # 识别到数字0-5时，使用0.7秒间隔
     if has_numbers:
         recognizer.skip_sleep = 0.55
 
-    should_return, stop_flag, switch_to_k28 = _handle_0q(has_0q, huijuan_mode, log, recognizer)
+    should_return, stop_flag, switch_to_k28 = _handle_0q(has_0q, has_exit, huijuan_mode, log, recognizer)
     if should_return:
         return stop_flag, current_count, consecutive_challenge, last_clicked_tiaozhan, switch_to_k28
 

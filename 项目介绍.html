@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.13 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.14 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.13</div>
+  <div class="nav-brand">YYS-AUTO V2.14</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,7 +584,7 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.13 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.14 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
     <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、15 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
@@ -603,7 +603,7 @@
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">162</div>
+        <div class="stat-value">163</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -867,7 +867,7 @@
 │   ├── <span class="file py">ql.py</span>                    <span class="comment">-- 契灵 (V2.11)</span>
 │   └── <span class="file py">dfw.py</span>                   <span class="comment">-- 大富翁 (V2.13)</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (162 张)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (163 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (7 张)</span>
 │   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
@@ -878,7 +878,7 @@
 │   ├── <span class="file media">k281/</span>                <span class="comment">-- 困28队长 (8 张)</span>
 │   ├── <span class="file media">k280/</span>                <span class="comment">-- 困28队员 (5 张)</span>
 │   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (14 张)</span>
-│   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (23 张)</span>
+│   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (24 张)</span>
 │   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (14 张)</span>
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
 │   ├── <span class="file media">yl/</span>                   <span class="comment">-- 御灵 (5 张, V2.10)</span>
@@ -1127,7 +1127,7 @@
             <td><span class="scene-name">&#128742; 困28单人</span></td>
             <td><span class="scene-module">k28.py</span></td>
             <td><span class="scene-badge tower">爬塔</span></td>
-            <td>噩梦二十八层单人模式，支持屏幕滑动探索。支持 5 种庭院识别（V2.9），智能识别 Boss 路线和普通敌人路线。</td>
+            <td>噩梦二十八层单人模式，支持屏幕滑动探索。支持 5 种庭院识别（V2.9），智能识别 Boss 路线和普通敌人路线。V2.14 更新困28识别图片。</td>
             <td>16</td>
           </tr>
           <tr>
@@ -1155,14 +1155,14 @@
             <td><span class="scene-name">&#128680; 结界突破</span></td>
             <td><span class="scene-module">jjtp.py</span></td>
             <td><span class="scene-badge farm">刷图</span></td>
-            <td>14 步自动战斗模式（card57），复杂的多步骤流程。V2.9 优化步骤提升清券速度。支持自动切换至/来自困28，绘卷模式核心。</td>
-            <td>23</td>
+            <td>14 步自动战斗模式（card57），复杂的多步骤流程。V2.9 优化步骤提升清券速度。支持自动切换至/来自困28，绘卷模式核心。V2.14 更新结界突破模板图片。</td>
+            <td>24</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#127775; 活动爬塔</span></td>
             <td><span class="scene-module">hdpt.py</span></td>
             <td><span class="scene-badge tower">爬塔</span></td>
-            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算，持续适配新活动（V2.13 适配 8/19 洛天依）。</td>
+            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算，持续适配新活动（V2.14 适配周年庆爬塔）。</td>
             <td>14</td>
           </tr>
           <tr>
@@ -1471,6 +1471,17 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.14</span>
+          <span class="changelog-date">2026-09-10</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>适配周年庆爬塔活动场景</li>
+          <li>更新困28识别图片</li>
+          <li>更新结界突破模板图片</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.13</span>
           <span class="changelog-date">2026-08-19</span>
         </div>
@@ -1620,7 +1631,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.13</div>
+  <div class="footer-brand">YYS-AUTO V2.14</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

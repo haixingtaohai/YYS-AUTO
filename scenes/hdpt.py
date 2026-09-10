@@ -70,7 +70,7 @@ def handle_scene(results, recognizer, log, current_count, target_count, count_ch
                 break
         
          # dfwrk/hdrk/tiaozhan/tiaozhan2：点击图片坐标，不记录次数
-        elif any(x in name_lower for x in ['dfwrk', 'hdrk', 'tiaozhan', 'pt']):
+        elif any(x in name_lower for x in ['dfwrk', 'hdrk', 'tiaozhan', 'pt' , 'rukou']):
             _click_random_center(recognizer, r)
             consecutive_challenge = 0
             last_clicked_chufa = False

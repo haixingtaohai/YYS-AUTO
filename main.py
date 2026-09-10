@@ -15,7 +15,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.V2.13'
+        myappid = 'yysauto.application.v2.14'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -838,7 +838,7 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOV2.13", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        ttk.Label(title_frame, text="YYS-AUTOv2.14", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -1684,7 +1684,7 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOV2.13")
+        self.root.title("YYS-AUTOv2.14")
         self.root.geometry("640x460")
         self.root.minsize(640, 460)  # 设置最小尺寸
 
@@ -2227,7 +2227,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  V2.13", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  v2.14", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线
