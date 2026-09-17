@@ -15,7 +15,7 @@ if os.name == 'nt':
     try:
         import ctypes
         # 设置应用程序用户模型 ID，这对 Windows 任务栏图标很重要
-        myappid = 'yysauto.application.v2.14'
+        myappid = 'yysauto.application.v2.15'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
@@ -113,6 +113,7 @@ def _recheck_ime_on_focus(widget):
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from image_recognizer import ImageRecognizer
 from adb import ADBManager, get_gui_logger
+import wav
 
 
 
@@ -135,6 +136,7 @@ import jjtp
 import hdpt
 import guanbijiacheng
 import dinghao
+import zoushen
 
 # GUI逻辑日志记录器
 gui_logger = get_gui_logger()
@@ -184,11 +186,26 @@ class SettingsTab:
         self.settings_dj_jinsheng_stop_var = tk.BooleanVar(value=self.parent.dj_jinsheng_stop)
         self.settings_ql_fangqi_var = tk.BooleanVar(value=self.parent.ql_fangqi)
         self.settings_ql_zaici_var = tk.BooleanVar(value=self.parent.ql_zaici)
-        self.settings_sound_var = tk.BooleanVar(value=self.parent.sound_enabled)
-        self.settings_sound_file_var = tk.StringVar(value=getattr(self.parent, 'sound_file', ''))
         self.settings_logging_var = tk.BooleanVar(value=self.parent.logging_enabled)
         self.settings_notify_var = tk.BooleanVar(value=self.parent.notify_enabled)
+        
+        # 提示音设置
+        wav.create_variables(self)
+        
+        # 走神模式设置
+        zoushen.create_variables(self)
     
+    def _add_section_help(self, group_frame, text):
+        """给设置页功能区的标题加上❓提示（悬停显示详细说明，与控制页运行参数一致）"""
+        title_frame = ttk.Frame(group_frame)
+        ttk.Label(title_frame, text=group_frame.cget("text")).pack(side=tk.LEFT)
+        q_btn = ttk.Label(title_frame, text="❓", font=('Microsoft YaHei', 9), cursor="hand2")
+        q_btn.pack(side=tk.LEFT, padx=(2, 0))
+        ToolTip(q_btn, text)
+        # 用自定义标题替换LabelFrame默认标题，使❓紧跟在区域名后
+        group_frame.configure(labelwidget=title_frame)
+        return q_btn
+
     def _toggle_ql_fangqi(self):
         if self.settings_ql_fangqi_var.get():
             self.settings_ql_zaici_var.set(False)
@@ -259,11 +276,8 @@ class SettingsTab:
         self.parent.ql_fangqi = self.settings_ql_fangqi_var.get()
         self.parent.ql_zaici = self.settings_ql_zaici_var.get()
 
-        old_sound_enabled = self.parent.sound_enabled
-        self.parent.sound_enabled = self.settings_sound_var.get()
-        self.parent.sound_file = self.settings_sound_file_var.get()
-        self._log_change(old_sound_enabled, self.parent.sound_enabled,
-                        "提示音已开启", "提示音已关闭")
+        # 提示音设置
+        wav.apply_settings(self)
         
         # 日志设置
         old_logging_enabled = self.parent.logging_enabled
@@ -280,6 +294,9 @@ class SettingsTab:
         set_notify_enabled(self.parent.notify_enabled)
         self._log_change(old_notify_enabled, self.parent.notify_enabled,
                         "系统通知已开启", "系统通知已关闭")
+        
+        # 走神模式设置
+        zoushen.apply_settings(self)
         
         self.parent.save_config()
     
@@ -382,7 +399,13 @@ class SettingsTab:
 
     def _create_notify_section(self, parent_frame):
         notify_group = ttk.LabelFrame(parent_frame, text="系统通知", padding="8")
-        notify_group.pack(fill=tk.X, pady=(0, 10))
+        notify_group.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        self._add_section_help(notify_group,
+            "任务结束时发送 Windows 系统通知（屏幕右下角弹窗）。\n"
+            "任务完成、次数达成、识别到指定图片时发送完成通知；\n"
+            "连续点击异常、被顶号等异常停止时发送错误通知。\n"
+            "“完成提示”/“错误提示”按钮用于测试通知能否正常弹出。\n"
+            "手动点击“停止”结束任务时不会发送通知。")
 
         top_row = ttk.Frame(notify_group)
         top_row.pack(fill=tk.X, pady=2)
@@ -397,6 +420,13 @@ class SettingsTab:
     def _create_adb_section(self, parent_frame):
         self.adb_group_frame = ttk.LabelFrame(parent_frame, text="ADB设备连接", padding="8")
         self.adb_group_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        self._add_section_help(self.adb_group_frame,
+            "填写模拟器/手机的 ADB 连接地址与端口，点击“连接”后生效。\n"
+            "ip地址：如果是本机模拟器连接，填写“127.0.0.1”；如果是局域网其他设备连接，填写设备的IP地址。\n"
+            "常用端口：16384（MuMu）、16416（MuMu）、7555（雷电）、62001（夜神旧版）、5555（USB调试）。\n"
+            "连接成功后，设备会出现在控制页的“设备选择”下拉框中；\n"
+            "若下拉框没有设备，先点“重启ADB”再重新连接。\n"
+            "运行中重启ADB会先停止所有标签的任务，期间连接区域会锁定。")
 
         ip_port_frame = ttk.Frame(self.adb_group_frame)
         ip_port_frame.pack(fill=tk.X, pady=2)
@@ -528,108 +558,6 @@ class SettingsTab:
         y = main_y + (main_h - d_h) // 2
         dialog.geometry(f"+{x}+{y}")
     
-    def _create_sound_section(self, parent_frame):
-        sound_group = ttk.LabelFrame(parent_frame, text="提示音设置", padding="8")
-        sound_group.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(5, 0))
-
-        # 开关行
-        top_row = ttk.Frame(sound_group)
-        top_row.pack(fill=tk.X, pady=2)
-        ttk.Checkbutton(top_row, text="启用提示音", variable=self.settings_sound_var,
-                        command=self.save_settings).pack(side=tk.LEFT)
-
-        # 音效文件选择
-        file_row = ttk.Frame(sound_group)
-        file_row.pack(fill=tk.X, pady=2)
-        ttk.Label(file_row, text="音效:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-        self.sound_combo = ttk.Combobox(file_row, width=14, state="readonly",
-                                         textvariable=self.settings_sound_file_var)
-        self.sound_combo.pack(side=tk.LEFT, padx=2)
-        self.sound_combo.bind("<<ComboboxSelected>>", lambda e: self.save_settings())
-        ttk.Button(file_row, text="试听", command=self._preview_sound, width=5).pack(side=tk.LEFT, padx=1)
-
-        # 操作按钮
-        btn_row = ttk.Frame(sound_group)
-        btn_row.pack(fill=tk.X, pady=2)
-        ttk.Button(btn_row, text="添加", command=self._add_sound_file, width=6).pack(side=tk.LEFT, padx=1)
-        ttk.Button(btn_row, text="删除", command=self._delete_sound_file, width=6).pack(side=tk.LEFT, padx=1)
-        ttk.Button(btn_row, text="刷新列表", command=self._refresh_sound_list, width=8).pack(side=tk.LEFT, padx=1)
-
-        # 初始化音效列表
-        self._refresh_sound_list()
-
-    def _get_wav_folder(self):
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), "wav")
-
-    def _refresh_sound_list(self):
-        """刷新音效文件列表"""
-        wav_folder = self._get_wav_folder()
-        files = []
-        if os.path.exists(wav_folder):
-            for f in sorted(os.listdir(wav_folder)):
-                if f.lower().endswith('.wav'):
-                    files.append(f)
-        self.sound_combo['values'] = files
-        current = self.settings_sound_file_var.get()
-        if current in files:
-            self.sound_combo.set(current)
-        elif files:
-            self.sound_combo.set(files[0])
-            self.settings_sound_file_var.set(files[0])
-
-    def _add_sound_file(self):
-        """添加音效文件"""
-        gui_logger.info("[设置] 点击按钮: 添加音效文件")
-        from tkinter import filedialog
-        wav_folder = self._get_wav_folder()
-        os.makedirs(wav_folder, exist_ok=True)
-        file_path = filedialog.askopenfilename(
-            title="选择WAV音频文件",
-            filetypes=[("WAV音频", "*.wav"), ("所有文件", "*.*")]
-        )
-        if file_path:
-            try:
-                filename = os.path.basename(file_path)
-                dest = os.path.join(wav_folder, filename)
-                import shutil
-                shutil.copy2(file_path, dest)
-                self._refresh_sound_list()
-                self.settings_sound_file_var.set(filename)
-                self.save_settings()
-            except Exception as e:
-                pass
-
-    def _delete_sound_file(self):
-        """删除选中的音效文件"""
-        gui_logger.info("[设置] 点击按钮: 删除音效文件")
-        filename = self.settings_sound_file_var.get()
-        if not filename:
-            return
-        wav_folder = self._get_wav_folder()
-        filepath = os.path.join(wav_folder, filename)
-        if os.path.exists(filepath):
-            try:
-                os.remove(filepath)
-                self._refresh_sound_list()
-                self.save_settings()
-            except Exception as e:
-                pass
-
-    def _preview_sound(self):
-        """试听选中的音效文件"""
-        gui_logger.info("[设置] 点击按钮: 试听音效")
-        filename = self.settings_sound_file_var.get()
-        if not filename or not filename.lower().endswith('.wav'):
-            return
-        wav_folder = self._get_wav_folder()
-        wav_path = os.path.join(wav_folder, filename)
-        if os.path.exists(wav_path):
-            try:
-                import winsound
-                winsound.PlaySound(wav_path, winsound.SND_FILENAME | winsound.SND_ASYNC)
-            except Exception as e:
-                pass
-
     def _open_log_folder(self):
         gui_logger.info("[设置] 点击按钮: 打开日志文件夹")
         from adb import get_log_dir
@@ -670,10 +598,13 @@ class SettingsTab:
         groups_container = ttk.Frame(main_frame)
         groups_container.pack(fill=tk.X, pady=(0, 10))
         self._create_adb_section(groups_container)
-        self._create_sound_section(groups_container)
+        wav.create_section(self, groups_container)
 
-        # 系统通知区
-        self._create_notify_section(main_frame)
+        # 系统通知区 + 走神设置区，同一行各占一半
+        notify_row = ttk.Frame(main_frame)
+        notify_row.pack(fill=tk.X, pady=(0, 10))
+        self._create_notify_section(notify_row)
+        zoushen.create_section(self, notify_row)
 
 class DeviceTab:
     def __init__(self, parent, tab_name, png_base_folder, presets):
@@ -701,6 +632,9 @@ class DeviceTab:
         
         # 场景使用计时
         self.scene_start_time = None
+        
+        # 走神模式：下次进入走神的时间戳（None=未启用/未调度）
+        self.zoushen_next_trigger_time = None
         
         self.setup_ui(tab_name)
     
@@ -757,6 +691,12 @@ class DeviceTab:
             self.parent.notebook.tab(self.frame, text=tab_name)
         except:
             pass
+        self._update_title_label()
+    
+    def _update_title_label(self):
+        # 标题处显示 版本号|标签名
+        if hasattr(self, 'title_label'):
+            self.title_label.config(text=f"YYS-AUTOv2.15|{self.tab_name}")
     
     def on_tab_name_changed(self, event=None):
         # 标签名称改变时保存 - 改为弹出窗口方式
@@ -799,6 +739,7 @@ class DeviceTab:
                     self.tab_name_label.config(text=new_name)
                 except:
                     pass
+                self._update_title_label()
                 self.save_tab_config()
             dialog.destroy()
         
@@ -838,7 +779,8 @@ class DeviceTab:
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(title_frame, text="YYS-AUTOv2.14", font=('Microsoft YaHei', 16, 'bold')).pack(anchor=tk.CENTER)
+        self.title_label = ttk.Label(title_frame, text=f"YYS-AUTOv2.15|{self.tab_name}", font=('Microsoft YaHei', 16, 'bold'))
+        self.title_label.pack(anchor=tk.CENTER)
         
         # 中间：三列布局
         middle_frame = ttk.Frame(main_frame)
@@ -1174,31 +1116,6 @@ class DeviceTab:
         self.log_text.config(state=tk.DISABLED)
         # 同步记录到GUI日志（场景分析输出）
         gui_logger.info(f"[{self.tab_name}] {message}")
-
-    def play_sound(self):
-        """播放提示音（非手动停止时调用）"""
-        if not hasattr(self.parent, 'sound_enabled') or not self.parent.sound_enabled:
-            return
-        try:
-            wav_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "wav")
-            if not os.path.exists(wav_folder):
-                return
-            # 优先使用用户选择的音效文件
-            sound_file = getattr(self.parent, 'sound_file', '')
-            if sound_file and sound_file.lower().endswith('.wav'):
-                wav_path = os.path.join(wav_folder, sound_file)
-                if os.path.exists(wav_path):
-                    import winsound
-                    winsound.PlaySound(wav_path, winsound.SND_FILENAME | winsound.SND_ASYNC)
-                    return
-            # 没有选择文件或文件不存在，尝试播放第一个wav
-            wav_files = [f for f in os.listdir(wav_folder) if f.lower().endswith('.wav')]
-            if wav_files:
-                wav_path = os.path.join(wav_folder, wav_files[0])
-                import winsound
-                winsound.PlaySound(wav_path, winsound.SND_FILENAME | winsound.SND_ASYNC)
-        except Exception as e:
-            pass
     
     def send_notification(self, reason):
         """发送系统通知（非手动停止时调用）
@@ -1360,6 +1277,10 @@ class DeviceTab:
 
         gui_logger.info(f"[{self.tab_name}] 开始运行循环 | 场景: {self.current_preset} | 目标次数: {target_count}")
 
+        # 初始化走神模式调度
+        self.zoushen_next_trigger_time = None
+        zoushen.schedule_next(self)
+
         consecutive_challenge = 0
         self.current_count = 0
         last_clicked_tiaozhan = False  # 记录上一次是否点击了tiaozhan
@@ -1399,6 +1320,10 @@ class DeviceTab:
                         tab.log("  队员已重置为未准备")
         
         while self.running:
+            # 走神模式：模拟玩家离开，暂停当前标签页的识别与点击
+            if zoushen.handle(self):
+                break  # 暂停期间被停止/重启ADB，走循环末尾既有的解锁收尾
+            
             results = self.recognizer.run_once()
             
             if results:
@@ -1549,7 +1474,7 @@ class DeviceTab:
                 if stop_flag:
                     # 非手动停止时播放提示音和发送系统通知
                     if not self.manual_stop:
-                        self.play_sound()
+                        wav.play(self)
                         if hasattr(self.recognizer, 'stop_reason') and self.recognizer.stop_reason:
                             self.send_notification(self.recognizer.stop_reason)
                     self.running = False
@@ -1684,7 +1609,7 @@ class DeviceTab:
 class AutoClickerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("YYS-AUTOv2.14")
+        self.root.title("YYS-AUTOv2.15")
         self.root.geometry("640x460")
         self.root.minsize(640, 460)  # 设置最小尺寸
 
@@ -1844,6 +1769,14 @@ class AutoClickerUI:
         # 系统通知设置
         self.notify_enabled = True
         
+        # 走神模式设置
+        self.zoushen_enabled = False        # 默认关闭
+        self.zoushen_trigger_min = 60       # 走神触发时间起始值（秒）
+        self.zoushen_trigger_max = 180      # 走神触发时间最终值（秒）
+        self.zoushen_duration_min = 5       # 走神持续时间起始值（秒）
+        self.zoushen_duration_max = 15      # 走神持续时间最终值（秒）
+        self.zoushen_whitelist = []         # 走神白名单场景（白名单内场景不触发走神）
+        
         # ADB设置
         self.adb_ip = "127.0.0.1"
         self.adb_port = "16384"
@@ -1924,6 +1857,19 @@ class AutoClickerUI:
                     if "notify_enabled" in config:
                         self.notify_enabled = config["notify_enabled"]
                         set_notify_enabled(self.notify_enabled)
+                    # 加载走神模式设置
+                    if "zoushen_enabled" in config:
+                        self.zoushen_enabled = config["zoushen_enabled"]
+                    if "zoushen_trigger_min" in config:
+                        self.zoushen_trigger_min = config["zoushen_trigger_min"]
+                    if "zoushen_trigger_max" in config:
+                        self.zoushen_trigger_max = config["zoushen_trigger_max"]
+                    if "zoushen_duration_min" in config:
+                        self.zoushen_duration_min = config["zoushen_duration_min"]
+                    if "zoushen_duration_max" in config:
+                        self.zoushen_duration_max = config["zoushen_duration_max"]
+                    if "zoushen_whitelist" in config:
+                        self.zoushen_whitelist = config["zoushen_whitelist"]
                     # 加载ADB设置
                     if "adb_ip" in config:
                         self.adb_ip = config["adb_ip"]
@@ -1958,6 +1904,13 @@ class AutoClickerUI:
             self.saved_config["logging_enabled"] = self.logging_enabled
             # 保存系统通知设置
             self.saved_config["notify_enabled"] = self.notify_enabled
+            # 保存走神模式设置
+            self.saved_config["zoushen_enabled"] = self.zoushen_enabled
+            self.saved_config["zoushen_trigger_min"] = self.zoushen_trigger_min
+            self.saved_config["zoushen_trigger_max"] = self.zoushen_trigger_max
+            self.saved_config["zoushen_duration_min"] = self.zoushen_duration_min
+            self.saved_config["zoushen_duration_max"] = self.zoushen_duration_max
+            self.saved_config["zoushen_whitelist"] = list(self.zoushen_whitelist)
             # 保存ADB设置
             self.saved_config["adb_ip"] = self.adb_ip
             self.saved_config["adb_port"] = self.adb_port
@@ -2227,7 +2180,7 @@ class AutoClickerUI:
         top.grab_set()
         
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  v2.14", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  v2.15", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
         
         # 装饰分隔线
@@ -2649,26 +2602,72 @@ class AutoClickerUI:
     def start_all_tabs(self):
         """一键开始所有标签任务"""
         gui_logger.info("点击按钮: 全部开始")
+        already_running = 0   # 点击前已在运行的标签数
+        no_device = 0         # 未选择设备而跳过的标签数
+        failed = 0            # 启动失败的标签数
+        started = 0           # 本次成功启动的标签数
         for tab in self.tabs:
-            if hasattr(tab, 'device_combo') and tab.device_combo.get() and not tab.running:
-                try:
-                    tab.start_loop()
-                except Exception as e:
-                    pass
-        if self.tabs:
-            self.tabs[0].log("已启动全部标签")
+            if tab.running:
+                already_running += 1
+                continue
+            if not (hasattr(tab, 'device_combo') and tab.device_combo.get()):
+                no_device += 1
+                continue
+            try:
+                tab.start_loop()
+            except:
+                failed += 1
+                continue
+            if tab.running:
+                started += 1
+            else:
+                failed += 1
+        
+        # 提示输出到所有标签，避免未选中的标签看不到结果
+        msg = f"全部开始：成功启动 {started} 个标签"
+        extra = []
+        if already_running > 0:
+            extra.append(f"点击前已有 {already_running} 个在运行")
+        if no_device > 0:
+            extra.append(f"{no_device} 个未选择设备")
+        if failed > 0:
+            extra.append(f"{failed} 个启动失败")
+        if extra:
+            msg += f"（{'，'.join(extra)}）"
+        for tab in self.tabs:
+            tab.log(msg)
 
     def stop_all_tabs(self):
         """一键停止所有标签任务"""
         gui_logger.info("点击按钮: 全部停止")
+        already_stopped = 0   # 点击前已停止的标签数
+        failed = 0            # 停止失败的标签数
+        stopped = 0           # 本次成功停止的标签数
         for tab in self.tabs:
+            if not tab.running:
+                already_stopped += 1
+                continue
+            try:
+                tab.stop_loop()
+            except:
+                failed += 1
+                continue
             if tab.running:
-                try:
-                    tab.stop_loop()
-                except Exception as e:
-                    pass
-        if self.tabs:
-            self.tabs[0].log("已停止全部标签")
+                failed += 1
+            else:
+                stopped += 1
+        
+        # 提示输出到所有标签，避免未选中的标签看不到结果
+        msg = f"全部停止：成功停止 {stopped} 个标签"
+        extra = []
+        if already_stopped > 0:
+            extra.append(f"点击前已有 {already_stopped} 个未运行")
+        if failed > 0:
+            extra.append(f"{failed} 个停止失败")
+        if extra:
+            msg += f"（{'，'.join(extra)}）"
+        for tab in self.tabs:
+            tab.log(msg)
     
     def delete_current_tab(self):
         gui_logger.info("点击按钮: 删除当前标签")
