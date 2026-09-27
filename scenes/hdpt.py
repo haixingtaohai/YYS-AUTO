@@ -1,107 +1,70 @@
-import random
-import time
+"""活动爬塔场景处理。
 
-def _click_random_center(recognizer, result):
-    """点击图片中心，随机偏移±10像素"""
-    x, y = result['center']
-    random_x = x + random.randint(-10, 10)
-    random_y = y + random.randint(-10, 10)
-    recognizer.click(random_x, random_y)
+识别结果按分支优先级处理：jujue > exit > suoding/tiaozhan > 其它。
+suoding 与 tiaozhan 同时出现时只点 suoding（先锁定再挑战）。
+"""
 
-def _click_random_xy(recognizer):
-    """点击通用坐标，随机偏移±10像素"""
-    random_x = recognizer.click_x + random.randint(-10, 10)
-    random_y = recognizer.click_y + random.randint(-10, 10)
-    recognizer.click(random_x, random_y)
+from __future__ import annotations
 
-def handle_scene(results, recognizer, log, current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan):
-    stop_flag = False
-    
-    # 检查是否同时识别到suoding和tiaozhan
-    has_suoding = any('suoding' in r['name'].lower() for r in results)
-    has_tiaozhan = any('tiaozhan' in r['name'].lower() or 'tiaoszhan' in r['name'].lower() for r in results)
-    
+from scenes.scene_api import SceneResult
+from scenes.scene_common import COUNT_OK, click_center, click_xy, count_challenge
+
+# 点击图片中心、不影响挑战计数的图片。注意 hdrk 会连带命中 hdrk1~hdrk4，
+# 而 tiaozhan 已被上面的分支拦截，列在这里只是为了保留原有的匹配集合。
+PASS_THROUGH_NAMES = ['dfwrk', 'hdrk', 'tiaozhan', 'pt', 'rukou']
+
+
+def handle_scene(ctx):
+    """处理一轮识别结果：先处理高优先级图片，挑战则计入次数。"""
+    state = ctx.state
+    recognizer = ctx.recognizer
+    log = ctx.log
+    results = ctx.results
+    stop = False
+
+    # 预检测：有 tiaozhan 时不点 suoding（先挑战后锁定）
+    has_tiaozhan = any('tiaozhan' in r['name'].lower() or 'tiaoszhan' in r['name'].lower()
+                       for r in results)
+
     for r in results:
-        name = r['name'].replace('.png', '')
-        log(name)
-        
+        log(r['name'].replace('.png', ''))
         name_lower = r['name'].lower()
-        
-        # 通用识别：jujue.png - 最高优先级
+
         if 'jujue' in name_lower:
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
-        
-        # exit：完成任务结束
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
         elif 'exit' in name_lower:
             log("任务完成")
             recognizer.stop_reason = "image"
-            stop_flag = True
+            stop = True
             break
-        
-        # suoding：仅在无tiaozhan同时出现时点击（有tiaozhan时先点挑战）
         elif 'suoding' in name_lower and not has_tiaozhan:
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
-        
-        # tiaozhan：有suoding时先点挑战
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
         elif 'tiaozhan' in name_lower or 'tiaoszhan' in name_lower:
-            _click_random_center(recognizer, r)
-            if count_challenge:
-                if not last_clicked_tiaozhan:
-                    recognizer.tiaozhan_count += 1
-                    current_count = recognizer.tiaozhan_count
-                    log(f"  挑战次数: {current_count}/{target_count}")
-                    if target_count > 0 and current_count >= target_count:
-                        log(f"达到目标挑战次数 {target_count}，结束脚本")
-                        recognizer.stop_reason = "count"
-                        stop_flag = True
-                        break
-                else:
-                    log("  连续点击挑战，不计入次数")
-            last_clicked_tiaozhan = True
-            consecutive_challenge += 1
-            if consecutive_challenge >= 4:
-                log("挑战失败：连续点击4次未识别到奖励")
-                recognizer.stop_reason = "anomaly"
-                stop_flag = True
+            click_center(recognizer, r)
+            if count_challenge(ctx) != COUNT_OK:
+                stop = True
                 break
-        
-         # dfwrk/hdrk/tiaozhan/tiaozhan2：点击图片坐标，不记录次数
-        elif any(x in name_lower for x in ['dfwrk', 'hdrk', 'tiaozhan', 'pt' , 'rukou']):
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_chufa = False
+        elif any(x in name_lower for x in PASS_THROUGH_NAMES):
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
             continue
-        # hdrk：点击图片坐标
-        elif any(f'hdrk{i}' in name_lower for i in range(1, 5)):
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
-        
-        # jiangli, jiangli3, mrjiangli, shengli：点击通用坐标
         elif 'jiangli' in name_lower or 'shengli' in name_lower:
-            _click_random_xy(recognizer)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
-        
-        # buji：点击1112，201坐标
+            click_xy(recognizer)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
         elif 'buji' in name_lower:
-            random_x = 1112 + random.randint(-10, 10)
-            random_y = 201 + random.randint(-10, 10)
-            recognizer.click(random_x, random_y)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
-
-         # rkjl/jiangli/jiangli2/jiangli3/shengli：点击通用坐标
-        elif any(x in name_lower for x in ['rkjl', 'jiangli', 'shengli']):
-            _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
-            consecutive_challenge = 0
-            last_clicked_chufa = False
+            # buji：点击固定坐标 1112, 201
+            click_xy(recognizer, 1112, 201)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
+        elif 'rkjl' in name_lower:
+            # 走到这里只可能是 rkjl —— jiangli/shengli 已在上面被拦截
+            click_xy(recognizer)
+            state.consecutive_challenge = 0
             continue
-    return stop_flag, current_count, consecutive_challenge, last_clicked_tiaozhan
 
-def handle_no_recognition():
-    return False, 0, False
+    return SceneResult(stop=stop)

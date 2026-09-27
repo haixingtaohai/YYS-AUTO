@@ -12,6 +12,7 @@ enable_logging = False
 class _FilterDisabled(logging.Filter):
     """当enable_logging为False时过滤掉所有日志"""
     def filter(self, record):
+        """日志过滤器：仅在开启日志记录时放行。"""
         return enable_logging
 
 def get_log_dir():
@@ -55,11 +56,12 @@ def set_logging_enabled(enabled):
 
 class ADBManager:
     def __init__(self):
+        """定位 adb 可执行文件并取日志记录器。"""
         self.adb_path = self._get_adb_path()
         self.logger = get_adb_logger()
     
     def _get_adb_path(self):
-        # 优先尝试调用同目录下platform-tools里的adb.exe
+        """优先用自带的 platform-tools/adb.exe，找不到时退回 PATH 上的 adb。"""
         adb_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "platform-tools", "adb.exe")
         if not os.path.exists(adb_path):
             # 最后尝试调用系统path中的adb
@@ -119,7 +121,7 @@ class ADBManager:
     
     def check_resolution(self, device):
         """
-        检查设备分辨率是否为1280*720或720*1280
+        检查设备分辨率：宽或高任意一个为720即可（如1280x720、720x1280、1600x720）
         """
         try:
             cmd = [self.adb_path, "-s", device, "shell", "wm", "size"]
@@ -127,9 +129,14 @@ class ADBManager:
             output = self._decode_output(result.stdout).strip()
             self.logger.info(f"命令: {' '.join(cmd)} | 返回: {output}")
             if "Physical size:" in output:
-                size_str = output.split("Physical size:")[1].strip()
-                if size_str == "1280x720" or size_str == "720x1280":
-                    return True
+                size_str = output.split("Physical size:")[1].strip().splitlines()[0].strip()
+                parts = size_str.split("x")
+                if len(parts) == 2:
+                    try:
+                        width, height = int(parts[0]), int(parts[1])
+                    except ValueError:
+                        return False
+                    return width == 720 or height == 720
             return False
         except Exception as e:
             self.logger.error(f"命令: {' '.join(cmd)} | 异常: {e}")

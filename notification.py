@@ -14,7 +14,7 @@ except ImportError:
 
 # 应用名称和标识
 _APP_NAME = "YYS-AUTO"
-_APP_ID = "yysauto.application.v2.15"
+_APP_ID = "yysauto.application.v2.16"
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _ICON_PATH = os.path.join(_BASE_DIR, "icon.ico")
 
@@ -23,6 +23,9 @@ if not os.path.exists(_ICON_PATH):
     _ICON_PATH = None
 
 # 确保 Windows Toast 能关联到正确的应用名称
+_registered = False
+
+
 def _register_app_name():
     """在开始菜单创建快捷方式，帮助 Windows 关联通知来源名称"""
     if sys.platform != 'win32':
@@ -71,7 +74,18 @@ if ($file) {{
     except Exception:
         pass  # 注册失败不影响通知功能
 
-_register_app_name()
+def ensure_registered():
+    """确保开始菜单里有带 AppUserModelID 的快捷方式，通知才能正确归属到应用名。
+
+    由 main() 在启动时调用。放在函数里而不是模块级，是为了让 `import ui.app`
+    （例如冒烟测试）不再顺带拉起一次 PowerShell。
+    """
+    global _registered
+    if _registered:
+        return
+    _registered = True
+    _register_app_name()
+
 
 # 通知开关状态（从配置读取）
 _notify_enabled = True

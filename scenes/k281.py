@@ -1,119 +1,105 @@
-import random
+"""困28队长场景处理。
+
+与困28单人（k28）的区别：没有 30q/绘卷切换，可点击的图片集合不同，并且多了
+has_recorded_challenge —— 同一轮里出现多个 boss/putong 时只有第一个计入次数。
+
+和 k28 一样，"连续点击挑战 4 次未识别到奖励"的计数是函数内局部量，每次调用从 0 开始。
+"""
+
+from __future__ import annotations
+
 import time
 
-def _click_random_center(recognizer, result):
-    x, y = result['center']
-    random_x = x + random.randint(-10, 10)
-    random_y = y + random.randint(-10, 10)
-    recognizer.click(random_x, random_y)
+from scenes.scene_api import SceneResult
+from scenes.scene_common import (
+    BOSS_COUNT_OK,
+    BOSS_STOP_OUTCOMES,
+    click_center,
+    click_xy,
+    count_boss_challenge,
+    log_results,
+    swipe_screen,
+)
 
-def _click_random_xy(recognizer, x, y):
-    random_x = x + random.randint(-10, 10)
-    random_y = y + random.randint(-10, 10)
-    recognizer.click(random_x, random_y)
+# 点击后需要主循环等待的图片
+CHALLENGE_NAMES = ('putong', 'boss')
+# 点击图片中心即可的图片（不计次数）
+CLICKABLE_NAMES = ('boss', 'jinru', 'putong', 'yaoqing')
+# 点击预设坐标的奖励类图片
+REWARD_NAMES = ('jiangli', 'jianglik28', 'shengli')
 
-def _log_results(results, log):
-    for r in results:
-        name = r['name'].replace('.png', '')
-        log(name)
 
-def _handle_swipe_screen(recognizer, log, device):
-    log("滑动屏幕")
-    try:
-        sx = 1100 + random.randint(-8, 8)
-        sy = 360 + random.randint(-8, 8)
-        ex = 200 + random.randint(-8, 8)
-        ey = 360 + random.randint(-8, 8)
-        
-        mx = 650 + random.randint(-20, 20)
-        my = 360 + random.randint(-10, 10)
-        
-        cmd1 = [recognizer.adb_path, "-s", device, "shell", "input", "swipe", str(sx), str(sy), str(mx), str(my), str(random.randint(180, 260))]
-        cmd2 = [recognizer.adb_path, "-s", device, "shell", "input", "swipe", str(mx), str(my), str(ex), str(ey), str(random.randint(220, 320))]
-        
-        __import__('subprocess').run(cmd1, capture_output=True, timeout=5)
-        __import__('subprocess').run(cmd2, capture_output=True, timeout=5)
-    except Exception as e:
-        pass
-    return False, 0, False
-
-def handle_scene(results, recognizer, log, current_count, target_count, count_challenge, consecutive_challenge, last_clicked_putong_boss):
-    consecutive_putong_boss = 0
-    stop_flag = False
+def handle_scene(ctx):
+    """处理一轮识别结果。"""
+    state = ctx.state
+    recognizer = ctx.recognizer
+    log = ctx.log
+    results = ctx.results
+    stop = False
     need_wait = False
-    
+
+    # 本轮的局部计数，不跨轮
+    consecutive_putong_boss = 0
+    has_recorded_challenge = False
+
     has_boss = any('boss' in r['name'].lower() for r in results)
     has_putong = any('putong' in r['name'].lower() for r in results)
-    has_recorded_challenge = False
-    
-    _log_results(results, log)
-    
+
+    log_results(results, log)
+
     for r in results:
         name_lower = r['name'].lower()
-        
+
         if 'jujue' in name_lower:
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
             continue
-        
+
+        # boss 和 putong 同时出现时只处理 boss
         if has_boss and has_putong and 'putong' in name_lower:
             continue
 
         if 'ssl' in name_lower:
-            _click_random_xy(recognizer, 46, 31)
-            consecutive_challenge = 0
+            click_xy(recognizer, 46, 31)
+            state.consecutive_challenge = 0
             continue
-        
+
         if 'baozang' in name_lower:
-            _click_random_center(recognizer, r)
+            click_center(recognizer, r)
             time.sleep(0.5)
-            _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
-            consecutive_challenge = 0
+            click_xy(recognizer)
+            state.consecutive_challenge = 0
             continue
-        
-        clickable = ['boss', 'jinru', 'putong', 'yaoqing']
-        if any(x in name_lower for x in clickable):
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            
-            if count_challenge and ('putong' in name_lower or 'boss' in name_lower):
-                if not has_recorded_challenge:
-                    if not last_clicked_putong_boss:
-                        recognizer.tiaozhan_count += 1
-                        current_count = recognizer.tiaozhan_count
-                        log(f"  挑战次数: {current_count}/{target_count}")
-                        if target_count > 0 and current_count >= target_count:
-                            log(f"达到目标挑战次数 {target_count}，结束脚本")
-                            recognizer.stop_reason = "count"
-                            stop_flag = True
-                            break
-                    else:
-                        log("  连续点击挑战，不计入次数")
-                    last_clicked_putong_boss = True
-                    consecutive_putong_boss += 1
-                    has_recorded_challenge = True
-                    if consecutive_putong_boss >= 4:
-                        log("挑战失败：连续点击4次未识别到奖励")
-                        recognizer.stop_reason = "anomaly"
-                        stop_flag = True
-                        break
-                    if 'putong' in name_lower or 'boss' in name_lower:
-                        need_wait = True
-                else:
-                    last_clicked_putong_boss = True
+
+        if any(x in name_lower for x in CLICKABLE_NAMES):
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+
+            if state.count_challenge and any(x in name_lower for x in CHALLENGE_NAMES):
+                # 队长一轮里可能同时识别到 boss 和 putong，只计第一次
+                outcome = count_boss_challenge(ctx, consecutive_putong_boss,
+                                               has_recorded_challenge, dedupe_round=True)
+                consecutive_putong_boss = outcome.consecutive
+                has_recorded_challenge = outcome.recorded
+                if outcome.outcome in BOSS_STOP_OUTCOMES:
+                    stop = True
+                    break
+                if outcome.outcome == BOSS_COUNT_OK:
+                    need_wait = True
             else:
-                last_clicked_putong_boss = False
+                state.last_clicked_putong_boss = False
                 consecutive_putong_boss = 0
             continue
-        
-        reward_names = ['jiangli', 'jianglik28', 'shengli']
-        if any(x in name_lower for x in reward_names):
-            _click_random_xy(recognizer, recognizer.click_x, recognizer.click_y)
-            consecutive_challenge = 0
-            consecutive_putong_boss = 0
-            last_clicked_putong_boss = False
-    
-    return stop_flag, current_count, consecutive_challenge, last_clicked_putong_boss, need_wait
 
-def handle_no_recognition(recognizer, log, device):
-    return _handle_swipe_screen(recognizer, log, device)
+        if any(x in name_lower for x in REWARD_NAMES):
+            click_xy(recognizer)
+            state.consecutive_challenge = 0
+            consecutive_putong_boss = 0
+            state.last_clicked_putong_boss = False
+
+    return SceneResult(stop=stop, need_wait=need_wait)
+
+
+def handle_no_recognition(ctx):
+    """连续 5 次没识别到图片时滑一次屏，重新找目标。"""
+    swipe_screen(ctx.recognizer, ctx.log, ctx.recognizer.device)

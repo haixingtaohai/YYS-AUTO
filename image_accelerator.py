@@ -15,11 +15,14 @@ except ImportError:
 
     # 如果 Numba 未安装，提供一个空的装饰器
     def jit(*args, **kwargs):
+        """Numba 不可用时的空装饰器，原样返回被装饰的函数。"""
         def decorator(func):
+            """原样返回传入的函数。"""
             return func
         return decorator
 
     def prange(n):
+        """Numba 不可用时的 prange 替身，退化成普通 range。"""
         return range(n)
 
 

@@ -1,39 +1,39 @@
-import random
-import time
+"""困28队员场景处理。
 
-def handle_scene(results, recognizer, log, current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan):
-    stop_flag = False
-    
+队员不统计挑战次数，只按图片类型点击：jujue / baozang / jieshou 点图片中心，
+jiangli 系列点预设坐标。
+"""
+
+from __future__ import annotations
+
+from scenes.scene_api import SceneResult
+from scenes.scene_common import click_center, click_xy
+
+# 点击预设坐标（recognizer.click_x / click_y）的奖励类图片
+REWARD_NAMES = ['jiangli', 'jianglik28', 'shengli']
+
+
+def handle_scene(ctx):
+    """处理一轮识别结果。"""
+    state = ctx.state
+    recognizer = ctx.recognizer
+    log = ctx.log
+    results = ctx.results
+
     for r in results:
-        name = r['name'].replace('.png', '')
-        log(name)
-        
+        log(r['name'].replace('.png', ''))
         name_lower = r['name'].lower()
-        
-        # 保留识别通用图片jujue.png点击图片坐标
-        if 'jujue' in name_lower:
-            x, y = r['center']
-            random_x = x + random.randint(-10, 10)
-            random_y = y + random.randint(-10, 10)
-            recognizer.click(random_x, random_y)
-            consecutive_challenge = 0
-        # 点击图片坐标的图片：baozang、jieshou
-        elif 'baozang' in name_lower or 'jieshou' in name_lower:
-            x, y = r['center']
-            random_x = x + random.randint(-10, 10)
-            random_y = y + random.randint(-10, 10)
-            recognizer.click(random_x, random_y)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
-        # 点击通用指定坐标的图片：jiangli、jianglik28、shengli
-        elif 'jiangli' in name_lower or 'jianglik28' in name_lower or 'shengli' in name_lower:
-            random_x = recognizer.click_x + random.randint(-10, 10)
-            random_y = recognizer.click_y + random.randint(-10, 10)
-            recognizer.click(random_x, random_y)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
-    
-    return stop_flag, current_count, consecutive_challenge, last_clicked_tiaozhan
 
-def handle_no_recognition(recognizer, log, device):
-    return False, 0, False
+        if 'jujue' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+        elif 'baozang' in name_lower or 'jieshou' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
+        elif any(x in name_lower for x in REWARD_NAMES):
+            click_xy(recognizer)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
+
+    return SceneResult()

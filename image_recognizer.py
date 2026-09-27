@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import subprocess
 import os
-import sys
 import time
 import logging
 from concurrent.futures import ThreadPoolExecutor
@@ -15,8 +14,6 @@ try:
         parse_raw_screencap,
         bgr_to_gray,
         match_template as numba_match_template,
-        decode_jpeg,
-        decode_jpeg_to_gray,
         get_acceleration_status,
         HAS_NUMBA,
         HAS_TURBOJPEG,
@@ -28,10 +25,9 @@ except ImportError:
     parse_raw_screencap = None
     bgr_to_gray = None
     numba_match_template = None
-    decode_jpeg = None
-    decode_jpeg_to_gray = None
 
     def get_acceleration_status():
+        """加速模块不可用时的占位实现。"""
         return {'numba': False, 'turbojpeg': False}
 
 def get_image_logger():
@@ -50,6 +46,7 @@ def get_image_logger():
 
 class ImageRecognizer:
     def __init__(self):
+        """写入识别参数与缓存的默认值；设备与模板目录由调用方设置。"""
         self.adb_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "platform-tools", "adb.exe")
         if not os.path.exists(self.adb_path):
             self.adb_path = "adb"
@@ -111,6 +108,7 @@ class ImageRecognizer:
             self.gui_logger.info(f"加速模块已加载: PyTurboJPEG")
 
     def connect_device(self):
+        """执行 adb connect，返回 (是否成功, 提示信息)。"""
         try:
             cmd = [self.adb_path, "connect", self.device]
             result = subprocess.run(cmd, capture_output=True, timeout=10)
@@ -226,6 +224,7 @@ class ImageRecognizer:
             return None
 
     def click(self, x, y):
+        """在设备上点击 (x, y)，返回是否成功。"""
         try:
             cmd = [self.adb_path, "-s", self.device, "shell", "input", "tap", str(x), str(y)]
             result = subprocess.run(cmd, capture_output=True, timeout=5)
@@ -258,6 +257,7 @@ class ImageRecognizer:
         return (template_gray, w, h)
     
     def find_template(self, screenshot, template_path, template_name=None):
+        """在截图中匹配单个模板（项目中未被调用，保留作调试入口）。"""
         # 使用缓存的模板
         cached = self._get_cached_template(template_path)
         if cached is None:
@@ -291,6 +291,7 @@ class ImageRecognizer:
             return None
 
     def get_all_templates(self):
+        """枚举识别目录下的模板 png；设了 folder 就只扫该目录。"""
         templates = []
         
         # 使用folder如果设置了，否则使用png_folder
@@ -324,6 +325,7 @@ class ImageRecognizer:
         return templates
 
     def stop(self):
+        """请求停止识别（把 running 置 False）。"""
         self.running = False
         print("\n正在停止...")
 
@@ -368,6 +370,7 @@ class ImageRecognizer:
         return tmpl, None, detail
     
     def run_once(self):
+        """执行一轮识别，返回识别结果列表；截图失败返回 None。"""
         # 重置上一轮的匹配详情
         self._last_matches_detail = []
         t_total_start = time.perf_counter()

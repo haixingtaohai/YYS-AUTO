@@ -1,24 +1,34 @@
 {
-  "last_tab": 0,
+  "last_tab": 2,
   "tabs": {
     "1": {
-      "tab_name": "大号",
+      "tab_name": "心意相通",
       "preset": "结界突破",
-      "target_count": "300",
+      "target_count": "0",
+      "match_workers": "4",
       "threshold": "0.8",
       "preset_thresholds": {
         "业原火": "0.8",
         "活动爬塔": "0.8",
         "结界突破": "0.8",
         "队员": "0.8",
-        "困28单人": "0.8"
+        "困28单人": "0.8",
+        "道馆": "0.8",
+        "御灵": "0.8",
+        "斗技": "0.8",
+        "契灵": "0.8",
+        "困28队长": "0.8",
+        "司机": "0.8",
+        "武道日常": "0.8",
+        "大富翁": "0.8"
       },
       "device": "emulator-5554"
     },
     "2": {
-      "tab_name": "小号",
+      "tab_name": "织梦之墟",
       "preset": "结界突破",
-      "target_count": "300",
+      "target_count": "40",
+      "match_workers": "4",
       "threshold": "0.8",
       "preset_thresholds": {
         "结界突破": "0.8",
@@ -32,7 +42,11 @@
         "魂土单人": "0.8",
         "困28队员": "0.8",
         "队员": "0.8",
-        "斗技": "0.8"
+        "斗技": "0.8",
+        "御灵": "0.8",
+        "契灵": "0.8",
+        "武道日常": "0.8",
+        "大富翁": "0.8"
       },
       "device": "emulator-5556"
     }
@@ -47,7 +61,22 @@
   "logging_enabled": true,
   "adb_ip": "127.0.0.1",
   "adb_port": "16384",
-  "window_geometry": "640x420+-757+909",
+  "window_geometry": "640x440+-788+902",
   "notify_enabled": true,
-  "dinghao_wait": 30
+  "dinghao_wait": 30,
+  "ql_fangqi": true,
+  "ql_zaici": false,
+  "zoushen_enabled": true,
+  "zoushen_trigger_min": 60,
+  "zoushen_trigger_max": 180,
+  "zoushen_duration_min": 5,
+  "zoushen_duration_max": 15,
+  "zoushen_whitelist": [
+    "司机",
+    "队员",
+    "道馆",
+    "困28队长",
+    "困28队员",
+    "结界突破"
+  ]
 }

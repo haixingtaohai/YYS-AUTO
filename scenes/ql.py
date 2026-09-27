@@ -1,91 +1,69 @@
-import random
+"""契灵场景处理。
 
-def _click_random_center(recognizer, result):
-    x, y = result['center']
-    random_x = x + random.randint(-10, 10)
-    random_y = y + random.randint(-10, 10)
-    recognizer.click(random_x, random_y)
+分支优先级：jujue > suoding > 探查/结契挑战 > jiangli 系列 > fangqi/zaici。
+有 suoding 时不点挑战。fangqi 与 zaici 互为互斥选项：选了一个就屏蔽另一个。
+"""
 
-def _click_random_xy(recognizer):
-    random_x = recognizer.click_x + random.randint(-10, 10)
-    random_y = recognizer.click_y + random.randint(-10, 10)
-    recognizer.click(random_x, random_y)
+from __future__ import annotations
 
-def handle_scene(results, recognizer, log, current_count, target_count, count_challenge, consecutive_challenge, last_clicked_tiaozhan, ql_fangqi=False, ql_zaici=False):
-    stop_flag = False
+from scenes.scene_api import SceneResult
+from scenes.scene_common import COUNT_OK, click_center, click_xy, count_challenge, log_results
 
-    # 先记录日志
-    for r in results:
-        name = r['name'].replace('.png', '')
-        log(name)
 
-    # 预检测：suoding和挑战同时出现时，只点suoding
+def handle_scene(ctx):
+    """处理一轮识别结果：先处理高优先级图片，挑战则计入次数。"""
+    state = ctx.state
+    recognizer = ctx.recognizer
+    log = ctx.log
+    results = ctx.results
+    options = ctx.options
+    stop = False
+
+    log_results(results, log)
+
+    # 预检测：suoding 和挑战同时出现时，只点 suoding
     has_suoding = any('suoding' in r['name'].lower() for r in results)
 
-    # 处理逻辑
     for r in results:
         name_lower = r['name'].lower()
 
-        # 通用识别：jujue 优先级最高
         if 'jujue' in name_lower:
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
             continue
 
-        # suoding：仅在suoding出现时点击（优先级高于挑战）
         if 'suoding' in name_lower:
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
             continue
 
-        # tancha-tiaozhan / jieqi-tiaozhan：仅在没有suoding时才点击
         if ('tancha-tiaozhan' in name_lower or 'jieqi-tiaozhan' in name_lower) and not has_suoding:
-            _click_random_center(recognizer, r)
-            if count_challenge:
-                if not last_clicked_tiaozhan:
-                    recognizer.tiaozhan_count += 1
-                    current_count = recognizer.tiaozhan_count
-                    log(f"  挑战次数: {current_count}/{target_count}")
-                    if target_count > 0 and current_count >= target_count:
-                        log(f"达到目标挑战次数 {target_count}，结束脚本")
-                        recognizer.stop_reason = "count"
-                        stop_flag = True
-                        break
-                else:
-                    log("  连续点击挑战，不计入次数")
-            last_clicked_tiaozhan = True
-            consecutive_challenge += 1
-            if consecutive_challenge >= 4:
-                log("挑战失败：连续点击4次未识别到奖励")
-                recognizer.stop_reason = "anomaly"
-                stop_flag = True
+            click_center(recognizer, r)
+            if count_challenge(ctx) != COUNT_OK:
+                stop = True
                 break
             continue
 
-        # jiangli/jiangli3/shengli：点击通用坐标
-        if 'jiangli' in name_lower or 'shengli' in name_lower or "jiangli4" in name_lower:
-            _click_random_xy(recognizer)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
+        if 'jiangli' in name_lower or 'shengli' in name_lower or 'jiangli4' in name_lower:
+            click_xy(recognizer)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
             continue
 
-        # fangqi：再次结契模式时屏蔽
-        if 'fangqi' in name_lower and not ql_zaici:
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
+        # fangqi：再次结契模式下屏蔽
+        if 'fangqi' in name_lower and not options.ql_zaici:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
             continue
 
-        # zaici：放弃结契模式时屏蔽
-        if 'zaici' in name_lower and not ql_fangqi:
-            _click_random_center(recognizer, r)
-            consecutive_challenge = 0
-            last_clicked_tiaozhan = False
+        # zaici：放弃结契模式下屏蔽
+        if 'zaici' in name_lower and not options.ql_fangqi:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
             continue
 
-    return stop_flag, current_count, consecutive_challenge, last_clicked_tiaozhan
-
-def handle_no_recognition():
-    return False, 0, False
+    return SceneResult(stop=stop)

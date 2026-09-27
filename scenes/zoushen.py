@@ -1,8 +1,8 @@
-"""走神模式：模拟真实玩家无法实时观察屏幕的行为
+"""随机暂停状态：模拟真实玩家无法实时观察屏幕的行为
 
 包含两部分：
 1. 运行期逻辑：随机抽取触发时间，到点暂停当前标签页的识别与点击，倒计时结束后恢复
-2. 设置页UI：走神设置区（开关/参数/白名单）与白名单勾选弹窗
+2. 设置页UI：随机暂停设置区（开关/参数/白名单）与白名单勾选弹窗
 """
 import random
 import time
@@ -15,10 +15,10 @@ gui_logger = get_gui_logger()
 
 # 推荐默认值
 DEFAULT_ENABLED = False
-DEFAULT_TRIGGER_MIN = 60      # 走神触发时间起始值（秒）
-DEFAULT_TRIGGER_MAX = 180     # 走神触发时间最终值（秒）
-DEFAULT_DURATION_MIN = 5      # 走神持续时间起始值（秒）
-DEFAULT_DURATION_MAX = 15     # 走神持续时间最终值（秒）
+DEFAULT_TRIGGER_MIN = 60      # 随机暂停触发时间起始值（秒）
+DEFAULT_TRIGGER_MAX = 180     # 随机暂停触发时间最终值（秒）
+DEFAULT_DURATION_MIN = 5      # 随机暂停持续时间起始值（秒）
+DEFAULT_DURATION_MAX = 15     # 随机暂停持续时间最终值（秒）
 TRIGGER_MAX_LIMIT = 3600      # 触发时间上限（秒）
 DURATION_MAX_LIMIT = 600      # 持续时间上限（秒）
 
@@ -26,10 +26,11 @@ DURATION_MAX_LIMIT = 600      # 持续时间上限（秒）
 # ---------------------------- 运行期逻辑 ----------------------------
 
 def get_params(parent):
-    """读取走神参数（带兜底与区间归一化）
+    """读取随机暂停参数（带兜底与区间归一化）
     返回 (启用, 触发下限, 触发上限, 持续下限, 持续上限)
     """
     def _get(name, default, max_value):
+        """从设置页变量读一个整数，非法时回退到默认值。"""
         try:
             value = int(getattr(parent, name, default))
         except (TypeError, ValueError):
@@ -51,13 +52,13 @@ def get_params(parent):
 
 
 def is_whitelisted(parent, preset):
-    """场景是否在走神白名单内（白名单内场景不触发走神）"""
+    """场景是否在随机暂停白名单内（白名单内场景不触发随机暂停）"""
     whitelist = getattr(parent, 'zoushen_whitelist', None) or []
     return preset in whitelist
 
 
 def schedule_next(tab):
-    """抽取下一次走神触发时间；未启用或场景在白名单内时清空"""
+    """抽取下一次随机暂停触发时间；未启用或场景在白名单内时清空"""
     enabled, trigger_min, trigger_max, _, _ = get_params(tab.parent)
     if not enabled or is_whitelisted(tab.parent, tab.current_preset):
         tab.zoushen_next_trigger_time = None
@@ -67,12 +68,12 @@ def schedule_next(tab):
 
 
 def wait(tab, seconds):
-    """走神等待：分片检查tab.running，停止/重启ADB时可立即退出
+    """随机暂停等待：分片检查tab.running，停止/重启ADB时可立即退出
     返回True=等待完成，False=已被停止
     """
     if seconds <= 0:
         return True
-    tab.log(f"走神模式：暂停 {seconds} 秒")
+    tab.log(f"随机暂停状态：暂停 {seconds} 秒")
     start_time = time.time()
     next_remain = seconds - 1  # 下一次要输出的剩余秒数
     while True:
@@ -83,18 +84,18 @@ def wait(tab, seconds):
         if elapsed >= seconds:
             break
         if next_remain > 0 and elapsed >= seconds - next_remain:
-            tab.log(f"走神模式：剩余 {next_remain} 秒")
+            tab.log(f"随机暂停状态：剩余 {next_remain} 秒")
             next_remain -= 1
     return True
 
 
 def handle(tab):
-    """主循环顶部的走神检查；返回True表示等待期间被停止，需要退出循环"""
+    """主循环顶部的随机暂停检查；返回True表示等待期间被停止，需要退出循环"""
     if tab.zoushen_next_trigger_time is None:
         # 未调度时尝试调度（未启用或白名单场景会在内部直接清空）
         schedule_next(tab)
     elif is_whitelisted(tab.parent, tab.current_preset):
-        # 切换到白名单场景：取消本次走神
+        # 切换到白名单场景：取消本次随机暂停
         tab.zoushen_next_trigger_time = None
     elif time.time() >= tab.zoushen_next_trigger_time:
         enabled, _, _, duration_min, duration_max = get_params(tab.parent)
@@ -102,7 +103,7 @@ def handle(tab):
             pause_seconds = random.randint(duration_min, duration_max)
             if not wait(tab, pause_seconds):
                 return True
-            tab.log("走神模式结束，恢复任务")
+            tab.log("随机暂停状态结束，恢复任务")
         schedule_next(tab)
     return False
 
@@ -110,7 +111,7 @@ def handle(tab):
 # ---------------------------- 设置页 ----------------------------
 
 def create_variables(settings_tab):
-    """创建设置页走神参数变量"""
+    """创建设置页随机暂停参数变量"""
     parent = settings_tab.parent
     settings_tab.settings_zoushen_enabled_var = tk.BooleanVar(value=parent.zoushen_enabled)
     settings_tab.settings_zoushen_trigger_min_var = tk.StringVar(value=str(parent.zoushen_trigger_min))
@@ -120,26 +121,26 @@ def create_variables(settings_tab):
 
 
 def apply_settings(settings_tab):
-    """把设置页的走神参数写回父对象"""
+    """把设置页的随机暂停参数写回父对象"""
     parent = settings_tab.parent
     old_enabled = parent.zoushen_enabled
     parent.zoushen_enabled = settings_tab.settings_zoushen_enabled_var.get()
     settings_tab._log_change(old_enabled, parent.zoushen_enabled,
-                            "走神模式已启用", "走神模式已关闭")
+                            "随机暂停已启用", "随机暂停已关闭")
     
-    # 走神参数：非数字/负数/越界一律忽略并保留旧值
+    # 随机暂停参数：非数字/负数/越界一律忽略并保留旧值
     _apply_int(settings_tab, settings_tab.settings_zoushen_trigger_min_var,
-               'zoushen_trigger_min', TRIGGER_MAX_LIMIT, "走神触发时间起始值")
+               'zoushen_trigger_min', TRIGGER_MAX_LIMIT, "随机暂停触发时间起始值")
     _apply_int(settings_tab, settings_tab.settings_zoushen_trigger_max_var,
-               'zoushen_trigger_max', TRIGGER_MAX_LIMIT, "走神触发时间最终值")
+               'zoushen_trigger_max', TRIGGER_MAX_LIMIT, "随机暂停触发时间最终值")
     _apply_int(settings_tab, settings_tab.settings_zoushen_duration_min_var,
-               'zoushen_duration_min', DURATION_MAX_LIMIT, "走神持续时间起始值")
+               'zoushen_duration_min', DURATION_MAX_LIMIT, "随机暂停持续时间起始值")
     _apply_int(settings_tab, settings_tab.settings_zoushen_duration_max_var,
-               'zoushen_duration_max', DURATION_MAX_LIMIT, "走神持续时间最终值")
+               'zoushen_duration_max', DURATION_MAX_LIMIT, "随机暂停持续时间最终值")
 
 
 def _apply_int(settings_tab, var, attr_name, max_value, label):
-    """应用单个走神整数参数：非法值忽略并保留旧值（与dinghao_wait等参数一致）"""
+    """应用单个随机暂停整数参数：非法值忽略并保留旧值（与dinghao_wait等参数一致）"""
     try:
         value = int(var.get().strip())
     except:
@@ -154,8 +155,8 @@ def _apply_int(settings_tab, var, attr_name, max_value, label):
 
 
 def reset_defaults(settings_tab):
-    """重置走神参数为推荐值"""
-    gui_logger.info("[设置] 点击按钮: 重置走神推荐值")
+    """重置随机暂停参数为推荐值"""
+    gui_logger.info("[设置] 点击按钮: 重置随机暂停推荐值")
     defaults = (
         ('zoushen_trigger_min', DEFAULT_TRIGGER_MIN, settings_tab.settings_zoushen_trigger_min_var),
         ('zoushen_trigger_max', DEFAULT_TRIGGER_MAX, settings_tab.settings_zoushen_trigger_max_var),
@@ -169,30 +170,30 @@ def reset_defaults(settings_tab):
     settings_tab.save_settings()
     if len(settings_tab.parent.tabs) > 0:
         settings_tab.parent.tabs[0].log(
-            f"已重置走神推荐值（触发{DEFAULT_TRIGGER_MIN}~{DEFAULT_TRIGGER_MAX}秒，"
+            f"已重置随机暂停推荐值（触发{DEFAULT_TRIGGER_MIN}~{DEFAULT_TRIGGER_MAX}秒，"
             f"持续{DEFAULT_DURATION_MIN}~{DEFAULT_DURATION_MAX}秒）")
 
 
 def create_section(settings_tab, parent_frame):
-    """构建走神设置区"""
-    zoushen_group = ttk.LabelFrame(parent_frame, text="走神设置", padding="8")
+    """构建随机暂停设置区"""
+    zoushen_group = ttk.LabelFrame(parent_frame, text="随机暂停设置", padding="8")
     zoushen_group.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(5, 0))
     settings_tab._add_section_help(zoushen_group,
         "模拟真实玩家无法一直盯着屏幕：到时间后暂停当前标签页的识别与点击，倒计时结束再恢复。\n"
-        "触发时间：任务开始后在该区间内随机取一个值作为倒计时，到点进入走神；\n"
-        "持续时间：进入走神后在该区间内随机取一个值作为暂停时长。\n"
-        "白名单：勾选的场景不会触发走神。\n"
-        "暂停期间点“停止”或“重启ADB”会立即中断走神。\n"
+        "触发时间：任务开始后在该区间内随机取一个值作为倒计时，到点进入随机暂停状态；\n"
+        "持续时间：进入随机暂停状态后在该区间内随机取一个值作为暂停时长。\n"
+        "白名单：勾选的场景不会触发随机暂停。\n"
+        "暂停期间点“停止”或“重启ADB”会立即中断随机暂停。\n"
         "推荐值：触发 60~180 秒，持续 5~15 秒（可点“重置推荐值”恢复）。")
 
     top_row = ttk.Frame(zoushen_group)
     top_row.pack(fill=tk.X, pady=2)
-    ttk.Checkbutton(top_row, text="启用走神模式", variable=settings_tab.settings_zoushen_enabled_var,
+    ttk.Checkbutton(top_row, text="启用随机暂停状态", variable=settings_tab.settings_zoushen_enabled_var,
                     command=settings_tab.save_settings).pack(side=tk.LEFT)
     ttk.Button(top_row, text="重置推荐值", command=lambda: reset_defaults(settings_tab),
                width=10).pack(side=tk.LEFT, padx=(8, 0))
 
-    # 走神触发时间区间（秒）
+    # 随机暂停触发时间区间（秒）
     trigger_row = ttk.Frame(zoushen_group)
     trigger_row.pack(fill=tk.X, pady=2)
     ttk.Label(trigger_row, text="触发时间:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
@@ -205,7 +206,7 @@ def create_section(settings_tab, parent_frame):
     settings_tab.zoushen_trigger_max_entry.bind('<FocusOut>', lambda e: settings_tab.save_settings())
     ttk.Label(trigger_row, text="秒", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
 
-    # 走神持续时间区间（秒）
+    # 随机暂停持续时间区间（秒）
     duration_row = ttk.Frame(zoushen_group)
     duration_row.pack(fill=tk.X, pady=2)
     ttk.Label(duration_row, text="持续时间:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
@@ -218,7 +219,7 @@ def create_section(settings_tab, parent_frame):
     settings_tab.zoushen_duration_max_entry.bind('<FocusOut>', lambda e: settings_tab.save_settings())
     ttk.Label(duration_row, text="秒", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
 
-    # 走神白名单（白名单内场景不触发走神）
+    # 随机暂停白名单（白名单内场景不触发随机暂停）
     whitelist_row = ttk.Frame(zoushen_group)
     whitelist_row.pack(fill=tk.X, pady=2)
     ttk.Label(whitelist_row, text="白名单:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
@@ -237,30 +238,30 @@ def refresh_whitelist_label(settings_tab):
 
 
 def apply_whitelist(settings_tab, scenes):
-    """应用走神白名单并输出日志"""
+    """应用随机暂停白名单并输出日志"""
     settings_tab.parent.zoushen_whitelist = list(scenes)
     refresh_whitelist_label(settings_tab)
     settings_tab.save_settings()
     if len(settings_tab.parent.tabs) > 0:
         if scenes:
-            settings_tab.parent.tabs[0].log(f"走神白名单已设置：{'、'.join(scenes)}")
+            settings_tab.parent.tabs[0].log(f"随机暂停白名单已设置：{'、'.join(scenes)}")
         else:
-            settings_tab.parent.tabs[0].log("走神白名单已清空（所有场景均会走神）")
+            settings_tab.parent.tabs[0].log("随机暂停白名单已清空（所有场景均会随机暂停）")
 
 
 def show_whitelist_dialog(settings_tab):
-    """弹窗设置走神白名单场景"""
-    gui_logger.info("[设置] 点击按钮: 设置走神白名单")
+    """弹窗设置随机暂停白名单场景"""
+    gui_logger.info("[设置] 点击按钮: 设置随机暂停白名单")
     scenes = list(settings_tab.parent.presets.keys())
     current = set(getattr(settings_tab.parent, 'zoushen_whitelist', None) or [])
 
     dialog = tk.Toplevel(settings_tab.parent.root)
-    dialog.title("走神白名单设置")
+    dialog.title("随机暂停白名单设置")
     dialog.resizable(False, False)
     dialog.transient(settings_tab.parent.root)
     dialog.grab_set()
 
-    ttk.Label(dialog, text="勾选的场景不会触发走神模式:", font=('Microsoft YaHei', 9)).pack(padx=20, pady=(15, 5))
+    ttk.Label(dialog, text="勾选的场景不会触发随机暂停状态:", font=('Microsoft YaHei', 9)).pack(padx=20, pady=(15, 5))
 
     list_frame = ttk.Frame(dialog)
     list_frame.pack(padx=20, pady=5)
@@ -273,6 +274,7 @@ def show_whitelist_dialog(settings_tab):
         ttk.Checkbutton(list_frame, text=scene, variable=var).grid(row=row, column=col, sticky=tk.W, padx=6, pady=2)
 
     def select_all(value):
+        """全选或全不选白名单。"""
         for var in scene_vars.values():
             var.set(value)
 
@@ -282,6 +284,7 @@ def show_whitelist_dialog(settings_tab):
     ttk.Button(tools_frame, text="清空", command=lambda: select_all(False), width=8).pack(side=tk.LEFT, padx=5)
 
     def on_ok():
+        """应用白名单选择并关闭对话框。"""
         apply_whitelist(settings_tab, [s for s in scenes if scene_vars[s].get()])
         dialog.destroy()
 
