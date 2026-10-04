@@ -4,7 +4,7 @@
 
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
 [![Version](https://img.shields.io/badge/Version-V2.16-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
