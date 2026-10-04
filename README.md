@@ -433,24 +433,27 @@ bat\install.bat
 
 ## 许可证
 
-本项目采用 [**Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International（CC BY-NC-SA 4.0）**](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议。
+本项目采用 [**PolyForm Noncommercial License 1.0.0**](https://polyformproject.org/licenses/noncommercial/1.0.0/) 许可协议。
 
-[![CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
 
 这意味着你可以：
 
-- ✅ **共享** —— 在任何媒介以任何形式复制、发行本作品
-- ✅ **演绎** —— 修改、转换或以本作品为基础进行创作
+- ✅ **使用** —— 以任何非商业目的运行、复制本项目
+- ✅ **修改** —— 修改、转换或以本项目为基础进行创作
+- ✅ **分发** —— 在非商业目的下分发原版或修改版
 
 但必须遵守以下条件：
 
-- 📝 **署名** —— 必须给出适当的署名，提供指向本许可协议的链接，并标明是否作出了修改
-- 🚫 **非商业性使用** —— 不得将本作品用于商业目的
-- 🔄 **相同方式共享** —— 若修改、转换或以本作品为基础进行创作，必须采用与本协议相同的许可协议分发你的贡献作品
+- 🚫 **非商业性使用** —— 不得将本项目或其衍生作品用于任何商业目的
+- 📄 **附带许可证** —— 分发时必须提供本许可证副本或指向本许可证的链接
+- 📝 **保留声明** —— 不得移除版权声明和许可证声明
+- 🔄 **相同许可证分发** —— 分发修改版或衍生作品时，必须继续遵守 PolyForm Noncommercial 1.0.0
+- ⚠️ **不得附加限制** —— 不得对本许可证授予的权利附加额外条款或限制
 
-完整法律文本请访问：<https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode>
+完整法律文本请访问：<https://polyformproject.org/licenses/noncommercial/1.0.0/>
 
----
+> 注意：由于禁止商业使用，PolyForm Noncommercial 1.0.0 不属于 OSI 定义的开源许可证，而是 source-available 许可证。
 
 <div align="center">
 
