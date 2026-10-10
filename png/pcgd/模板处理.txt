@@ -1,0 +1,7 @@
+jixu.jpg  通用坐标
+panchang.jpg   图片坐标
+rukou.jpg		图片坐标
+suoding.jpg		图片坐标，优先级第一
+tiaozhan1.jpg	图片坐标，记录挑战次数
+tiaozhan5.jpg	图片坐标，记录挑战次数
+zhandou.jpg		图片坐标

@@ -14,7 +14,7 @@ except ImportError:
 
 # 应用名称和标识
 _APP_NAME = "YYS-AUTO"
-_APP_ID = "yysauto.application.v2.16"
+_APP_ID = "yysauto.application.v2.17"
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _ICON_PATH = os.path.join(_BASE_DIR, "icon.ico")
 

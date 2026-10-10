@@ -73,7 +73,7 @@ def check_no_duplicate_scene_modules():
 
     duplicated = [n for n in sys.modules
                   if n in ("yyh", "htdr", "sj", "dy", "dj", "dg", "k28", "k281",
-                           "k280", "yjsl", "yl", "ql", "dfw", "jjtp", "hdpt",
+                           "k280", "yjsl", "yl", "ql", "dfw", "jjtp", "hdpt", "pcgd",
                            "zoushen", "dinghao", "guanbijiacheng")]
     check("没有顶层的重复场景模块", not duplicated, f"(发现 {duplicated})")
 
@@ -110,7 +110,7 @@ def check_gui_constructs():
             check("notebook 已建立", hasattr(app, "notebook"))
             check("settings_tab 已建立", hasattr(app, "settings_tab"))
             check("tabs 非空", len(app.tabs) > 0, f"(实际 {len(app.tabs)})")
-            check("presets 有 15 个场景", len(app.presets) == 15,
+            check("presets 有 14 个场景", len(app.presets) == 14,
                   f"(实际 {len(app.presets)})")
             check("saved_config 是 dict", isinstance(app.saved_config, dict))
 

@@ -5,11 +5,11 @@
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Version](https://img.shields.io/badge/Version-V2.16-blue.svg)](使用文档第一次使用必看/更新日志.txt)
+[![Version](https://img.shields.io/badge/Version-V2.17-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
 [![GUI](https://img.shields.io/badge/GUI-Tkinter-orange.svg)](#技术栈)
-[![Templates](https://img.shields.io/badge/模板图片-163%20张-success.svg)](#场景一览)
+[![Templates](https://img.shields.io/badge/模板图片-141%20张-success.svg)](#场景一览)
 
 </div>
 
@@ -46,9 +46,9 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 
 | 指标 | 数值 |
 | :--- | :--- |
-| 当前版本 | **V2.16**（2026-09-28） |
-| 场景预设 | **15** 个 |
-| 模板图片 | **163** 张 |
+| 当前版本 | **V2.17**（2026-10-10） |
+| 场景预设 | **14** 个 |
+| 模板图片 | **141** 张 |
 | 代码行数 | 约 6100 行 |
 | 运行平台 | Windows（Python 3.8+，兼容 3.11） |
 | 多设备 | 支持，每个标签页独立线程控制一台模拟器 |
@@ -83,7 +83,7 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 
 ## 场景一览
 
-15 个场景预设，覆盖日常主要玩法。所有场景统一导出 `handle_scene(ctx)` 接口，返回 `SceneResult`（是否停止 / 是否等待 / 切换到哪个场景）。
+14 个场景预设，覆盖日常主要玩法。所有场景统一导出 `handle_scene(ctx)` 接口，返回 `SceneResult`（是否停止 / 是否等待 / 切换到哪个场景）。
 
 | 场景 | 模块 | 类型 | 说明 | 模板数 |
 | :--- | :--- | :--- | :--- | ---: |
@@ -98,10 +98,9 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 | 🤝 困28队员 | `k280.py` | 组队 | 困28 队员版本，被动跟随队长 | 5 |
 | 🏆 英杰试炼 | `yjsl.py` | 爬塔 | 多阶段挑战，自动通过各阶段关卡 | 14 |
 | 🚨 结界突破 | `jjtp.py` | 刷图 | 多步骤自动战斗，绘卷模式核心 | 24 |
-| 🌟 活动爬塔 | `hdpt.py` | 爬塔 | 限时活动爬塔，持续适配新活动 | 14 |
 | 💎 御灵 | `yl.py` | 刷图 | 御灵副本自动挑战，支持层数选择与连续挑战 | 5 |
 | 💎 契灵 | `ql.py` | 刷图 | 契灵结契自动化，支持放弃 / 再次结契两种模式 | 9 |
-| 🎲 大富翁 | `dfw.py` | 刷图 | 识别出发、投掷、抢夺、挑战等节点自动游玩 | 16 |
+| 🏔️ 磐长故地 | `pcgd.py` | 刷图 | 活动积分场景，识别入口 / 战场 / 战斗 / 挑战 / 继续，识别 `exit` 完成任务 | 8 |
 
 **辅助模块**（非预设，由主流程自动调用）
 
@@ -150,7 +149,7 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 yys-auto/
 ├── main.py                  # 启动入口：sys.path、进程标识、图标、主窗口
 ├── paths.py                 # 路径常量（全部由 ROOT_DIR 推导）
-├── presets.py               # 15 个场景预设表
+├── presets.py               # 14 个场景预设表
 ├── image_recognizer.py      # OpenCV 模板匹配识别引擎
 ├── image_accelerator.py     # Numba JIT / PyTurboJPEG 加速模块（可选）
 ├── adb.py                   # ADB 设备管理 + 日志基础设施
@@ -177,8 +176,8 @@ yys-auto/
 │   ├── scene_common.py      # 点击、日志、滑屏、挑战计数等公用函数
 │   ├── registry.py          # 预设名 → 场景模块映射
 │   ├── yyh.py / htdr.py / sj.py / dy.py / dj.py / dg.py
-│   ├── k28.py / k281.py / k280.py / yjsl.py / jjtp.py / hdpt.py
-│   ├── yl.py / ql.py / dfw.py
+│   ├── k28.py / k281.py / k280.py / yjsl.py / jjtp.py / pcgd.py
+│   ├── yl.py / ql.py
 │   └── guanbijiacheng.py / dinghao.py / zoushen.py
 │
 ├── tools/                   # 开发辅助脚本（不参与运行）
@@ -188,7 +187,7 @@ yys-auto/
 │   ├── find_dead_code.py    # return 之后的死代码检查
 │   └── comment_ratio.py     # 注释密度统计
 │
-├── png/                     # 模板图片（163 张，按场景分目录）
+├── png/                     # 模板图片（141 张，按场景分目录）
 ├── wav/                     # 提示音音效（6 个）
 ├── logs/                    # 运行日志（GUIlog / adb / image）
 ├── bat/
@@ -399,13 +398,11 @@ bat\install.bat
 
 ## 更新日志
 
-当前版本 **V2.16**（2026-09-28）：
+当前版本 **V2.17**（2026-10-10）：
 
-- 走神模式更名为「随机暂停状态」
-- 修复活动爬塔场景识别到 `rkjl` 时崩溃的问题
-- 重构代码结构，原 2700 余行的 `main.py` 拆分为 `ui/` 包与 `paths.py`、`presets.py`
-- 统一 15 个场景模块的接口，重复的辅助函数合并到 `scene_common.py`，主循环改用场景注册表派发
-- 加固易出错处：阈值非数字、场景名异常、日志目录不可读、链接打不开等情况不再中断流程
+- 删除活动爬塔和大富翁场景（仅移除入口，场景实现文件保留）
+- 新增磐长故地场景（`pcgd.py`，10 月 10 日咲耶活动积分场景），识别到 `exit` 视为任务完成并停止运行
+- 识别引擎支持 `.jpg` / `.jpeg` 模板图片
 
 完整版本历史见 [`使用文档第一次使用必看/更新日志.txt`](使用文档第一次使用必看/更新日志.txt)。
 

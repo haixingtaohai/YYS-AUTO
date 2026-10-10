@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.16 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.17 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.16</div>
+  <div class="nav-brand">YYS-AUTO V2.17</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,9 +584,9 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.16 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.17 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
-    <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、15 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
+    <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、14 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
       <span class="hero-tag python">Python 3.8+</span>
       <span class="hero-tag opencv">OpenCV</span>
@@ -595,15 +595,15 @@
     </div>
     <div class="stats-bar">
       <div class="stat-item fade-in stagger-1">
-        <div class="stat-value">~6100</div>
+        <div class="stat-value">~6300</div>
         <div class="stat-label">总代码行数</div>
       </div>
       <div class="stat-item fade-in stagger-2">
-        <div class="stat-value">15</div>
+        <div class="stat-value">14</div>
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">163</div>
+        <div class="stat-value">141</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -672,9 +672,9 @@
       <div class="card feature-card fade-in stagger-6">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127918;</div>
-          <div class="card-title">15 场景预设 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
+          <div class="card-title">14 场景预设 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
         </div>
-        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、活动爬塔、御灵、契灵、大富翁等 15 种游戏场景自动化方案，覆盖日常主要玩法。</div>
+        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、御灵、契灵、磐长故地等 14 种游戏场景自动化方案，覆盖日常主要玩法。</div>
         <span class="feature-tag">一键切换</span>
       </div>
       <div class="card feature-card fade-in stagger-7">
@@ -853,14 +853,14 @@
     <p class="section-desc">完整的文件目录树，清晰展示项目组织方式</p>
     <div class="file-tree fade-in">
 <span class="folder">yys-auto/</span>                           <span class="comment">-- 项目根目录</span>
-├── <span class="file py">main.py</span>                          <span class="comment">-- 启动入口 (~86 行)</span>
-├── <span class="file py">paths.py</span>                         <span class="comment">-- 路径常量 (~26 行)</span>
-├── <span class="file py">presets.py</span>                       <span class="comment">-- 15 个场景预设表 (~109 行)</span>
-├── <span class="file py">image_recognizer.py</span>             <span class="comment">-- 图像识别引擎 (~424 行)</span>
-├── <span class="file py">image_accelerator.py</span>           <span class="comment">-- 识别加速模块 (~309 行, V2.10)</span>
-├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 日志系统 (~142 行)</span>
-├── <span class="file py">notification.py</span>                <span class="comment">-- 系统通知模块 (~178 行)</span>
-├── <span class="file py">wav.py</span>                         <span class="comment">-- 提示音设置模块 (~173 行, V2.15)</span>
+├── <span class="file py">main.py</span>                          <span class="comment">-- 启动入口 (~101 行)</span>
+├── <span class="file py">paths.py</span>                         <span class="comment">-- 路径常量 (~35 行)</span>
+├── <span class="file py">presets.py</span>                       <span class="comment">-- 14 个场景预设表 (~102 行)</span>
+├── <span class="file py">image_recognizer.py</span>             <span class="comment">-- 图像识别引擎 (~450 行)</span>
+├── <span class="file py">image_accelerator.py</span>           <span class="comment">-- 识别加速模块 (~336 行, V2.10)</span>
+├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 日志系统 (~143 行)</span>
+├── <span class="file py">notification.py</span>                <span class="comment">-- 系统通知模块 (~185 行)</span>
+├── <span class="file py">wav.py</span>                         <span class="comment">-- 提示音设置模块 (~175 行, V2.15)</span>
 ├── <span class="file json">config.json</span>                    <span class="comment">-- 持久化配置文件</span>
 ├── <span class="file json">usage_records.json</span>             <span class="comment">-- 使用时长记录 (V2.11)</span>
 ├── <span class="file ico">icon.ico</span>                       <span class="comment">-- 应用程序图标</span>
@@ -868,16 +868,16 @@
 ├── <span class="file bat">清除程序数据.bat</span>              <span class="comment">-- 清除配置与缓存</span>
 │
 ├── <span class="folder">ui/</span>                               <span class="comment">-- 界面层 (V2.16 从 main.py 拆出)</span>
-│   ├── <span class="file py">app.py</span>                   <span class="comment">-- 主窗口、菜单栏、配置持久化 (~660 行)</span>
-│   ├── <span class="file py">device_tab.py</span>            <span class="comment">-- 设备标签页 (~632 行)</span>
-│   ├── <span class="file py">settings_tab.py</span>          <span class="comment">-- 设置标签页 (~491 行)</span>
-│   ├── <span class="file py">scene_runner.py</span>          <span class="comment">-- 运行循环与场景调度 (~328 行)</span>
-│   ├── <span class="file py">dialogs.py</span>               <span class="comment">-- 关于 / 快捷键 / 运行时长记录 (~289 行)</span>
-│   ├── <span class="file py">config_store.py</span>          <span class="comment">-- 配置与记录的读写 (~103 行)</span>
-│   ├── <span class="file py">ime.py</span>                   <span class="comment">-- 输入法控制 (~79 行)</span>
+│   ├── <span class="file py">app.py</span>                   <span class="comment">-- 主窗口、菜单栏、配置持久化 (~705 行)</span>
+│   ├── <span class="file py">device_tab.py</span>            <span class="comment">-- 设备标签页 (~667 行)</span>
+│   ├── <span class="file py">settings_tab.py</span>          <span class="comment">-- 设置标签页 (~501 行)</span>
+│   ├── <span class="file py">scene_runner.py</span>          <span class="comment">-- 运行循环与场景调度 (~353 行)</span>
+│   ├── <span class="file py">dialogs.py</span>               <span class="comment">-- 关于 / 快捷键 / 运行时长记录 (~301 行)</span>
+│   ├── <span class="file py">config_store.py</span>          <span class="comment">-- 配置与记录的读写 (~114 行)</span>
+│   ├── <span class="file py">ime.py</span>                   <span class="comment">-- 输入法控制 (~82 行)</span>
 │   └── <span class="file py">widgets.py</span>               <span class="comment">-- 自定义控件 ToolTip (~34 行)</span>
 │
-├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录 (22 个)</span>
+├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录 (21 个)</span>
 │   ├── <span class="file py">scene_api.py</span>             <span class="comment">-- 场景接口数据结构 (V2.16)</span>
 │   ├── <span class="file py">scene_common.py</span>          <span class="comment">-- 场景公用辅助函数 (V2.16)</span>
 │   ├── <span class="file py">registry.py</span>              <span class="comment">-- 预设名 → 模块映射 (V2.16)</span>
@@ -892,12 +892,11 @@
 │   ├── <span class="file py">k280.py</span>                  <span class="comment">-- 困28队员</span>
 │   ├── <span class="file py">yjsl.py</span>                  <span class="comment">-- 英杰试炼</span>
 │   ├── <span class="file py">jjtp.py</span>                  <span class="comment">-- 结界突破</span>
-│   ├── <span class="file py">hdpt.py</span>                  <span class="comment">-- 活动爬塔</span>
+│   ├── <span class="file py">pcgd.py</span>                  <span class="comment">-- 磐长故地 (V2.17)</span>
 │   ├── <span class="file py">guanbijiacheng.py</span>        <span class="comment">-- 关闭加成</span>
 │   ├── <span class="file py">dinghao.py</span>              <span class="comment">-- 被顶号处理</span>
 │   ├── <span class="file py">yl.py</span>                    <span class="comment">-- 御灵 (V2.10)</span>
 │   ├── <span class="file py">ql.py</span>                    <span class="comment">-- 契灵 (V2.11)</span>
-│   ├── <span class="file py">dfw.py</span>                   <span class="comment">-- 大富翁 (V2.13)</span>
 │   └── <span class="file py">zoushen.py</span>               <span class="comment">-- 走神模式 (V2.15)</span>
 │
 ├── <span class="folder">tools/</span>                            <span class="comment">-- 开发辅助脚本 (V2.16，不参与运行)</span>
@@ -907,7 +906,7 @@
 │   ├── <span class="file py">find_dead_code.py</span>        <span class="comment">-- return 之后的死代码检查</span>
 │   └── <span class="file py">comment_ratio.py</span>         <span class="comment">-- 注释密度统计</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (163 张)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (141 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (7 张)</span>
 │   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
@@ -919,11 +918,10 @@
 │   ├── <span class="file media">k280/</span>                <span class="comment">-- 困28队员 (5 张)</span>
 │   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (14 张)</span>
 │   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (24 张)</span>
-│   ├── <span class="file media">hdpt/</span>                <span class="comment">-- 活动爬塔 (14 张)</span>
+│   ├── <span class="file media">pcgd/</span>                <span class="comment">-- 磐长故地 (8 张, V2.17)</span>
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
 │   ├── <span class="file media">yl/</span>                   <span class="comment">-- 御灵 (5 张, V2.10)</span>
 │   ├── <span class="file media">ql/</span>                   <span class="comment">-- 契灵 (9 张, V2.11)</span>
-│   ├── <span class="file media">dfw/</span>                   <span class="comment">-- 大富翁 (16 张, V2.13)</span>
 │   ├── <span class="file media">dinghao.png</span>             <span class="comment">-- 顶号识别</span>
 │   └── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
 │
@@ -983,7 +981,7 @@
         <div class="module-detail-title">
           <span style="color:var(--accent-blue);">&#9632;</span> main.py -- 启动入口
         </div>
-        <span class="module-detail-code">~86 行</span>
+        <span class="module-detail-code">~101 行</span>
       </div>
       <div class="module-detail-body">
         V2.16 起 main.py 只负责启动：把项目根目录放进 sys.path、设置 Windows 进程标识（AppUserModelID）与任务栏图标、隐藏控制台，然后创建主窗口。启动失败会弹原生对话框提示——控制台此时已隐藏，没有这个提示用户只会看到程序"闪一下就没了"。界面逻辑全部搬到 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">ui/</code> 包。
@@ -1001,7 +999,7 @@
         <div class="module-detail-title">
           <span style="color:var(--accent-blue);">&#9632;</span> ui/ -- 界面层
         </div>
-        <span class="module-detail-code">~2616 行 / 8 个模块</span>
+        <span class="module-detail-code">~2757 行 / 8 个模块</span>
       </div>
       <div class="module-detail-body">
         V2.16 把原来 2700 多行的 main.py 按职责拆成 8 个模块：<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">app.py</code> 主窗口与菜单栏、<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">device_tab.py</code> 设备标签页、<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">settings_tab.py</code> 设置页、<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">scene_runner.py</code> 运行循环、<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">dialogs.py</code> 各类对话框、<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">config_store.py</code> 配置读写、<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">ime.py</code> 输入法控制、<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">widgets.py</code> 自定义控件。运行循环与对话框用 mixin 挂回主类，避免改动大量 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">self.*</code> 引用。
@@ -1024,10 +1022,10 @@
         <div class="module-detail-title">
           <span style="color:var(--accent-cyan);">&#9632;</span> presets.py / paths.py
         </div>
-        <span class="module-detail-code">~109 / ~26 行</span>
+        <span class="module-detail-code">~102 / ~35 行</span>
       </div>
       <div class="module-detail-body">
-        V2.16 新增的两个数据模块。<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">presets.py</code> 集中存放 15 个场景的预设（模板目录、点击坐标、识别阈值、是否统计挑战次数）；<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">paths.py</code> 统一推导所有路径常量。后者很关键：程序由 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">bat/run.bat</code> 以 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">python ..\main.py</code> 启动，工作目录不保证是项目根目录，用 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">__file__</code> 统一推导才能保证配置和模板目录永远找得到。
+        V2.16 新增的两个数据模块。<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">presets.py</code> 集中存放 14 个场景的预设（模板目录、点击坐标、识别阈值、是否统计挑战次数）；<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">paths.py</code> 统一推导所有路径常量。后者很关键：程序由 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">bat/run.bat</code> 以 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">python ..\main.py</code> 启动，工作目录不保证是项目根目录，用 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">__file__</code> 统一推导才能保证配置和模板目录永远找得到。
       </div>
       <div class="module-detail-tags">
         <span class="module-tag">场景预设表</span>
@@ -1043,7 +1041,7 @@
           <div class="module-detail-title">
           <span style="color:var(--accent-green);">&#9632;</span> image_recognizer.py
         </div>
-        <span class="module-detail-code">~424 行</span>
+        <span class="module-detail-code">~450 行</span>
       </div>
       <div class="module-detail-body">
           OpenCV 模板匹配引擎。使用 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">TM_CCOEFF_NORMED</code> 归一化交叉相关算法，配合 ADB 截图和点击模拟，实现高精度游戏界面识别。内置详细日志记录，将每次识别结果（图片名称、中心坐标、置信度）写入 logs 目录。
@@ -1062,7 +1060,7 @@
           <div class="module-detail-title">
             <span style="color:var(--accent-orange);">&#9632;</span> adb.py
           </div>
-          <span class="module-detail-code">~142 行</span>
+          <span class="module-detail-code">~143 行</span>
         </div>
         <div class="module-detail-body">
           ADB 设备管理层与日志基础设施。负责模拟器通信、自动发现 platform-tools 目录、验证设备分辨率（强制 1280x720）。V2.6 引入 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">_FilterDisabled</code> 过滤器类 + <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">set_logging_enabled()</code> 全局开关，日志默认关闭，用户可在菜单栏中启用。
@@ -1079,7 +1077,7 @@
           <div class="module-detail-title">
             <span style="color:var(--accent-cyan);">&#9632;</span> notification.py
           </div>
-          <span class="module-detail-code">~178 行</span>
+          <span class="module-detail-code">~185 行</span>
         </div>
         <div class="module-detail-body">
           V2.9 新增系统通知模块。使用 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">winotify</code> (Windows Toast API) 发送系统级通知，若未安装则自动回退到 PowerShell 托盘通知。支持完成/错误两种通知类型，可在设置中开关和测试。自动注册开始菜单快捷方式以确保通知来源名称正确显示。
@@ -1096,7 +1094,7 @@
           <div class="module-detail-title">
             <span style="color:var(--accent-yellow);">&#9632;</span> image_accelerator.py
           </div>
-          <span class="module-detail-code">~309 行</span>
+          <span class="module-detail-code">~336 行</span>
         </div>
         <div class="module-detail-body">
           V2.10 新增图像识别加速模块。使用 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">Numba JIT</code> 并行加速 RGBA/BGR 灰度转换与 TM_CCOEFF_NORMED 模板匹配，<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">PyTurboJPEG</code> 加速 JPEG 解码（快 2-5 倍），并支持 raw screencap 一步转灰度。未安装依赖时自动优雅降级到 OpenCV，通过 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">get_acceleration_status()</code> 查询加速状态。
@@ -1114,7 +1112,7 @@
           <div class="module-detail-title">
             <span style="color:var(--accent-violet);">&#9632;</span> wav.py
           </div>
-          <span class="module-detail-code">~173 行</span>
+          <span class="module-detail-code">~175 行</span>
         </div>
         <div class="module-detail-body">
           V2.15 拆分新增提示音设置模块。管理 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">wav/</code> 音效文件目录，支持导入音效、试听、配置任务结束提示音开关与播放，内置 QQ、Steam、iOS 信息/通知、言灵、骄阳长明等多款音效。
@@ -1284,13 +1282,6 @@
             <td>24</td>
           </tr>
           <tr>
-            <td><span class="scene-name">&#127775; 活动爬塔</span></td>
-            <td><span class="scene-module">hdpt.py</span></td>
-            <td><span class="scene-badge tower">爬塔</span></td>
-            <td>限时活动爬塔模式，自动识别退出界面并逐层攀登。支持多层奖励结算，持续适配新活动（V2.14 适配周年庆爬塔）。</td>
-            <td>14</td>
-          </tr>
-          <tr>
             <td><span class="scene-name">&#128260; 关闭加成</span></td>
             <td><span class="scene-module">guanbijiacheng.py</span></td>
             <td><span class="scene-badge util">工具</span></td>
@@ -1319,11 +1310,11 @@
             <td>9</td>
           </tr>
           <tr>
-            <td><span class="scene-name">&#127922; 大富翁</span></td>
-            <td><span class="scene-module">dfw.py</span></td>
+            <td><span class="scene-name">&#127956; 磐长故地</span></td>
+            <td><span class="scene-module">pcgd.py</span></td>
             <td><span class="scene-badge farm">刷图</span></td>
-            <td>V2.13 新增（8月19日洛天依活动）。识别出发、投掷、抢夺、挑战、奖励等节点自动游玩。升级大富翁等级需手动升级，第一次打怪前需配置阵容，此场景不计挑战次数。</td>
-            <td>16</td>
+            <td>V2.17 新增（10月10日咲耶活动积分场景）。识别入口、战场、战斗、挑战、继续等节点，suoding 优先级最高；连续点击挑战 4 次判为异常，识别到 exit 视为任务完成并停止运行。</td>
+            <td>8</td>
           </tr>
         </tbody>
       </table>
@@ -1596,6 +1587,17 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.17</span>
+          <span class="changelog-date">2026-10-10</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>删除活动爬塔和大富翁场景（仅移除入口，场景实现文件与模板保留）</li>
+          <li>新增磐长故地场景：<code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">pcgd.py</code>（10月10日咲耶活动积分场景），suoding 优先级最高，连续点击挑战 4 次判为异常，识别到 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">exit</code> 视为任务完成并停止运行</li>
+          <li>识别引擎支持 <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">.jpg</code> / <code style="font-family:monospace;background:rgba(108,92,231,0.12);padding:0.1rem 0.4rem;border-radius:3px;color:var(--accent-cyan);font-size:0.82rem;">.jpeg</code> 格式的模板图片</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.16</span>
           <span class="changelog-date">2026-09-28</span>
         </div>
@@ -1784,7 +1786,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.16</div>
+  <div class="footer-brand">YYS-AUTO V2.17</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

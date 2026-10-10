@@ -30,6 +30,9 @@ except ImportError:
         """加速模块不可用时的占位实现。"""
         return {'numba': False, 'turbojpeg': False}
 
+# 可作为模板加载的图片扩展名
+TEMPLATE_EXTENSIONS = ('.png', '.jpg', '.jpeg')
+
 def get_image_logger():
     """获取识图日志记录器，只写入本地文件，不输出到终端"""
     logger = logging.getLogger("image")
@@ -291,14 +294,14 @@ class ImageRecognizer:
             return None
 
     def get_all_templates(self):
-        """枚举识别目录下的模板 png；设了 folder 就只扫该目录。"""
+        """枚举识别目录下的模板图片（png/jpg/jpeg）；设了 folder 就只扫该目录。"""
         templates = []
         
         # 使用folder如果设置了，否则使用png_folder
         current_folder = self.folder if self.folder else self.png_folder
 
         for filename in os.listdir(current_folder):
-            if filename.lower().endswith('.png'):
+            if filename.lower().endswith(TEMPLATE_EXTENSIONS):
                 if self.template_filter and self.template_filter not in filename.lower():
                     continue
                 template_path = os.path.join(current_folder, filename)
@@ -312,7 +315,7 @@ class ImageRecognizer:
             main_png_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "png")
             if self.png_folder != main_png_folder:
                 for filename in os.listdir(main_png_folder):
-                    if filename.lower().endswith('.png'):
+                    if filename.lower().endswith(TEMPLATE_EXTENSIONS):
                         if self.template_filter and self.template_filter not in filename.lower():
                             continue
                         template_path = os.path.join(main_png_folder, filename)

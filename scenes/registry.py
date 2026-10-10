@@ -10,16 +10,15 @@
 from __future__ import annotations
 
 from scenes import (
-    dfw,
     dg,
     dj,
     dy,
-    hdpt,
     htdr,
     jjtp,
     k28,
     k280,
     k281,
+    pcgd,
     ql,
     sj,
     yjsl,
@@ -41,9 +40,8 @@ SCENE_MODULES = {
     "英杰试炼": yjsl,
     "御灵": yl,
     "契灵": ql,
-    "大富翁": dfw,
     "结界突破": jjtp,
-    "活动爬塔": hdpt,
+    "磐长故地": pcgd,
 }
 
 # 未识别到图片时需要调用 handle_no_recognition 的场景。

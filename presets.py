@@ -85,13 +85,6 @@ PRESETS = {
                 "threshold": 0.80,
                 "count_challenge": True
             },
-            "大富翁": {
-                "folder": "dfw",
-                "click_x": 777,
-                "click_y": 666,
-                "threshold": 0.80,
-                "count_challenge": False
-            },
             "结界突破": {
                 "folder": "jjtp",
                 "click_x": 777,
@@ -99,8 +92,8 @@ PRESETS = {
                 "threshold": 0.8,
                 "count_challenge": False
             },
-            "活动爬塔": {
-                "folder": "hdpt",
+            "磐长故地": {
+                "folder": "pcgd",
                 "click_x": 777,
                 "click_y": 666,
                 "threshold": 0.80,

@@ -28,8 +28,6 @@ gui_logger = get_gui_logger()
 CLOSE_JIACHENG_PRESETS = ("司机", "队员", "魂土单人")
 # 点击 boss/putong 后额外等待的时长（秒）
 BOSS_WAIT_SECONDS = 3
-# 大富翁点击 chufa 后额外等待的时长（秒）
-BIG_RICHMAN_WAIT_SECONDS = 5
 # 普通一轮识别之间的间隔（秒）
 ROUND_WAIT_SECONDS = 2
 # 未识别到图片时的轮询间隔（秒）
@@ -261,8 +259,7 @@ class SceneRunnerMixin:
         指定本次的间隔（用完即清）。
         """
         if need_wait:
-            time.sleep(BIG_RICHMAN_WAIT_SECONDS if self.current_preset == "大富翁"
-                       else BOSS_WAIT_SECONDS)
+            time.sleep(BOSS_WAIT_SECONDS)
         elif getattr(self.recognizer, 'skip_sleep', False):
             skip = self.recognizer.skip_sleep
             self.recognizer.skip_sleep = False
