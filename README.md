@@ -4,7 +4,7 @@
 
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-lightgrey.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
 [![Version](https://img.shields.io/badge/Version-V2.17-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
@@ -430,22 +430,22 @@ bat\install.bat
 
 ## 许可证
 
-本项目采用 [**Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International（CC BY-NC-SA 4.0）**](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议。
+本项目采用 [**PolyForm Noncommercial License 1.0.0**](https://polyformproject.org/licenses/noncommercial/1.0.0/) 许可协议。
 
-[![CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-lightgrey.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
 
 这意味着你可以：
 
-- ✅ **共享** —— 在任何媒介以任何形式复制、发行本作品
-- ✅ **演绎** —— 修改、转换或以本作品为基础进行创作
+- ✅ **非商业使用** —— 出于任何非商业目的使用、复制、修改、分发本作品
+- ✅ **修改与演绎** —— 修改本作品，或基于本作品进行再创作
 
 但必须遵守以下条件：
 
-- 📝 **署名** —— 必须给出适当的署名，提供指向本许可协议的链接，并标明是否作出了修改
-- 🚫 **非商业性使用** —— 不得将本作品用于商业目的
-- 🔄 **相同方式共享** —— 若修改、转换或以本作品为基础进行创作，必须采用与本协议相同的许可协议分发你的贡献作品
+- 🚫 **仅限非商业用途** —— 不得将本作品用于任何商业目的
+- 📝 **保留许可与声明** —— 分发本作品或其修改版本时，必须附带本许可证副本，并保留原始版权与许可声明
+- ⚠️ **自担风险** —— 本作品按「原样」提供，不附带任何形式的明示或默示担保
 
-完整法律文本请访问：<https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode>
+完整法律文本请访问：<https://polyformproject.org/licenses/noncommercial/1.0.0/>
 
 ---
 
