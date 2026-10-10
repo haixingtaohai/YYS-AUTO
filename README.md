@@ -4,7 +4,7 @@
 
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
-[![License](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-lightgrey.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
 [![Version](https://img.shields.io/badge/Version-V2.17-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
@@ -49,7 +49,7 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 | 当前版本 | **V2.17**（2026-10-10） |
 | 场景预设 | **14** 个 |
 | 模板图片 | **141** 张 |
-| 代码行数 | 约 6100 行 |
+| 代码行数 | 约 6500 行 |
 | 运行平台 | Windows（Python 3.8+，兼容 3.11） |
 | 多设备 | 支持，每个标签页独立线程控制一台模拟器 |
 
@@ -100,7 +100,7 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 | 🚨 结界突破 | `jjtp.py` | 刷图 | 多步骤自动战斗，绘卷模式核心 | 24 |
 | 💎 御灵 | `yl.py` | 刷图 | 御灵副本自动挑战，支持层数选择与连续挑战 | 5 |
 | 💎 契灵 | `ql.py` | 刷图 | 契灵结契自动化，支持放弃 / 再次结契两种模式 | 9 |
-| 🏔️ 磐长故地 | `pcgd.py` | 刷图 | 活动积分场景，识别入口 / 战场 / 战斗 / 挑战 / 继续，识别 `exit` 完成任务 | 8 |
+| 🏔️ 磐长故地 | `pcgd.py` | 爬塔 | 咲耶活动积分场景，自动进入、挑战、结算，识别退出后完成停止 | 8 |
 
 **辅助模块**（非预设，由主流程自动调用）
 
@@ -400,9 +400,8 @@ bat\install.bat
 
 当前版本 **V2.17**（2026-10-10）：
 
-- 删除活动爬塔和大富翁场景（仅移除入口，场景实现文件保留）
-- 新增磐长故地场景（`pcgd.py`，10 月 10 日咲耶活动积分场景），识别到 `exit` 视为任务完成并停止运行
-- 识别引擎支持 `.jpg` / `.jpeg` 模板图片
+- 删除活动爬塔与大富翁场景
+- 新增磐长故地场景（10 月 10 日咲耶活动积分场景）
 
 完整版本历史见 [`使用文档第一次使用必看/更新日志.txt`](使用文档第一次使用必看/更新日志.txt)。
 
@@ -432,22 +431,25 @@ bat\install.bat
 
 本项目采用 [**PolyForm Noncommercial License 1.0.0**](https://polyformproject.org/licenses/noncommercial/1.0.0/) 许可协议。
 
-[![PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-lightgrey.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
 
 这意味着你可以：
 
-- ✅ **非商业使用** —— 出于任何非商业目的使用、复制、修改、分发本作品
-- ✅ **修改与演绎** —— 修改本作品，或基于本作品进行再创作
+- ✅ **使用** —— 以任何非商业目的运行、复制本项目
+- ✅ **修改** —— 修改、转换或以本项目为基础进行创作
+- ✅ **分发** —— 在非商业目的下分发原版或修改版
 
 但必须遵守以下条件：
 
-- 🚫 **仅限非商业用途** —— 不得将本作品用于任何商业目的
-- 📝 **保留许可与声明** —— 分发本作品或其修改版本时，必须附带本许可证副本，并保留原始版权与许可声明
-- ⚠️ **自担风险** —— 本作品按「原样」提供，不附带任何形式的明示或默示担保
+- 🚫 **非商业性使用** —— 不得将本项目或其衍生作品用于任何商业目的
+- 📄 **附带许可证** —— 分发时必须提供本许可证副本或指向本许可证的链接
+- 📝 **保留声明** —— 不得移除版权声明和许可证声明
+- 🔄 **相同许可证分发** —— 分发修改版或衍生作品时，必须继续遵守 PolyForm Noncommercial 1.0.0
+- ⚠️ **不得附加限制** —— 不得对本许可证授予的权利附加额外条款或限制
 
 完整法律文本请访问：<https://polyformproject.org/licenses/noncommercial/1.0.0/>
 
----
+> 注意：由于禁止商业使用，PolyForm Noncommercial 1.0.0 不属于 OSI 定义的开源许可证，而是 source-available 许可证。
 
 <div align="center">
 
