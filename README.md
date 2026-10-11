@@ -5,15 +5,16 @@
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
-[![Version](https://img.shields.io/badge/Version-V2.17-blue.svg)](使用文档第一次使用必看/更新日志.txt)
+[![Version](https://img.shields.io/badge/Version-V2.17.1-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
 [![GUI](https://img.shields.io/badge/GUI-Tkinter-orange.svg)](#技术栈)
-[![Templates](https://img.shields.io/badge/模板图片-141%20张-success.svg)](#场景一览)
+[![Templates](https://img.shields.io/badge/模板图片-143%20张-success.svg)](#场景一览)
 
 </div>
 
 > ⚠️ **本项目仅供学习交流与个人研究使用，严禁任何形式的商业用途。** 使用前请先阅读 [免责声明](#免责声明)。
+>大部分文档和备注都是AI写的，实际功能可能和文档与注释的不一样，请自行判断。
 
 ---
 
@@ -46,9 +47,9 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 
 | 指标 | 数值 |
 | :--- | :--- |
-| 当前版本 | **V2.17**（2026-10-10） |
+| 当前版本 | **V2.17.1**（2026-10-11） |
 | 场景预设 | **14** 个 |
-| 模板图片 | **141** 张 |
+| 模板图片 | **143** 张 |
 | 代码行数 | 约 6500 行 |
 | 运行平台 | Windows（Python 3.8+，兼容 3.11） |
 | 多设备 | 支持，每个标签页独立线程控制一台模拟器 |
@@ -100,7 +101,7 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 | 🚨 结界突破 | `jjtp.py` | 刷图 | 多步骤自动战斗，绘卷模式核心 | 24 |
 | 💎 御灵 | `yl.py` | 刷图 | 御灵副本自动挑战，支持层数选择与连续挑战 | 5 |
 | 💎 契灵 | `ql.py` | 刷图 | 契灵结契自动化，支持放弃 / 再次结契两种模式 | 9 |
-| 🏔️ 磐长故地 | `pcgd.py` | 爬塔 | 咲耶活动积分场景，自动进入、挑战、结算，识别退出后完成停止 | 8 |
+| 🏔️ 活动通用 | `pcgd.py` | 爬塔 | 活动战斗通用场景，适配古迹演武、刹那试炼等咲耶活动积分玩法，自动进入、挑战、结算，识别退出后完成停止 | 10 |
 
 **辅助模块**（非预设，由主流程自动调用）
 
@@ -187,7 +188,7 @@ yys-auto/
 │   ├── find_dead_code.py    # return 之后的死代码检查
 │   └── comment_ratio.py     # 注释密度统计
 │
-├── png/                     # 模板图片（141 张，按场景分目录）
+├── png/                     # 模板图片（143 张，按场景分目录）
 ├── wav/                     # 提示音音效（6 个）
 ├── logs/                    # 运行日志（GUIlog / adb / image）
 ├── bat/
@@ -398,10 +399,10 @@ bat\install.bat
 
 ## 更新日志
 
-当前版本 **V2.17**（2026-10-10）：
+当前版本 **V2.17.1**（2026-10-11）：
 
-- 删除活动爬塔与大富翁场景
-- 新增磐长故地场景（10 月 10 日咲耶活动积分场景）
+- 添加两张模板图片，适配古迹演武、刹那试炼两个活动战斗场景
+- 磐长故地场景更名为「活动通用」，古迹演武、刹那试炼等三个战斗场景均可使用
 
 完整版本历史见 [`使用文档第一次使用必看/更新日志.txt`](使用文档第一次使用必看/更新日志.txt)。
 

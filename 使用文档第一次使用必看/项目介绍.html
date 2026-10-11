@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.17 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.17.1 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.17</div>
+  <div class="nav-brand">YYS-AUTO V2.17.1</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,7 +584,7 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.17 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.17.1 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
     <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、14 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
@@ -603,7 +603,7 @@
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">141</div>
+        <div class="stat-value">143</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -632,7 +632,7 @@
       <div class="card feature-card fade-in stagger-1">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(236,72,153,0.15);">&#127919;</div>
-          <div class="card-title">挑战计数器 <span style="font-size:0.7rem;background:rgba(236,72,153,0.25);color:#ec4899;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.1</span></div>
+          <div class="card-title">挑战计数器</div>
         </div>
         <div class="card-desc">精确追踪每次挑战次数，支持设置目标上限。达到目标后自动停止或触发后续操作（如关闭加成），防止过度消耗体力。</div>
         <span class="feature-tag">精确计数</span>
@@ -640,7 +640,7 @@
       <div class="card feature-card fade-in stagger-2">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(108,92,231,0.15);">&#128101;</div>
-          <div class="card-title">司机-队员联动 <span style="font-size:0.7rem;background:rgba(108,92,231,0.25);color:var(--accent-purple);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.2</span></div>
+          <div class="card-title">司机-队员联动</div>
         </div>
         <div class="card-desc">智能司机队员配对系统，自动同步组队操作。司机发起邀请后队员自动接受，无需手动协调。</div>
         <span class="feature-tag">协同自动化</span>
@@ -648,194 +648,58 @@
       <div class="card feature-card fade-in stagger-3">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(59,130,246,0.15);">&#128241;</div>
-          <div class="card-title">多设备支持 <span style="font-size:0.7rem;background:rgba(59,130,246,0.25);color:var(--accent-blue);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.4</span></div>
+          <div class="card-title">多设备支持</div>
         </div>
         <div class="card-desc">选项卡式 UI 设计，每个选项卡独立控制一个模拟器实例。支持同时管理多个设备并行运行自动化任务。</div>
         <span class="feature-tag">Tab UI</span>
       </div>
       <div class="card feature-card fade-in stagger-4">
         <div class="card-header">
-          <div class="card-icon" style="background:rgba(148,163,184,0.15);">&#128190;</div>
-          <div class="card-title">配置持久化 <span style="font-size:0.7rem;background:rgba(148,163,184,0.25);color:#94a3b8;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.9</span></div>
+          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127918;</div>
+          <div class="card-title">14 场景预设</div>
         </div>
-        <div class="card-desc">所有设置通过 JSON 文件持久保存。包括设备连接信息、ADB 地址端口、功能开关、窗口位置等，重启后自动恢复上次配置。</div>
-        <span class="feature-tag">JSON 存储</span>
+        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、御灵、契灵、活动通用等 14 种游戏场景自动化方案，覆盖日常主要玩法。</div>
+        <span class="feature-tag">一键切换</span>
       </div>
       <div class="card feature-card fade-in stagger-5">
         <div class="card-header">
-          <div class="card-icon" style="background:rgba(239,68,68,0.15);">&#128736;</div>
-          <div class="card-title">自动关闭加成 <span style="font-size:0.7rem;background:rgba(239,68,68,0.25);color:#ef4444;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V1.10</span></div>
-        </div>
-        <div class="card-desc">达到指定挑战次数后自动执行关闭加成流程：强制停止游戏进程、重新启动，彻底关闭当前生效的经验/金币加成。</div>
-        <span class="feature-tag">自动化流程</span>
-      </div>
-      <div class="card feature-card fade-in stagger-6">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127918;</div>
-          <div class="card-title">14 场景预设 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
-        </div>
-        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、御灵、契灵、磐长故地等 14 种游戏场景自动化方案，覆盖日常主要玩法。</div>
-        <span class="feature-tag">一键切换</span>
-      </div>
-      <div class="card feature-card fade-in stagger-7">
-        <div class="card-header">
           <div class="card-icon" style="background:rgba(245,158,11,0.15);">&#128214;</div>
-          <div class="card-title">绘卷模式 <span style="font-size:0.7rem;background:rgba(245,158,11,0.25);color:var(--accent-yellow);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
+          <div class="card-title">绘卷模式</div>
         </div>
         <div class="card-desc">高效刷绘卷模式，自动在结界突破和困28之间智能切换。根据通关次数自动判断何时切换场景，最大化产出效率。</div>
         <span class="feature-tag">智能切换</span>
       </div>
-      <div class="card feature-card fade-in stagger-8">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(168,85,247,0.15);">&#9889;</div>
-          <div class="card-title">模板缓存优化 <span style="font-size:0.7rem;background:rgba(168,85,247,0.25);color:var(--accent-purple);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.0</span></div>
-        </div>
-        <div class="card-desc">模板图片一次性加载到内存缓存，避免重复磁盘读取。配合高精度匹配算法，在保证识别准确率的同时提升响应速度。</div>
-        <span class="feature-tag">性能优化</span>
-      </div>
-      <div class="card feature-card fade-in stagger-9">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(6,182,212,0.15);">&#128276;</div>
-          <div class="card-title">声音提醒 <span style="font-size:0.7rem;background:rgba(6,182,212,0.25);color:#06b6d4;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.4</span></div>
-        </div>
-        <div class="card-desc">任务完成后自动播放 WAV 音效通知。内置 6 种提示音（QQ、Steam、iOS 信息、iOS 通知、言灵、骄阳长明），确保即使不在电脑前也能及时知晓任务状态。</div>
-        <span class="feature-tag">音效通知</span>
-      </div>
-      <div class="card feature-card fade-in stagger-10">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#128196;</div>
-          <div class="card-title">可控日志记录 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.6</span></div>
-        </div>
-        <div class="card-desc">日志功能升级为可开关模式（默认关闭）。启用后 ADB 命令和识图结果写入 logs 目录，通过菜单栏一键控制，支持打开日志文件夹和清空日志。</div>
-        <span class="feature-tag">logging + Filter</span>
-      </div>
-      <div class="card feature-card fade-in stagger-11">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#9776;</div>
-          <div class="card-title">菜单栏布局 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.6</span></div>
-        </div>
-        <div class="card-desc">重新设计 UI 布局，部分功能从设置选项卡移入顶部菜单栏。V2.9 将「文件(F)」改名为「程序(P)」，新增重启程序、重启ADB并重启程序按钮。</div>
-        <span class="feature-tag">tkinter Menu</span>
-      </div>
-      <div class="card feature-card fade-in stagger-12">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(99,102,241,0.15);">&#9000;</div>
-          <div class="card-title">快捷键操作 <span style="font-size:0.7rem;background:rgba(99,102,241,0.25);color:#6366f1;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.7</span></div>
-        </div>
-        <div class="card-desc">全套快捷键支持：Ctrl+T/W 管理标签，R/S 运行/停止，F5/F6 全部开始/停止，数字键快速切换标签。输入框聚焦时自动屏蔽快捷键，避免误触。</div>
-        <span class="feature-tag">Keyboard</span>
-      </div>
-      <div class="card feature-card fade-in stagger-13">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(20,184,166,0.15);">&#128301;</div>
-          <div class="card-title">阈值独立记忆 <span style="font-size:0.7rem;background:rgba(20,184,166,0.25);color:#14b8a6;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.8</span></div>
-        </div>
-        <div class="card-desc">修复阈值自动重置问题。每个场景独立记忆用户设置的识别阈值，切换场景时自动恢复上次设置。重置默认按钮一键清除所有场景的阈值记忆。</div>
-        <span class="feature-tag">preset_thresholds</span>
-      </div>
-      <div class="card feature-card fade-in stagger-14">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(239,68,68,0.15);">&#9211;</div>
-          <div class="card-title">安全退出机制 <span style="font-size:0.7rem;background:rgba(239,68,68,0.25);color:#ef4444;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.8</span></div>
-        </div>
-        <div class="card-desc">一键停止所有设备任务、关闭 ADB 服务进程、保存配置并退出程序，避免 ADB 进程残留。</div>
-        <span class="feature-tag">adb kill-server</span>
-      </div>
-      <div class="card feature-card fade-in stagger-15">
+      <div class="card feature-card fade-in stagger-6">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(59,130,246,0.15);">&#128276;</div>
-          <div class="card-title">系统级通知 <span style="font-size:0.7rem;background:rgba(59,130,246,0.25);color:var(--accent-blue);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
+          <div class="card-title">系统通知与提示音</div>
         </div>
-        <div class="card-desc">新增 Windows Toast 通知推送。任务完成或异常停止时发送系统通知，即使程序在后台也能及时知晓。优先使用 winotify，未安装自动回退 PowerShell 托盘通知。</div>
-        <span class="feature-tag">winotify / Toast</span>
+        <div class="card-desc">任务完成或异常停止时推送 Windows 系统通知并播放提示音，即使不在电脑前也能及时知晓。内置 6 款音效、支持导入与试听；通知优先使用 winotify，未安装自动回退 PowerShell 托盘通知。</div>
+        <span class="feature-tag">Toast + WAV</span>
       </div>
-      <div class="card feature-card fade-in stagger-16">
+      <div class="card feature-card fade-in stagger-7">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(245,158,11,0.15);">&#128683;</div>
-          <div class="card-title">被顶号自动处理 <span style="font-size:0.7rem;background:rgba(245,158,11,0.25);color:var(--accent-yellow);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
+          <div class="card-title">被顶号自动处理</div>
         </div>
         <div class="card-desc">全局最高优先级检测。被顶号后自动关闭游戏、等待可配置秒数（默认30秒）、重启并进入游戏。支持第三方自动寄养场景，可在菜单栏设置等待时间。</div>
         <span class="feature-tag">dinghao.py</span>
       </div>
-      <div class="card feature-card fade-in stagger-17">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127969;</div>
-          <div class="card-title">多庭院识别 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
-        </div>
-        <div class="card-desc">支持从庭院自动进入场景，识别 5 种庭院探索页：茨心乐园、织梦莲庭、枫色秋庭（100天送）、默认庭、默认焕新庭。适用场景：结界突破、困28单人、英杰试炼、魂土单人。</div>
-        <span class="feature-tag">庭院模板</span>
-      </div>
-      <div class="card feature-card fade-in stagger-18">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(168,85,247,0.15);">&#128260;</div>
-          <div class="card-title">一键应用所有 <span style="font-size:0.7rem;background:rgba(168,85,247,0.25);color:var(--accent-purple);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.9</span></div>
-        </div>
-        <div class="card-desc">控制页新增「一键应用到所有」按钮，点击后将当前标签页的运行参数和场景选择同步应用到所有设备标签页，省去逐个设置的麻烦。</div>
-        <span class="feature-tag">批量配置</span>
-      </div>
-      <div class="card feature-card fade-in stagger-19">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(142,202,255,0.15);">&#128142;</div>
-          <div class="card-title">御灵场景 <span style="font-size:0.7rem;background:rgba(142,202,255,0.25);color:#8ecaff;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.10</span></div>
-        </div>
-        <div class="card-desc">V2.10 新增御灵副本自动化。完整识别御灵入口、挑战界面、胜利结算等流程节点，支持御灵层数选择与连续自动挑战，刷御灵魂更省心。</div>
-        <span class="feature-tag">yl.py</span>
-      </div>
-      <div class="card feature-card fade-in stagger-20">
+      <div class="card feature-card fade-in stagger-8">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(251,191,36,0.15);">&#9889;</div>
-          <div class="card-title">识图性能优化 <span style="font-size:0.7rem;background:rgba(251,191,36,0.25);color:#fbbf24;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.10</span></div>
+          <div class="card-title">识图性能优化</div>
         </div>
         <div class="card-desc">V2.10 新增 image_accelerator 加速模块：Numba JIT 并行灰度转换与模板匹配、PyTurboJPEG 解码（快 2-5 倍）、raw 截图一步转灰度。大幅提高识图响应速度，未安装依赖自动降级 OpenCV。</div>
         <span class="feature-tag">Numba / TurboJPEG</span>
       </div>
-      <div class="card feature-card fade-in stagger-21">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#128142;</div>
-          <div class="card-title">契灵场景 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.11</span></div>
-        </div>
-        <div class="card-desc">V2.11 新增契灵结契自动化。识别挑战、锁定、奖励、放弃结契/再次结契等节点，默认放弃结契，可在功能设置菜单中切换为再次结契模式。</div>
-        <span class="feature-tag">ql.py</span>
-      </div>
-      <div class="card feature-card fade-in stagger-22">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#128337;</div>
-          <div class="card-title">使用时长记录 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.11</span></div>
-        </div>
-        <div class="card-desc">V2.11 新增使用时长统计。按场景累计记录脚本运行时长，持久化保存到 usage_records.json，通过运行菜单栏「运行时长记录」查看各场景累计使用时间。</div>
-        <span class="feature-tag">usage_records.json</span>
-      </div>
-      <div class="card feature-card fade-in stagger-23">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(234,179,8,0.15);">&#127922;</div>
-          <div class="card-title">大富翁场景 <span style="font-size:0.7rem;background:rgba(234,179,8,0.25);color:#eab308;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.13</span></div>
-        </div>
-        <div class="card-desc">V2.13 新增大富翁活动自动化。识别出发、投掷、抢夺、挑战、奖励等节点自动游玩。升级大富翁等级需手动升级，第一次打怪前需配置阵容，此场景不计挑战次数。</div>
-        <span class="feature-tag">dfw.py</span>
-      </div>
-      <div class="card feature-card fade-in stagger-24">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#9881;&#65039;</div>
-          <div class="card-title">多线程匹配 <span style="font-size:0.7rem;background:rgba(16,185,129,0.25);color:var(--accent-green);padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.12</span></div>
-        </div>
-        <div class="card-desc">V2.12 新增模板匹配多线程并行。主页可自行选择匹配线程数（1~8），利用 OpenCV 模板匹配释放 GIL 的特性实现真正并行，显著提升识别速度。</div>
-        <span class="feature-tag">并行匹配</span>
-      </div>
-      <div class="card feature-card fade-in stagger-25">
+      <div class="card feature-card fade-in stagger-9">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(168,85,247,0.15);">&#128564;</div>
-          <div class="card-title">走神模式 <span style="font-size:0.7rem;background:rgba(168,85,247,0.25);color:#a855f7;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.15</span></div>
+          <div class="card-title">随机暂停</div>
         </div>
-        <div class="card-desc">V2.15 新增走神模式。模拟真实玩家无法实时观察屏幕的行为：随机抽取触发时间，到点暂停当前标签页的识别与点击，倒计时结束后恢复。可自定义触发时间、持续时间，白名单场景不触发走神。默认关闭，须在设置页手动开启。</div>
+        <div class="card-desc">模拟真实玩家无法实时观察屏幕的行为：按随机区间暂停当前标签页的识别与点击，倒计时结束后恢复。可自定义触发与持续时长，白名单场景不触发，默认关闭、须在设置页手动开启。</div>
         <span class="feature-tag">zoushen.py</span>
-      </div>
-      <div class="card feature-card fade-in stagger-26">
-        <div class="card-header">
-          <div class="card-icon" style="background:rgba(251,146,60,0.15);">&#128266;&#65039;</div>
-          <div class="card-title">任务结束提示音 <span style="font-size:0.7rem;background:rgba(251,146,60,0.25);color:#fb923c;padding:0.1rem 0.4rem;border-radius:4px;vertical-align:middle;">V2.15</span></div>
-        </div>
-        <div class="card-desc">V2.15 拆分新增提示音设置模块（wav.py）。任务结束自动播放提示音提醒，设置页支持音效文件管理、试听与结束提示音开关，内置 QQ、Steam、iOS 及游戏语音等多款音效。</div>
-        <span class="feature-tag">wav.py</span>
       </div>
     </div>
   </div>
@@ -892,7 +756,7 @@
 │   ├── <span class="file py">k280.py</span>                  <span class="comment">-- 困28队员</span>
 │   ├── <span class="file py">yjsl.py</span>                  <span class="comment">-- 英杰试炼</span>
 │   ├── <span class="file py">jjtp.py</span>                  <span class="comment">-- 结界突破</span>
-│   ├── <span class="file py">pcgd.py</span>                  <span class="comment">-- 磐长故地 (V2.17)</span>
+│   ├── <span class="file py">pcgd.py</span>                  <span class="comment">-- 活动通用 (V2.17)</span>
 │   ├── <span class="file py">guanbijiacheng.py</span>        <span class="comment">-- 关闭加成</span>
 │   ├── <span class="file py">dinghao.py</span>              <span class="comment">-- 被顶号处理</span>
 │   ├── <span class="file py">yl.py</span>                    <span class="comment">-- 御灵 (V2.10)</span>
@@ -906,7 +770,7 @@
 │   ├── <span class="file py">find_dead_code.py</span>        <span class="comment">-- return 之后的死代码检查</span>
 │   └── <span class="file py">comment_ratio.py</span>         <span class="comment">-- 注释密度统计</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (141 张)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (143 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (7 张)</span>
 │   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
@@ -918,7 +782,7 @@
 │   ├── <span class="file media">k280/</span>                <span class="comment">-- 困28队员 (5 张)</span>
 │   ├── <span class="file media">yjsl/</span>                <span class="comment">-- 英杰试炼 (14 张)</span>
 │   ├── <span class="file media">jjtp/</span>                <span class="comment">-- 结界突破 (24 张)</span>
-│   ├── <span class="file media">pcgd/</span>                <span class="comment">-- 磐长故地 (8 张, V2.17)</span>
+│   ├── <span class="file media">pcgd/</span>                <span class="comment">-- 活动通用 (10 张, V2.17)</span>
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
 │   ├── <span class="file media">yl/</span>                   <span class="comment">-- 御灵 (5 张, V2.10)</span>
 │   ├── <span class="file media">ql/</span>                   <span class="comment">-- 契灵 (9 张, V2.11)</span>
@@ -1310,11 +1174,11 @@
             <td>9</td>
           </tr>
           <tr>
-            <td><span class="scene-name">&#127956; 磐长故地</span></td>
+            <td><span class="scene-name">&#127956; 活动通用</span></td>
             <td><span class="scene-module">pcgd.py</span></td>
             <td><span class="scene-badge farm">刷图</span></td>
-            <td>V2.17 新增（10月10日咲耶活动积分场景）。识别入口、战场、战斗、挑战、继续等节点，suoding 优先级最高；连续点击挑战 4 次判为异常，识别到 exit 视为任务完成并停止运行。</td>
-            <td>8</td>
+            <td>V2.17 新增，V2.17.1 更名为活动通用。适配古迹演武、刹那试炼等咲耶活动积分战斗场景；识别入口、战场、战斗、挑战、继续等节点，suoding 优先级最高；连续点击挑战 4 次判为异常，识别到 exit 视为任务完成并停止运行。</td>
+            <td>10</td>
           </tr>
         </tbody>
       </table>
@@ -1587,6 +1451,16 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.17.1</span>
+          <span class="changelog-date">2026-10-11</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>添加两张模板图片，适配古迹演武、刹那试炼两个活动战斗场景</li>
+          <li>磐长故地场景更名为「活动通用」，古迹演武、刹那试炼等三个战斗场景均可使用</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.17</span>
           <span class="changelog-date">2026-10-10</span>
         </div>
@@ -1786,7 +1660,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.17</div>
+  <div class="footer-brand">YYS-AUTO V2.17.1</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

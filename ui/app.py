@@ -29,7 +29,7 @@ class AutoClickerUI(DialogsMixin):
     def __init__(self, root):
         """构建主窗口：先备好状态与路径，再建 notebook、菜单栏和设备标签页。"""
         self.root = root
-        self.root.title("YYS-AUTOv2.17")
+        self.root.title("YYS-AUTOv2.17.1")
         self.root.geometry("640x460")
         self.root.minsize(640, 460)  # 设置最小尺寸
 

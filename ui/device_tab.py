@@ -34,6 +34,12 @@ ADB_LOCK_WIDGETS = (
     'device_combo', 'refresh_btn', 'clear_device_btn', 'start_btn', 'start_all_btn',
 )
 
+# 主页面场景名显示映射：内部预设键保持不变（配置、注册表入口都沿用旧键），
+# 仅调整界面上单选按钮的文字。
+SCENE_DISPLAY_NAMES = {
+    "磐长故地": "活动通用",
+}
+
 
 class DeviceTab(SceneRunnerMixin):
     def __init__(self, parent, tab_name, png_base_folder, presets):
@@ -126,7 +132,7 @@ class DeviceTab(SceneRunnerMixin):
         """刷新标题上的「版本号|标签名」。"""
         # 标题处显示 版本号|标签名
         if hasattr(self, 'title_label'):
-            self.title_label.config(text=f"YYS-AUTOv2.17|{self.tab_name}")
+            self.title_label.config(text=f"YYS-AUTOv2.17.1|{self.tab_name}")
     
     def on_tab_name_changed(self, event=None):
         """标签名变化回调：弹出重命名对话框。"""
@@ -205,7 +211,7 @@ class DeviceTab(SceneRunnerMixin):
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        self.title_label = ttk.Label(title_frame, text=f"YYS-AUTOv2.17|{self.tab_name}", font=('Microsoft YaHei', 16, 'bold'))
+        self.title_label = ttk.Label(title_frame, text=f"YYS-AUTOv2.17.1|{self.tab_name}", font=('Microsoft YaHei', 16, 'bold'))
         self.title_label.pack(anchor=tk.CENTER)
         
         # 中间：三列布局
@@ -312,13 +318,15 @@ class DeviceTab(SceneRunnerMixin):
         self.preset_radiobuttons = []
         
         for i, preset_name in enumerate(presets_list[:mid]):
-            rb = ttk.Radiobutton(left_frame, text=preset_name, variable=self.current_preset_var, value=preset_name, 
+            rb = ttk.Radiobutton(left_frame, text=SCENE_DISPLAY_NAMES.get(preset_name, preset_name),
+                                variable=self.current_preset_var, value=preset_name,
                                 command=self.on_preset_change)
             rb.pack(anchor=tk.W, padx=2, pady=1)
             self.preset_radiobuttons.append(rb)
         
         for i, preset_name in enumerate(presets_list[mid:]):
-            rb = ttk.Radiobutton(right_frame, text=preset_name, variable=self.current_preset_var, value=preset_name, 
+            rb = ttk.Radiobutton(right_frame, text=SCENE_DISPLAY_NAMES.get(preset_name, preset_name),
+                                variable=self.current_preset_var, value=preset_name,
                                 command=self.on_preset_change)
             rb.pack(anchor=tk.W, padx=2, pady=1)
             self.preset_radiobuttons.append(rb)

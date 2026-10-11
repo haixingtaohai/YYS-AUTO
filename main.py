@@ -31,7 +31,7 @@ from ui.app import AutoClickerUI
 
 # Windows AppUserModelID：任务栏图标与系统通知的归属都靠它，必须与
 # notification._APP_ID 保持一致，并且要在创建任何窗口之前设置。
-APP_USER_MODEL_ID = "yysauto.application.v2.17"
+APP_USER_MODEL_ID = "yysauto.application.v2.17.1"
 
 # 导入期是否隐藏过控制台。冒烟测试靠它确认没有副作用提前发生。
 _CONSOLE_HIDDEN = False

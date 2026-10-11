@@ -92,7 +92,7 @@ class DialogsMixin:
         top.grab_set()
 
         # 标题区
-        ttk.Label(top, text="YYS-AUTO  v2.17", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
+        ttk.Label(top, text="YYS-AUTO  v2.17.1", font=('Microsoft YaHei', 16, 'bold')).pack(padx=40, pady=(20, 2))
         ttk.Label(top, text="阴阳师自动化辅助工具", font=('Microsoft YaHei', 9), foreground="#888").pack(padx=40, pady=(0, 8))
 
         # 装饰分隔线
