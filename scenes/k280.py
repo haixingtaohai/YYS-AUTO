@@ -1,7 +1,7 @@
 """困28队员场景处理。
 
-队员不统计挑战次数，只按图片类型点击：jujue / baozang / jieshou 点图片中心，
-jiangli 系列点预设坐标。
+队员不统计挑战次数，只按图片类型点击：jujue 点固定坐标 (870, 583)，
+baozang / jieshou 点图片中心，jiangli 系列点预设坐标。
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ def handle_scene(ctx):
         name_lower = r['name'].lower()
 
         if 'jujue' in name_lower:
-            click_center(recognizer, r)
+            click_xy(recognizer, 870, 583)
             state.consecutive_challenge = 0
         elif 'baozang' in name_lower or 'jieshou' in name_lower:
             click_center(recognizer, r)

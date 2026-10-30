@@ -26,7 +26,7 @@ def handle_scene(ctx):
         name_lower = r['name'].lower()
 
         if 'jujue' in name_lower:
-            click_center(recognizer, r)
+            click_xy(recognizer, 870, 583)
             state.consecutive_challenge = 0
         elif 'tiaozhan' in name_lower or 'tiaoszhan' in name_lower:
             # 联动模式：队员没准备好就等下一轮

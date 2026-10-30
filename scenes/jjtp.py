@@ -199,7 +199,9 @@ def _handle_normal_mode(ctx, results, flags):
     state = ctx.state
     recognizer = ctx.recognizer
 
-    if click_center_in_results(recognizer, results, 'jujue'):
+    # jujue 统一点固定坐标，不按识别框中心
+    if any('jujue' in r['name'].lower() for r in results):
+        click_xy(recognizer, 870, 583)
         return 0, False, False
 
     for name in TANSUO_NAMES:

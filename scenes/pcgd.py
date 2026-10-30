@@ -11,7 +11,8 @@
 suoding 与 tiaozhan 同时出现时只点 suoding。
 
 挑战计数复用通用的 :func:`count_challenge`：连续点击 tiaozhan 不重复计数，
-连续点击 4 次未识别到其它画面视为异常并停止。jujue 为通用拒绝模板，保留识别处理。
+连续点击 4 次未识别到其它画面视为异常并停止。jujue 为通用拒绝模板，保留识别处理，
+点击固定坐标 (870, 583)。
 识别到 exit 视为任务完成，直接停止运行。
 """
 
@@ -49,7 +50,7 @@ def handle_scene(ctx):
 
         # 通用拒绝模板，优先级最高
         if 'jujue' in name_lower:
-            click_center(recognizer, r)
+            click_xy(recognizer, 870, 583)
             state.consecutive_challenge = 0
             state.last_clicked_tiaozhan = False
             continue

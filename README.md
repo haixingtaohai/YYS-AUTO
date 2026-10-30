@@ -5,7 +5,7 @@
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
-[![Version](https://img.shields.io/badge/Version-V2.17.1-blue.svg)](使用文档第一次使用必看/更新日志.txt)
+[![Version](https://img.shields.io/badge/Version-V2.17.2-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
 [![GUI](https://img.shields.io/badge/GUI-Tkinter-orange.svg)](#技术栈)
@@ -47,7 +47,7 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 
 | 指标 | 数值 |
 | :--- | :--- |
-| 当前版本 | **V2.17.1**（2026-10-11） |
+| 当前版本 | **V2.17.2**（2026-10-30） |
 | 场景预设 | **14** 个 |
 | 模板图片 | **143** 张 |
 | 代码行数 | 约 6500 行 |
@@ -399,10 +399,9 @@ bat\install.bat
 
 ## 更新日志
 
-当前版本 **V2.17.1**（2026-10-11）：
+当前版本 **V2.17.2**（2026-10-30）：
 
-- 添加两张模板图片，适配古迹演武、刹那试炼两个活动战斗场景
-- 磐长故地场景更名为「活动通用」，古迹演武、刹那试炼等三个战斗场景均可使用
+- 更新新版拒绝悬赏识别模板
 
 完整版本历史见 [`使用文档第一次使用必看/更新日志.txt`](使用文档第一次使用必看/更新日志.txt)。
 
@@ -459,7 +458,3 @@ bat\install.bat
 如果这个项目对你有帮助，欢迎点一个 ⭐ Star
 
 </div>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=haixingtaohai/YYS-AUTO&type=Date)](https://www.star-history.com/#haixingtaohai/YYS-AUTO&Date)

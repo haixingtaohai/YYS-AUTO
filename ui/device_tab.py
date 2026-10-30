@@ -132,7 +132,7 @@ class DeviceTab(SceneRunnerMixin):
         """刷新标题上的「版本号|标签名」。"""
         # 标题处显示 版本号|标签名
         if hasattr(self, 'title_label'):
-            self.title_label.config(text=f"YYS-AUTOv2.17.1|{self.tab_name}")
+            self.title_label.config(text=f"YYS-AUTOv2.17.2|{self.tab_name}")
     
     def on_tab_name_changed(self, event=None):
         """标签名变化回调：弹出重命名对话框。"""
@@ -211,7 +211,7 @@ class DeviceTab(SceneRunnerMixin):
         # 顶部：标题
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=2)
-        self.title_label = ttk.Label(title_frame, text=f"YYS-AUTOv2.17.1|{self.tab_name}", font=('Microsoft YaHei', 16, 'bold'))
+        self.title_label = ttk.Label(title_frame, text=f"YYS-AUTOv2.17.2|{self.tab_name}", font=('Microsoft YaHei', 16, 'bold'))
         self.title_label.pack(anchor=tk.CENTER)
         
         # 中间：三列布局
