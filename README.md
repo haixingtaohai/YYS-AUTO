@@ -36,6 +36,7 @@
 - [反馈与交流](#反馈与交流)
 - [免责声明](#免责声明)
 - [许可证](#许可证)
+- [Star History](#Star History)
 
 ---
 
@@ -459,3 +460,7 @@ bat\install.bat
 如果这个项目对你有帮助，欢迎点一个 ⭐ Star
 
 </div>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=haixingtaohai/YYS-AUTO&type=Date)](https://www.star-history.com/#haixingtaohai/YYS-AUTO&Date)
