@@ -1,10 +1,13 @@
 """困28队员场景处理。
 
 队员不统计挑战次数，只按图片类型点击：jujue 点固定坐标 (870, 583)，
-baozang / jieshou 点图片中心，jiangli 系列点预设坐标。
+baozang 与单人/队长一致（点图片中心，0.5s 后再点预设坐标），
+jieshou 点图片中心，jiangli 系列点预设坐标。
 """
 
 from __future__ import annotations
+
+import time
 
 from scenes.scene_api import SceneResult
 from scenes.scene_common import click_center, click_xy
@@ -27,7 +30,13 @@ def handle_scene(ctx):
         if 'jujue' in name_lower:
             click_xy(recognizer, 870, 583)
             state.consecutive_challenge = 0
-        elif 'baozang' in name_lower or 'jieshou' in name_lower:
+        elif 'baozang' in name_lower:
+            click_center(recognizer, r)
+            time.sleep(0.5)
+            click_xy(recognizer)
+            state.consecutive_challenge = 0
+            state.last_clicked_tiaozhan = False
+        elif 'jieshou' in name_lower:
             click_center(recognizer, r)
             state.consecutive_challenge = 0
             state.last_clicked_tiaozhan = False

@@ -642,7 +642,7 @@
           <div class="card-icon" style="background:rgba(108,92,231,0.15);">&#128101;</div>
           <div class="card-title">司机-队员联动</div>
         </div>
-        <div class="card-desc">智能司机队员配对系统，自动同步组队操作。司机发起邀请后队员自动接受，无需手动协调。</div>
+        <div class="card-desc">智能司机队员配对系统，自动同步组队操作。司机发起邀请后队员自动接受，无需手动协调。困28 队长完成任务或异常中止时，还会自动带停唯一的困28 队员标签。</div>
         <span class="feature-tag">协同自动化</span>
       </div>
       <div class="card feature-card fade-in stagger-3">
@@ -1121,14 +1121,14 @@
             <td><span class="scene-name">&#128081; 困28队长</span></td>
             <td><span class="scene-module">k281.py</span></td>
             <td><span class="scene-badge coop">组队</span></td>
-            <td>困28队长版本，拥有邀请功能。负责发起挑战和招募队友，管理团队流程。</td>
+            <td>困28队长版本，拥有邀请功能。负责发起挑战和招募队友，管理团队流程。完成任务或异常中止后，若仅有 1 个困28队员标签，会自动带停该标签。</td>
             <td>8</td>
           </tr>
           <tr>
             <td><span class="scene-name">&#129309; 困28队员</span></td>
             <td><span class="scene-module">k280.py</span></td>
             <td><span class="scene-badge coop">组队</span></td>
-            <td>困28队员版本，被动跟随模式。自动接受邀请、追踪奖励，与队长模块协同工作。</td>
+            <td>困28队员版本，被动跟随模式。自动接受邀请、追踪奖励，与队长模块协同工作。识别到 baozang 时与单人 / 队长一致：点击图片中心，0.5 秒后再点预设坐标。</td>
             <td>5</td>
           </tr>
           <tr>
@@ -1456,6 +1456,8 @@
         </div>
         <ul class="changelog-changes">
           <li>更新新版拒绝悬赏识别模板</li>
+          <li>困28队员场景识别到 baozang 时改为与困28单人 / 队长一致的处理：点击宝藏图片中心后等待 0.5 秒，再点击预设坐标</li>
+          <li>困28队长完成任务或异常中止后，自动连带停止困28队员标签的运行；存在 2 个及以上困28队员标签时此逻辑不生效</li>
         </ul>
       </div>
       <div class="changelog-item">

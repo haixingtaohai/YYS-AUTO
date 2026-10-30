@@ -236,6 +236,30 @@ class SceneRunnerMixin:
         for thread in threads:
             thread.join()
 
+    def _stop_linked_k28_teammates(self):
+        """困28队长完成任务或异常中止后，连带停止困28队员标签。
+
+        困28队员标签有 2 个及以上时不联动，避免打断其它队员。
+        """
+        if self.current_preset != "困28队长":
+            return
+        if getattr(self.recognizer, 'stop_reason', '') not in ("count", "anomaly"):
+            return
+
+        teammates = [tab for tab in self.parent.tabs
+                     if tab is not self and getattr(tab, 'current_preset', None) == "困28队员"]
+        if len(teammates) >= 2:
+            self.log(f"存在 {len(teammates)} 个困28队员标签，不连带停止")
+            return
+        if not teammates or not getattr(teammates[0], 'running', False):
+            return
+
+        teammate = teammates[0]
+        self.log(f"连带停止困28队员标签：{teammate.tab_name}")
+        teammate.log("困28队长已停止，本标签连带停止运行")
+        # 跨线程操作控件，切回主线程执行
+        self.parent.root.after(0, teammate.stop_loop)
+
     def _handle_stop(self):
         """场景判定停止后的收尾：提示音、系统通知、可选的关闭加成。"""
         # 非手动停止时播放提示音和发送系统通知
@@ -245,6 +269,7 @@ class SceneRunnerMixin:
                 self.send_notification(self.recognizer.stop_reason)
 
         self.running = False
+        self._stop_linked_k28_teammates()
 
         if getattr(self.parent, 'close_jiacheng_enabled', False) \
                 and self.current_preset in CLOSE_JIACHENG_PRESETS:
