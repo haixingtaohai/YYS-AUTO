@@ -60,6 +60,9 @@ def handle_scene(ctx):
         if 'jujue' in name_lower:
             click_xy(recognizer, 870, 583)
             state.consecutive_challenge = 0
+        elif 'cgw' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
         elif 'tiaozhan' in name_lower:
             tiaozhan_count += 1
             click_center(recognizer, r)

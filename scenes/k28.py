@@ -64,6 +64,11 @@ def handle_scene(ctx):
             state.consecutive_challenge = 0
             continue
 
+        if 'cgw' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            continue
+
         if 'jjtp' in name_lower:
             click_xy(recognizer, 1205, 135)
             state.consecutive_challenge = 0

@@ -5,11 +5,11 @@
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
-[![Version](https://img.shields.io/badge/Version-V2.17.2-blue.svg)](使用文档第一次使用必看/更新日志.txt)
+[![Version](https://img.shields.io/badge/Version-V2.17.3-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
 [![GUI](https://img.shields.io/badge/GUI-Tkinter-orange.svg)](#技术栈)
-[![Templates](https://img.shields.io/badge/模板图片-143%20张-success.svg)](#场景一览)
+[![Templates](https://img.shields.io/badge/模板图片-144%20张-success.svg)](#场景一览)
 
 </div>
 
@@ -43,13 +43,13 @@
 
 YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过 **ADB** 与安卓模拟器通信，用 **OpenCV 模板匹配**识别游戏画面，再以模拟点击 / 滑动的方式完成刷图、组队、爬塔等重复性日常操作。
 
-整套程序为零外部 GUI 依赖的桌面应用：界面用 Python 内置的 Tkinter，识别与通信全部通过 `subprocess` 调用自带 ADB 完成，开箱即用。多标签运行时，困28 队长完成任务或异常中止会自动带停唯一的困28 队员标签，减少看守。
+整套程序为零外部 GUI 依赖的桌面应用：界面用 Python 内置的 Tkinter，识别与通信全部通过 `subprocess` 调用自带 ADB 完成，开箱即用。多标签运行时，困28 队长完成任务或异常中止会自动带停唯一的困28 队员标签，减少看守。识别引擎支持通用模板：jujue（拒绝）、cgw（超鬼王门票掉落确认）、dinghao（顶号）在全部场景生效。
 
 | 指标 | 数值 |
 | :--- | :--- |
-| 当前版本 | **V2.17.2**（2026-10-30） |
+| 当前版本 | **V2.17.3**（2026-11-11） |
 | 场景预设 | **14** 个 |
-| 模板图片 | **143** 张 |
+| 模板图片 | **144** 张 |
 | 代码行数 | 约 6500 行 |
 | 运行平台 | Windows（Python 3.8+，兼容 3.11） |
 | 多设备 | 支持，每个标签页独立线程控制一台模拟器 |
@@ -188,7 +188,10 @@ yys-auto/
 │   ├── find_dead_code.py    # return 之后的死代码检查
 │   └── comment_ratio.py     # 注释密度统计
 │
-├── png/                     # 模板图片（143 张，按场景分目录）
+├── png/                     # 模板图片（144 张，按场景分目录）
+│   ├── cgw.png              # 通用：超鬼王门票掉落确认
+│   ├── jujue.png            # 通用：拒绝
+│   └── dinghao.png          # 通用：被顶号
 ├── wav/                     # 提示音音效（6 个）
 ├── logs/                    # 运行日志（GUIlog / adb / image）
 ├── bat/
@@ -399,11 +402,9 @@ bat\install.bat
 
 ## 更新日志
 
-当前版本 **V2.17.2**（2026-10-30）：
+当前版本 **V2.17.3**（2026-11-11）：
 
-- 更新新版拒绝悬赏识别模板
-- 困28队员识别到 baozang 时改为与困28单人 / 队长一致：点击图片中心，0.5 秒后再点预设坐标
-- 困28队长完成任务或异常中止后自动带停唯一的困28队员标签；存在 2 个及以上困28队员标签时不联动
+- 添加超鬼王门票掉落确认模板（cgw.png），作为通用识别图片应用于全部场景，识别到后点击图片坐标
 
 完整版本历史见 [`使用文档第一次使用必看/更新日志.txt`](使用文档第一次使用必看/更新日志.txt)。
 

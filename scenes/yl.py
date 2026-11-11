@@ -32,6 +32,11 @@ def handle_scene(ctx):
             state.last_clicked_tiaozhan = False
             continue
 
+        if 'cgw' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            continue
+
         if 'suoding' in name_lower:
             click_center(recognizer, r)
             state.consecutive_challenge = 0

@@ -25,6 +25,9 @@ def handle_scene(ctx):
         if 'jujue' in name_lower:
             click_xy(recognizer, 870, 583)
             state.consecutive_challenge = 0
+        elif 'cgw' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
         elif 'duiwu' in name_lower:
             # 识别到 duiwu 视为队员已准备
             if options.on_ready:

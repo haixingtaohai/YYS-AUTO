@@ -204,6 +204,10 @@ def _handle_normal_mode(ctx, results, flags):
         click_xy(recognizer, 870, 583)
         return 0, False, False
 
+    # cgw：超鬼王门票掉落确认，点击图片中心
+    if click_center_in_results(recognizer, results, 'cgw'):
+        return 0, False, True
+
     for name in TANSUO_NAMES:
         if click_center_in_results(recognizer, results, name):
             return 0, False, True

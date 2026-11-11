@@ -28,6 +28,9 @@ def handle_scene(ctx):
         if 'jujue' in name_lower:
             click_xy(recognizer, 870, 583)
             state.consecutive_challenge = 0
+        elif 'cgw' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
         elif 'tiaozhan' in name_lower or 'tiaoszhan' in name_lower:
             # 联动模式：队员没准备好就等下一轮
             if options.link_enabled and options.check_teammates_ready \

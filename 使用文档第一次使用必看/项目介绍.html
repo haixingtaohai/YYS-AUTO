@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.17.2 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.17.3 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.17.2</div>
+  <div class="nav-brand">YYS-AUTO V2.17.3</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,7 +584,7 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.17.2 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.17.3 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
     <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、14 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
@@ -603,7 +603,7 @@
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">143</div>
+        <div class="stat-value">144</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -770,7 +770,7 @@
 │   ├── <span class="file py">find_dead_code.py</span>        <span class="comment">-- return 之后的死代码检查</span>
 │   └── <span class="file py">comment_ratio.py</span>         <span class="comment">-- 注释密度统计</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (143 张)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (144 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (7 张)</span>
 │   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
@@ -787,7 +787,8 @@
 │   ├── <span class="file media">yl/</span>                   <span class="comment">-- 御灵 (5 张, V2.10)</span>
 │   ├── <span class="file media">ql/</span>                   <span class="comment">-- 契灵 (9 张, V2.11)</span>
 │   ├── <span class="file media">dinghao.png</span>             <span class="comment">-- 顶号识别</span>
-│   └── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
+│   ├── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
+│   └── <span class="file media">cgw.png</span>               <span class="comment">-- 通用超鬼王门票掉落确认 (V2.17.3)</span>
 │
 ├── <span class="folder">logs/</span>                              <span class="comment">-- 详细日志目录</span>
 │   ├── GUIlog_YYYYMMDD_HHMMSS.log   <span class="comment">-- GUI 运行日志 (V2.10)</span>
@@ -1451,6 +1452,15 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.17.3</span>
+          <span class="changelog-date">2026-11-11</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>添加超鬼王门票掉落确认模板（cgw.png），作为通用识别图片应用于全部场景，识别到后点击图片坐标</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.17.2</span>
           <span class="changelog-date">2026-10-30</span>
         </div>
@@ -1671,7 +1681,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.17.2</div>
+  <div class="footer-brand">YYS-AUTO V2.17.3</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

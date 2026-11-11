@@ -55,6 +55,11 @@ def handle_scene(ctx):
             state.consecutive_challenge = 0
             continue
 
+        if 'cgw' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            continue
+
         # boss 和 putong 同时出现时只处理 boss
         if has_boss and has_putong and 'putong' in name_lower:
             continue

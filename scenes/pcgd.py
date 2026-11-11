@@ -55,6 +55,12 @@ def handle_scene(ctx):
             state.last_clicked_tiaozhan = False
             continue
 
+        # 超鬼王门票掉落确认，通用模板
+        if 'cgw' in name_lower:
+            click_center(recognizer, r)
+            state.consecutive_challenge = 0
+            continue
+
         # suoding 优先级第一
         if 'suoding' in name_lower:
             click_center(recognizer, r)
