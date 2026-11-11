@@ -86,12 +86,15 @@ COUNT_REACHED = "count"      # 达到目标挑战次数
 COUNT_ANOMALY = "anomaly"    # 连续点击多次仍未识别到奖励
 
 
-def count_challenge(ctx, last_clicked_attr="last_clicked_tiaozhan", anomaly_limit=4):
+def count_challenge(ctx, last_clicked_attr="last_clicked_tiaozhan", anomaly_limit=4,
+                    label="挑战次数", action="挑战"):
     """通用的「挑战次数统计 + 连续点击异常检测」。
 
     连续两次点到挑战不计入次数（第二次只提示）。返回 :data:`COUNT_OK`、
     :data:`COUNT_REACHED` 或 :data:`COUNT_ANOMALY`；后两者由调用方负责停止并
     跳出本轮识别结果循环。
+
+    ``label`` / ``action`` 供场景自定义日志措辞（如超鬼王场景用「召唤」）。
     """
     state = ctx.state
     recognizer = ctx.recognizer
@@ -101,18 +104,18 @@ def count_challenge(ctx, last_clicked_attr="last_clicked_tiaozhan", anomaly_limi
         if not last_clicked:
             recognizer.tiaozhan_count += 1
             state.current_count = recognizer.tiaozhan_count
-            ctx.log(f"  挑战次数: {state.current_count}/{state.target_count}")
+            ctx.log(f"  {label}: {state.current_count}/{state.target_count}")
             if state.target_count > 0 and state.current_count >= state.target_count:
-                ctx.log(f"达到目标挑战次数 {state.target_count}，结束脚本")
+                ctx.log(f"达到目标{label} {state.target_count}，结束脚本")
                 recognizer.stop_reason = "count"
                 return COUNT_REACHED
         else:
-            ctx.log("  连续点击挑战，不计入次数")
+            ctx.log(f"  连续点击{action}，不计入次数")
 
     setattr(state, last_clicked_attr, True)
     state.consecutive_challenge += 1
     if state.consecutive_challenge >= anomaly_limit:
-        ctx.log(f"挑战失败：连续点击{anomaly_limit}次未识别到奖励")
+        ctx.log(f"{action}失败：连续点击{anomaly_limit}次未识别到奖励")
         recognizer.stop_reason = "anomaly"
         return COUNT_ANOMALY
     return COUNT_OK

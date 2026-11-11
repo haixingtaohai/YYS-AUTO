@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 from scenes import (
+    cgw,
     dg,
     dj,
     dy,
@@ -42,6 +43,7 @@ SCENE_MODULES = {
     "契灵": ql,
     "结界突破": jjtp,
     "磐长故地": pcgd,
+    "超鬼王": cgw,
 }
 
 # 未识别到图片时需要调用 handle_no_recognition 的场景。

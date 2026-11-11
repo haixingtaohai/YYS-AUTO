@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YYS-AUTO V2.17.3 - 阴阳师自动化工具 项目介绍</title>
+<title>YYS-AUTO V2.18 - 阴阳师自动化工具 项目介绍</title>
 <style>
   /* ========== Reset & Base ========== */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -554,7 +554,7 @@
 
 <!-- ======== Navigation ======== -->
 <nav class="top-nav">
-  <div class="nav-brand">YYS-AUTO V2.17.3</div>
+  <div class="nav-brand">YYS-AUTO V2.18</div>
   <ul class="nav-links">
     <li><a href="#overview" class="active">概览</a></li>
     <li><a href="#features">功能</a></li>
@@ -584,9 +584,9 @@
 <!-- ======== Hero Section ======== -->
 <section class="hero" id="overview">
   <div class="hero-content">
-    <div class="hero-badge">V2.17.3 &middot; Python Desktop Application</div>
+    <div class="hero-badge">V2.18 &middot; Python Desktop Application</div>
     <h1>阴阳师自动化工具</h1>
-    <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、14 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
+    <p>基于 OpenCV 模板匹配与 ADB 控制的阴阳师手游自动化脚本。支持多设备管理、15 种游戏场景预设，实现全自动刷图、组队、爬塔等操作。</p>
     <div class="hero-tags">
       <span class="hero-tag python">Python 3.8+</span>
       <span class="hero-tag opencv">OpenCV</span>
@@ -599,11 +599,11 @@
         <div class="stat-label">总代码行数</div>
       </div>
       <div class="stat-item fade-in stagger-2">
-        <div class="stat-value">14</div>
+        <div class="stat-value">15</div>
         <div class="stat-label">场景预设</div>
       </div>
       <div class="stat-item fade-in stagger-3">
-        <div class="stat-value">144</div>
+        <div class="stat-value">148</div>
         <div class="stat-label">模板图片</div>
       </div>
       <div class="stat-item fade-in stagger-4">
@@ -656,9 +656,9 @@
       <div class="card feature-card fade-in stagger-4">
         <div class="card-header">
           <div class="card-icon" style="background:rgba(16,185,129,0.15);">&#127918;</div>
-          <div class="card-title">14 场景预设</div>
+          <div class="card-title">15 场景预设</div>
         </div>
-        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、御灵、契灵、活动通用等 14 种游戏场景自动化方案，覆盖日常主要玩法。</div>
+        <div class="card-desc">内置业原火、魂土、斗技、道馆、困28、结界突破、御灵、契灵、超鬼王、活动通用等 15 种游戏场景自动化方案，覆盖日常主要玩法。</div>
         <span class="feature-tag">一键切换</span>
       </div>
       <div class="card feature-card fade-in stagger-5">
@@ -719,7 +719,7 @@
 <span class="folder">yys-auto/</span>                           <span class="comment">-- 项目根目录</span>
 ├── <span class="file py">main.py</span>                          <span class="comment">-- 启动入口 (~101 行)</span>
 ├── <span class="file py">paths.py</span>                         <span class="comment">-- 路径常量 (~35 行)</span>
-├── <span class="file py">presets.py</span>                       <span class="comment">-- 14 个场景预设表 (~102 行)</span>
+├── <span class="file py">presets.py</span>                       <span class="comment">-- 15 个场景预设表 (~102 行)</span>
 ├── <span class="file py">image_recognizer.py</span>             <span class="comment">-- 图像识别引擎 (~450 行)</span>
 ├── <span class="file py">image_accelerator.py</span>           <span class="comment">-- 识别加速模块 (~336 行, V2.10)</span>
 ├── <span class="file py">adb.py</span>                          <span class="comment">-- ADB 设备管理 + 日志系统 (~143 行)</span>
@@ -741,7 +741,7 @@
 │   ├── <span class="file py">ime.py</span>                   <span class="comment">-- 输入法控制 (~82 行)</span>
 │   └── <span class="file py">widgets.py</span>               <span class="comment">-- 自定义控件 ToolTip (~34 行)</span>
 │
-├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录 (21 个)</span>
+├── <span class="folder">scenes/</span>                           <span class="comment">-- 场景模块目录 (22 个)</span>
 │   ├── <span class="file py">scene_api.py</span>             <span class="comment">-- 场景接口数据结构 (V2.16)</span>
 │   ├── <span class="file py">scene_common.py</span>          <span class="comment">-- 场景公用辅助函数 (V2.16)</span>
 │   ├── <span class="file py">registry.py</span>              <span class="comment">-- 预设名 → 模块映射 (V2.16)</span>
@@ -761,6 +761,7 @@
 │   ├── <span class="file py">dinghao.py</span>              <span class="comment">-- 被顶号处理</span>
 │   ├── <span class="file py">yl.py</span>                    <span class="comment">-- 御灵 (V2.10)</span>
 │   ├── <span class="file py">ql.py</span>                    <span class="comment">-- 契灵 (V2.11)</span>
+│   ├── <span class="file py">cgw.py</span>                   <span class="comment">-- 超鬼王 (V2.18)</span>
 │   └── <span class="file py">zoushen.py</span>               <span class="comment">-- 走神模式 (V2.15)</span>
 │
 ├── <span class="folder">tools/</span>                            <span class="comment">-- 开发辅助脚本 (V2.16，不参与运行)</span>
@@ -770,7 +771,7 @@
 │   ├── <span class="file py">find_dead_code.py</span>        <span class="comment">-- return 之后的死代码检查</span>
 │   └── <span class="file py">comment_ratio.py</span>         <span class="comment">-- 注释密度统计</span>
 │
-├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (144 张)</span>
+├── <span class="folder">png/</span>                              <span class="comment">-- 模板图片目录 (148 张)</span>
 │   ├── <span class="file media">yyh/</span>                 <span class="comment">-- 业原火 (7 张)</span>
 │   ├── <span class="file media">htdr/</span>                <span class="comment">-- 魂土单人 (12 张)</span>
 │   ├── <span class="file media">sj/</span>                  <span class="comment">-- 司机 (6 张)</span>
@@ -786,6 +787,7 @@
 │   ├── <span class="file media">jiacheng/</span>            <span class="comment">-- 关闭加成 (3 张)</span>
 │   ├── <span class="file media">yl/</span>                   <span class="comment">-- 御灵 (5 张, V2.10)</span>
 │   ├── <span class="file media">ql/</span>                   <span class="comment">-- 契灵 (9 张, V2.11)</span>
+│   ├── <span class="file media">cgw/</span>                  <span class="comment">-- 超鬼王 (4 张, V2.18)</span>
 │   ├── <span class="file media">dinghao.png</span>             <span class="comment">-- 顶号识别</span>
 │   ├── <span class="file media">jujue.png</span>             <span class="comment">-- 通用拒绝按钮</span>
 │   └── <span class="file media">cgw.png</span>               <span class="comment">-- 通用超鬼王门票掉落确认 (V2.17.3)</span>
@@ -1181,6 +1183,13 @@
             <td>V2.17 新增，V2.17.1 更名为活动通用。适配古迹演武、刹那试炼等咲耶活动积分战斗场景；识别入口、战场、战斗、挑战、继续等节点，suoding 优先级最高；连续点击挑战 4 次判为异常，识别到 exit 视为任务完成并停止运行。</td>
             <td>10</td>
           </tr>
+          <tr>
+            <td><span class="scene-name">&#128123; 超鬼王</span></td>
+            <td><span class="scene-module">cgw.py</span></td>
+            <td><span class="scene-badge farm">刷图</span></td>
+            <td>V2.18 新增。识别召唤、准备、挑战、继续等节点，识别到召唤计入运行次数；仅进行召唤鬼王和进入战斗，需自行切换队伍和开关强追。</td>
+            <td>4</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1452,6 +1461,15 @@
     <div class="changelog-list fade-in">
       <div class="changelog-item">
         <div class="changelog-version">
+          <span class="changelog-badge">V2.18</span>
+          <span class="changelog-date">2026-11-12</span>
+        </div>
+        <ul class="changelog-changes">
+          <li>添加超鬼王场景，仅进行召唤鬼王和进入战斗，需要自行切换队伍和开关强追</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">
           <span class="changelog-badge">V2.17.3</span>
           <span class="changelog-date">2026-11-11</span>
         </div>
@@ -1681,7 +1699,7 @@
 <div class="divider"></div>
 
 <footer class="footer">
-  <div class="footer-brand">YYS-AUTO V2.17.3</div>
+  <div class="footer-brand">YYS-AUTO V2.18</div>
   <p style="margin-top:0.5rem;">阴阳师自动化工具 -- 基于 OpenCV + ADB 的智能刷图方案</p>
   <div class="footer-links">
     <a href="#overview">项目概览</a>

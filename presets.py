@@ -98,5 +98,12 @@ PRESETS = {
                 "click_y": 666,
                 "threshold": 0.80,
                 "count_challenge": True
+            },
+            "超鬼王": {
+                "folder": "cgw",
+                "click_x": 777,
+                "click_y": 666,
+                "threshold": 0.80,
+                "count_challenge": True
             }
         }
