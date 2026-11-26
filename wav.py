@@ -35,9 +35,7 @@ def apply_settings(settings_tab):
 
 def create_section(settings_tab, parent_frame):
     """构建提示音设置区"""
-    sound_group = ttk.LabelFrame(parent_frame, text="提示音设置", padding="8")
-    sound_group.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(5, 0))
-    settings_tab._add_section_help(sound_group,
+    sound_group = settings_tab._create_group(parent_frame, "提示音设置",
         "任务正常结束时播放的提示音（在 wav 目录中读取）。\n"
         "“音效”下拉框选择要播放的 .wav 文件，可点“试听”先确认效果；\n"
         "“添加”从电脑中导入 wav 文件；\n"
@@ -46,15 +44,18 @@ def create_section(settings_tab, parent_frame):
         "手动点击“停止”结束任务时不会播放。")
 
     # 开关行
-    top_row = ttk.Frame(sound_group)
+    top_row = ttk.Frame(sound_group, style="Card.TFrame")
     top_row.pack(fill=tk.X, pady=2)
     ttk.Checkbutton(top_row, text="启用提示音", variable=settings_tab.settings_sound_var,
+                    style="Card.TCheckbutton",
                     command=settings_tab.save_settings).pack(side=tk.LEFT)
 
+    settings_tab._add_row_separator(sound_group)
+
     # 音效文件选择
-    file_row = ttk.Frame(sound_group)
+    file_row = ttk.Frame(sound_group, style="Card.TFrame")
     file_row.pack(fill=tk.X, pady=2)
-    ttk.Label(file_row, text="音效:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+    ttk.Label(file_row, text="音效:", style="Card.TLabel").pack(side=tk.LEFT, padx=2)
     settings_tab.sound_combo = ttk.Combobox(file_row, width=14, state="readonly",
                                             textvariable=settings_tab.settings_sound_file_var)
     settings_tab.sound_combo.pack(side=tk.LEFT, padx=2)
@@ -62,8 +63,10 @@ def create_section(settings_tab, parent_frame):
     ttk.Button(file_row, text="试听", width=5,
                command=lambda: preview(settings_tab)).pack(side=tk.LEFT, padx=1)
 
+    settings_tab._add_row_separator(sound_group)
+
     # 操作按钮
-    btn_row = ttk.Frame(sound_group)
+    btn_row = ttk.Frame(sound_group, style="Card.TFrame")
     btn_row.pack(fill=tk.X, pady=2)
     ttk.Button(btn_row, text="添加", width=6,
                command=lambda: add_file(settings_tab)).pack(side=tk.LEFT, padx=1)

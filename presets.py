@@ -91,19 +91,5 @@ PRESETS = {
                 "click_y": 666,
                 "threshold": 0.8,
                 "count_challenge": False
-            },
-            "磐长故地": {
-                "folder": "pcgd",
-                "click_x": 777,
-                "click_y": 666,
-                "threshold": 0.80,
-                "count_challenge": True
-            },
-            "超鬼王": {
-                "folder": "cgw",
-                "click_x": 777,
-                "click_y": 666,
-                "threshold": 0.80,
-                "count_challenge": True
             }
         }

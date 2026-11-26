@@ -176,9 +176,7 @@ def reset_defaults(settings_tab):
 
 def create_section(settings_tab, parent_frame):
     """构建随机暂停设置区"""
-    zoushen_group = ttk.LabelFrame(parent_frame, text="随机暂停设置", padding="8")
-    zoushen_group.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(5, 0))
-    settings_tab._add_section_help(zoushen_group,
+    zoushen_group = settings_tab._create_group(parent_frame, "随机暂停设置",
         "模拟真实玩家无法一直盯着屏幕：到时间后暂停当前标签页的识别与点击，倒计时结束再恢复。\n"
         "触发时间：任务开始后在该区间内随机取一个值作为倒计时，到点进入随机暂停状态；\n"
         "持续时间：进入随机暂停状态后在该区间内随机取一个值作为暂停时长。\n"
@@ -186,44 +184,51 @@ def create_section(settings_tab, parent_frame):
         "暂停期间点“停止”或“重启ADB”会立即中断随机暂停。\n"
         "推荐值：触发 60~180 秒，持续 5~15 秒（可点“重置推荐值”恢复）。")
 
-    top_row = ttk.Frame(zoushen_group)
+    top_row = ttk.Frame(zoushen_group, style="Card.TFrame")
     top_row.pack(fill=tk.X, pady=2)
     ttk.Checkbutton(top_row, text="启用随机暂停状态", variable=settings_tab.settings_zoushen_enabled_var,
+                    style="Card.TCheckbutton",
                     command=settings_tab.save_settings).pack(side=tk.LEFT)
     ttk.Button(top_row, text="重置推荐值", command=lambda: reset_defaults(settings_tab),
                width=10).pack(side=tk.LEFT, padx=(8, 0))
 
+    settings_tab._add_row_separator(zoushen_group)
+
     # 随机暂停触发时间区间（秒）
-    trigger_row = ttk.Frame(zoushen_group)
+    trigger_row = ttk.Frame(zoushen_group, style="Card.TFrame")
     trigger_row.pack(fill=tk.X, pady=2)
-    ttk.Label(trigger_row, text="触发时间:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+    ttk.Label(trigger_row, text="触发时间:", style="Card.TLabel").pack(side=tk.LEFT, padx=2)
     settings_tab.zoushen_trigger_min_entry = ttk.Entry(trigger_row, textvariable=settings_tab.settings_zoushen_trigger_min_var, width=5)
     settings_tab.zoushen_trigger_min_entry.pack(side=tk.LEFT, padx=2)
     settings_tab.zoushen_trigger_min_entry.bind('<FocusOut>', lambda e: settings_tab.save_settings())
-    ttk.Label(trigger_row, text="~", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT)
+    ttk.Label(trigger_row, text="~", style="Card.TLabel").pack(side=tk.LEFT)
     settings_tab.zoushen_trigger_max_entry = ttk.Entry(trigger_row, textvariable=settings_tab.settings_zoushen_trigger_max_var, width=5)
     settings_tab.zoushen_trigger_max_entry.pack(side=tk.LEFT, padx=2)
     settings_tab.zoushen_trigger_max_entry.bind('<FocusOut>', lambda e: settings_tab.save_settings())
-    ttk.Label(trigger_row, text="秒", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+    ttk.Label(trigger_row, text="秒", style="Card.TLabel").pack(side=tk.LEFT, padx=2)
+
+    settings_tab._add_row_separator(zoushen_group)
 
     # 随机暂停持续时间区间（秒）
-    duration_row = ttk.Frame(zoushen_group)
+    duration_row = ttk.Frame(zoushen_group, style="Card.TFrame")
     duration_row.pack(fill=tk.X, pady=2)
-    ttk.Label(duration_row, text="持续时间:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+    ttk.Label(duration_row, text="持续时间:", style="Card.TLabel").pack(side=tk.LEFT, padx=2)
     settings_tab.zoushen_duration_min_entry = ttk.Entry(duration_row, textvariable=settings_tab.settings_zoushen_duration_min_var, width=5)
     settings_tab.zoushen_duration_min_entry.pack(side=tk.LEFT, padx=2)
     settings_tab.zoushen_duration_min_entry.bind('<FocusOut>', lambda e: settings_tab.save_settings())
-    ttk.Label(duration_row, text="~", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT)
+    ttk.Label(duration_row, text="~", style="Card.TLabel").pack(side=tk.LEFT)
     settings_tab.zoushen_duration_max_entry = ttk.Entry(duration_row, textvariable=settings_tab.settings_zoushen_duration_max_var, width=5)
     settings_tab.zoushen_duration_max_entry.pack(side=tk.LEFT, padx=2)
     settings_tab.zoushen_duration_max_entry.bind('<FocusOut>', lambda e: settings_tab.save_settings())
-    ttk.Label(duration_row, text="秒", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
+    ttk.Label(duration_row, text="秒", style="Card.TLabel").pack(side=tk.LEFT, padx=2)
+
+    settings_tab._add_row_separator(zoushen_group)
 
     # 随机暂停白名单（白名单内场景不触发随机暂停）
-    whitelist_row = ttk.Frame(zoushen_group)
+    whitelist_row = ttk.Frame(zoushen_group, style="Card.TFrame")
     whitelist_row.pack(fill=tk.X, pady=2)
-    ttk.Label(whitelist_row, text="白名单:", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-    settings_tab.zoushen_whitelist_label = ttk.Label(whitelist_row, text="未设置", font=('Microsoft YaHei', 9))
+    ttk.Label(whitelist_row, text="白名单:", style="Card.TLabel").pack(side=tk.LEFT, padx=2)
+    settings_tab.zoushen_whitelist_label = ttk.Label(whitelist_row, text="未设置", style="Card.TLabel")
     settings_tab.zoushen_whitelist_label.pack(side=tk.LEFT, padx=2)
     ttk.Button(whitelist_row, text="设置", width=6,
                command=lambda: show_whitelist_dialog(settings_tab)).pack(side=tk.LEFT, padx=2)

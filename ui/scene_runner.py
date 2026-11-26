@@ -305,6 +305,7 @@ class SceneRunnerMixin:
         self.start_btn.config(state=tk.NORMAL)
         self.stop_btn.config(state=tk.DISABLED)
         self.unlock_controls()
+        self._set_run_status(False)
 
     def run_loop_thread(self):
         """标签页的运行循环，跑在独立线程里。"""
@@ -368,6 +369,7 @@ class SceneRunnerMixin:
         
         # 解锁所有控件
         self.unlock_controls()
+        self._set_run_status(False)
         
         # 挑战次数以 recognizer 上的计数为准（场景只写它，不写 scene_state）
         if self._preset_config().get("count_challenge", True) and self.recognizer:

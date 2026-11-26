@@ -5,11 +5,11 @@
 **阴阳师自动化工具 · 基于 OpenCV 模板匹配 + ADB 控制的 Windows 桌面脚本**
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0/)
-[![Version](https://img.shields.io/badge/Version-V2.18-blue.svg)](使用文档第一次使用必看/更新日志.txt)
+[![Version](https://img.shields.io/badge/Version-V3.0-blue.svg)](使用文档第一次使用必看/更新日志.txt)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](#环境要求)
 [![GUI](https://img.shields.io/badge/GUI-Tkinter-orange.svg)](#技术栈)
-[![Templates](https://img.shields.io/badge/模板图片-148%20张-success.svg)](#场景一览)
+[![Templates](https://img.shields.io/badge/模板图片-134%20张-success.svg)](#场景一览)
 
 </div>
 
@@ -47,9 +47,9 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 
 | 指标 | 数值 |
 | :--- | :--- |
-| 当前版本 | **V2.18**（2026-11-12） |
-| 场景预设 | **15** 个 |
-| 模板图片 | **148** 张 |
+| 当前版本 | **V3.0**（2026-11-27） |
+| 场景预设 | **13** 个 |
+| 模板图片 | **134** 张 |
 | 代码行数 | 约 6500 行 |
 | 运行平台 | Windows（Python 3.8+，兼容 3.11） |
 | 多设备 | 支持，每个标签页独立线程控制一台模拟器 |
@@ -78,13 +78,13 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 - **完整快捷键** —— 标签管理、启停、批量操作、标签切换全都有键盘映射，输入框聚焦时自动屏蔽。
 - **任务结束提示音** —— 任务结束播放 WAV 音效，设置页支持导入、试听与切换，内置 6 款音效。
 - **系统级通知** —— 任务完成或异常停止时推送 Windows Toast 通知（`winotify`，未安装则回退 PowerShell 托盘通知）。
-- **可控日志** —— ADB 命令、识图结果、GUI 运行日志分别写入 `logs/`，默认关闭，可在菜单栏一键开关。
+- **可控日志** —— ADB 命令、识图结果、GUI 运行日志分别写入 `logs/`，默认关闭，可在设置页一键开关。
 
 ---
 
 ## 场景一览
 
-14 个场景预设，覆盖日常主要玩法。所有场景统一导出 `handle_scene(ctx)` 接口，返回 `SceneResult`（是否停止 / 是否等待 / 切换到哪个场景）。
+13 个场景预设，覆盖日常主要玩法。所有场景统一导出 `handle_scene(ctx)` 接口，返回 `SceneResult`（是否停止 / 是否等待 / 切换到哪个场景）。
 
 | 场景 | 模块 | 类型 | 说明 | 模板数 |
 | :--- | :--- | :--- | :--- | ---: |
@@ -101,7 +101,6 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 | 🚨 结界突破 | `jjtp.py` | 刷图 | 多步骤自动战斗，绘卷模式核心 | 24 |
 | 💎 御灵 | `yl.py` | 刷图 | 御灵副本自动挑战，支持层数选择与连续挑战 | 5 |
 | 💎 契灵 | `ql.py` | 刷图 | 契灵结契自动化，支持放弃 / 再次结契两种模式 | 9 |
-| 🏔️ 活动通用 | `pcgd.py` | 爬塔 | 活动战斗通用场景，适配古迹演武、刹那试炼等咲耶活动积分玩法，自动进入、挑战、结算，识别退出后完成停止 | 10 |
 
 **辅助模块**（非预设，由主流程自动调用）
 
@@ -120,10 +119,11 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 | 菜单 | 主要功能 |
 | :--- | :--- |
 | **程序(P)** | 重启工具、重启 ADB 并重启程序、关闭 ADB 并退出、退出程序 |
-| **设置(T)** | 功能设置（队员司机联动 / 绘卷模式 / 斗技段位晋升结束 / 契灵结契模式 / 关闭御魂加成 / 等待秒数）、日志（启用记录 / 打开日志文件夹 / 清空日志）、软件更新 |
 | **标签(B)** | 新建标签、删除当前标签、修改标签名字、清除全部标签设备 |
 | **运行(R)** | 开始 / 停止当前标签、全部开始 / 全部停止、运行时长记录 |
 | **帮助(H)** | 打开使用说明文档、快捷键说明、Bug 反馈与建议、关于 YYS-AUTO |
+
+> 「设置」标签页：左侧按 功能开关 / 设备连接 / 提示音与通知 / 随机暂停 / 日志与更新 分类，原菜单「设置(T)」的功能、日志与软件更新入口均已并入此页。
 
 ### 快捷键
 
@@ -150,7 +150,7 @@ YYS-AUTO 是一个用 Python 编写的阴阳师手游自动化工具。它通过
 yys-auto/
 ├── main.py                  # 启动入口：sys.path、进程标识、图标、主窗口
 ├── paths.py                 # 路径常量（全部由 ROOT_DIR 推导）
-├── presets.py               # 14 个场景预设表
+├── presets.py               # 13 个场景预设表
 ├── image_recognizer.py      # OpenCV 模板匹配识别引擎
 ├── image_accelerator.py     # Numba JIT / PyTurboJPEG 加速模块（可选）
 ├── adb.py                   # ADB 设备管理 + 日志基础设施
@@ -177,8 +177,8 @@ yys-auto/
 │   ├── scene_common.py      # 点击、日志、滑屏、挑战计数等公用函数
 │   ├── registry.py          # 预设名 → 场景模块映射
 │   ├── yyh.py / htdr.py / sj.py / dy.py / dj.py / dg.py
-│   ├── k28.py / k281.py / k280.py / yjsl.py / jjtp.py / pcgd.py
-│   ├── yl.py / ql.py / cgw.py
+│   ├── k28.py / k281.py / k280.py / yjsl.py / jjtp.py
+│   ├── yl.py / ql.py
 │   └── guanbijiacheng.py / dinghao.py / zoushen.py
 │
 ├── tools/                   # 开发辅助脚本（不参与运行）
@@ -188,8 +188,7 @@ yys-auto/
 │   ├── find_dead_code.py    # return 之后的死代码检查
 │   └── comment_ratio.py     # 注释密度统计
 │
-├── png/                     # 模板图片（148 张，按场景分目录）
-│   ├── cgw/                 # 超鬼王（4 张）
+├── png/                     # 模板图片（134 张，按场景分目录）
 │   ├── cgw.png              # 通用：超鬼王门票掉落确认
 │   ├── jujue.png            # 通用：拒绝
 │   └── dinghao.png          # 通用：被顶号
@@ -403,9 +402,10 @@ bat\install.bat
 
 ## 更新日志
 
-当前版本 **V2.18**（2026-11-12）：
+当前版本 **V3.0**（2026-11-27）：
 
-- 添加超鬼王场景，仅进行召唤鬼王和进入战斗，需要自行切换队伍和开关强追
+- 删除活动通用（磐长故地）和超鬼王场景
+- 设备控制页全新布局，设置页重新整理
 
 完整版本历史见 [`使用文档第一次使用必看/更新日志.txt`](使用文档第一次使用必看/更新日志.txt)。
 

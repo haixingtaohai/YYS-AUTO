@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -19,6 +20,10 @@ from ui.settings_tab import SettingsTab
 
 gui_logger = get_gui_logger()
 
+# 主窗口固定尺寸
+WINDOW_WIDTH = 640
+WINDOW_HEIGHT = 460
+
 
 def _adb_path():
     """优先用自带的 adb，找不到时退回 PATH 上的 adb。"""
@@ -29,9 +34,9 @@ class AutoClickerUI(DialogsMixin):
     def __init__(self, root):
         """构建主窗口：先备好状态与路径，再建 notebook、菜单栏和设备标签页。"""
         self.root = root
-        self.root.title("YYS-AUTOv2.18")
-        self.root.geometry("640x460")
-        self.root.minsize(640, 460)  # 设置最小尺寸
+        self.root.title("YYS-AUTOv3.0")
+        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+        self.root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 设置最小尺寸
 
         # 初始化标志
         self.initialized = False
@@ -102,10 +107,12 @@ class AutoClickerUI(DialogsMixin):
         self.usage_records = self._load_usage_records()
         self.saved_config = self.load_config()
 
-        # 恢复窗口位置（延迟到窗口显示后执行，避免被窗口管理器覆盖）
-        if "window_geometry" in self.saved_config:
-            saved_geometry = self.saved_config["window_geometry"]
-            self.root.after(0, lambda g=saved_geometry: self.root.geometry(g))
+        # 恢复窗口位置（窗口尺寸固定，只有尺寸一致的旧记录才恢复位置）。
+        saved_geometry = self.saved_config.get("window_geometry", "")
+        match = re.match(r"^(\d+)x(\d+)([+-]\d+[+-]\d+)$", str(saved_geometry))
+        if match and (int(match.group(1)), int(match.group(2))) == (WINDOW_WIDTH, WINDOW_HEIGHT):
+            position = match.group(3)
+            self.root.after(0, lambda p=position: self.root.geometry(p))
 
         self.setup_ui()
 
@@ -272,57 +279,7 @@ class AutoClickerUI(DialogsMixin):
         file_menu.add_command(label="退出程序 (Alt+F4)", command=self.on_window_close)
         menubar.add_cascade(label="程序(P)", menu=file_menu, underline=3)
 
-        # 设置菜单
-        settings_menu = tk.Menu(menubar, tearoff=False)
-
-        # 功能设置二级菜单
-        func_menu = tk.Menu(settings_menu, tearoff=False)
-        func_menu.add_checkbutton(label="队员司机联动",
-                                  variable=self.settings_tab.settings_link_var,
-                                  command=self.settings_tab.save_settings)
-        func_menu.add_checkbutton(label="绘卷模式",
-                                  variable=self.settings_tab.settings_huijuan_mode_var,
-                                  command=self.settings_tab.save_settings)
-        func_menu.add_checkbutton(label="斗技段位晋升结束程序",
-                                  variable=self.settings_tab.settings_dj_jinsheng_stop_var,
-                                  command=self.settings_tab.save_settings)
-        func_menu.add_separator()
-        func_menu.add_checkbutton(label="契灵放弃结契",
-                                  variable=self.settings_tab.settings_ql_fangqi_var,
-                                  command=lambda: [self.settings_tab._toggle_ql_fangqi(), self.settings_tab.save_settings()])
-        func_menu.add_checkbutton(label="契灵再次结契",
-                                  variable=self.settings_tab.settings_ql_zaici_var,
-                                  command=lambda: [self.settings_tab._toggle_ql_zaici(), self.settings_tab.save_settings()])
-        func_menu.add_separator()
-        func_menu.add_checkbutton(label="挑战结束后关闭御魂加成",
-                                  variable=self.settings_tab.settings_close_jiacheng_var,
-                                  command=self.settings_tab.save_settings)
-        func_menu.add_separator()
-        func_menu.add_command(label="设置关闭加成等待秒数",
-                              command=self.settings_tab._set_close_jiacheng_wait)
-        func_menu.add_command(label="设置被顶号后等待秒数",
-                              command=self.settings_tab._set_dinghao_wait)
-        settings_menu.add_cascade(label="功能设置", menu=func_menu)
-
-        # 日志二级菜单
-        log_menu = tk.Menu(settings_menu, tearoff=False)
-        self._log_menu = log_menu
-        log_menu.add_checkbutton(label="启用日志记录",
-                                 variable=self.settings_tab.settings_logging_var,
-                                 command=self.settings_tab.save_settings)
-        log_menu.add_separator()
-        log_menu.add_command(label="打开日志文件夹", command=self.settings_tab._open_log_folder)
-        log_menu.add_command(label="清空日志", command=self.settings_tab._clear_logs)
-        settings_menu.add_cascade(label="日志", menu=log_menu)
-
-        # 软件更新二级菜单
-        update_menu = tk.Menu(settings_menu, tearoff=False)
-        update_menu.add_command(label="复制网盘密码", command=self.settings_tab._copy_password)
-        update_menu.add_command(label="跳转网盘更新软件", command=self.settings_tab._open_update_link)
-        update_menu.add_command(label="GitHub仓库", command=self.settings_tab._open_github)
-        settings_menu.add_cascade(label="软件更新", menu=update_menu)
-
-        menubar.add_cascade(label="设置(T)", menu=settings_menu, underline=3)
+        # 设置菜单已并入「设置」标签页，菜单栏不再提供独立入口。
 
         # 标签菜单
         tab_menu = tk.Menu(menubar, tearoff=False)

@@ -34,12 +34,6 @@ ADB_LOCK_WIDGETS = (
     'device_combo', 'refresh_btn', 'clear_device_btn', 'start_btn', 'start_all_btn',
 )
 
-# 主页面场景名显示映射：内部预设键保持不变（配置、注册表入口都沿用旧键），
-# 仅调整界面上单选按钮的文字。
-SCENE_DISPLAY_NAMES = {
-    "磐长故地": "活动通用",
-}
-
 
 class DeviceTab(SceneRunnerMixin):
     def __init__(self, parent, tab_name, png_base_folder, presets):
@@ -129,10 +123,9 @@ class DeviceTab(SceneRunnerMixin):
         self._update_title_label()
     
     def _update_title_label(self):
-        """刷新标题上的「版本号|标签名」。"""
-        # 标题处显示 版本号|标签名
+        """刷新顶部的标签名。"""
         if hasattr(self, 'title_label'):
-            self.title_label.config(text=f"YYS-AUTOv2.18|{self.tab_name}")
+            self.title_label.config(text=self.tab_name)
     
     def on_tab_name_changed(self, event=None):
         """标签名变化回调：弹出重命名对话框。"""
@@ -174,7 +167,7 @@ class DeviceTab(SceneRunnerMixin):
                 self.tab_name = new_name
                 try:
                     self.parent.notebook.tab(self.frame, text=new_name)
-                    self.tab_name_label.config(text=new_name)
+                    self.title_label.config(text=new_name)
                 except:
                     pass
                 self._update_title_label()
@@ -204,165 +197,232 @@ class DeviceTab(SceneRunnerMixin):
             pass
 
     def setup_ui(self, tab_name):
-        """搭建本标签界面：设备卡片、场景选择、日志区、运行控制。"""
-        main_frame = ttk.Frame(self.frame, padding="5")
-        main_frame.pack(fill=tk.BOTH, expand=True)
-        
-        # 顶部：标题
-        title_frame = ttk.Frame(main_frame)
-        title_frame.pack(fill=tk.X, pady=2)
-        self.title_label = ttk.Label(title_frame, text=f"YYS-AUTOv2.18|{self.tab_name}", font=('Microsoft YaHei', 16, 'bold'))
-        self.title_label.pack(anchor=tk.CENTER)
-        
-        # 中间：三列布局
-        middle_frame = ttk.Frame(main_frame)
-        middle_frame.pack(fill=tk.BOTH, expand=True, pady=5)
-        
-        # 第一列：设备管理
-        device_card = ttk.LabelFrame(middle_frame, text="📱 设备管理", padding="5")
-        device_card.pack(side=tk.LEFT, fill=tk.BOTH, padx=2)
-        device_card.config(width=220)
-        device_card.pack_propagate(False)
-        
-        # 刷新和清除按钮
-        device_btn_frame = ttk.Frame(device_card)
-        device_btn_frame.pack(fill=tk.X, pady=2)
-        self.refresh_btn = ttk.Button(device_btn_frame, text="刷新", command=self.refresh_all_devices, width=8)
-        self.refresh_btn.pack(side=tk.LEFT, padx=2)
-        self.clear_device_btn = ttk.Button(device_btn_frame, text="清除", command=self.clear_device, width=8)
-        self.clear_device_btn.pack(side=tk.LEFT, padx=2)
-        
-        # 设备选择
-        device_combo_frame = ttk.Frame(device_card)
-        device_combo_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(device_combo_frame, text="设备选择：", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-        # 暂时设置为可编辑状态，测试是否能显示设备
-        self.device_combo = ttk.Combobox(device_combo_frame, width=20, state="normal")
-        self.device_combo.pack(side=tk.LEFT, padx=2)
+        """搭建本标签界面：顶部设备条、场景主区、右侧日志与底部运行参数。"""
+        style = ttk.Style(self.parent.root)
+        # 灰色区域统一使用原生 ttk 背景色
+        self._card_bg = (style.lookup("TFrame", "background")
+                         or self.parent.root.cget("background"))
+        style.configure("Card.TFrame", background=self._card_bg)
+        style.configure("Card.TLabel", background=self._card_bg,
+                        font=('Microsoft YaHei', 9))
+        style.configure("CardMuted.TLabel", background=self._card_bg,
+                        foreground="SystemGrayText", font=('Microsoft YaHei', 8))
+        style.configure("CardTitle.TLabel", background=self._card_bg,
+                        font=('Microsoft YaHei', 9, 'bold'))
+
+        page = tk.Frame(self.frame, bg="#ffffff")
+        page.pack(fill=tk.BOTH, expand=True)
+        body = tk.Frame(page, bg="#ffffff")
+        body.pack(fill=tk.BOTH, expand=True, padx=8, pady=6)
+
+        # 顶部：标签名 + 设备选择 + 运行状态
+        topbar = tk.Frame(body, bg="#ffffff")
+        topbar.pack(fill=tk.X)
+
+        self.title_label = tk.Label(topbar, text=self.tab_name, bg="#ffffff",
+                                    fg="#1f1f1f",
+                                    font=('Microsoft YaHei', 10, 'bold'))
+        self.title_label.pack(side=tk.LEFT)
+
+        tk.Label(topbar, text="设备", bg="#ffffff", fg="#666",
+                 font=('Microsoft YaHei', 8)).pack(side=tk.LEFT, padx=(8, 2))
+
+        self.device_combo = ttk.Combobox(topbar, width=18, state="normal")
+        self.device_combo.pack(side=tk.LEFT)
         self.device_combo.bind("<<ComboboxSelected>>", self.on_device_changed)
-        
-        ttk.Separator(device_card, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
-        
-        # 运行参数
-        ttk.Label(device_card, text="⚙️ 运行参数", font=('Microsoft YaHei', 9, 'bold')).pack(anchor=tk.W, padx=2, pady=(5, 2))
-        
-        # 识别阈值
-        threshold_frame = ttk.Frame(device_card)
-        threshold_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(threshold_frame, text="识别阈值：", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-        q_btn = ttk.Label(threshold_frame, text="❓", font=('Microsoft YaHei', 9), cursor="hand2")
-        q_btn.pack(side=tk.LEFT, padx=0)
-        ToolTip(q_btn, "识别阈值控制图片匹配的严格程度。\n"
-                       "阈值越低，匹配越宽松（容易误识别）；\n"
-                       "阈值越高，匹配越严格（可能漏识别）。\n"
-                       "建议范围：0.7 ~ 0.9，默认 0.8。")
-        self.threshold_entry = ttk.Entry(threshold_frame, width=6)
-        self.threshold_entry.pack(side=tk.LEFT, padx=2)
-        self.threshold_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
-        
-        # 运行次数
-        count_frame = ttk.Frame(device_card)
-        count_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(count_frame, text="运行次数：", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-        q_btn2 = ttk.Label(count_frame, text="❓", font=('Microsoft YaHei', 9), cursor="hand2")
-        q_btn2.pack(side=tk.LEFT, padx=0)
-        ToolTip(q_btn2, "当前设备标签页脚本的循环执行次数。\n"
-                        "设为 0 表示无限循环，直到手动停止。")
-        self.target_count_entry = ttk.Entry(count_frame, width=6, textvariable=self.target_count_var)
-        self.target_count_entry.pack(side=tk.LEFT, padx=2)
-        self.target_count_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
-        
-        # 匹配线程数
-        workers_frame = ttk.Frame(device_card)
-        workers_frame.pack(fill=tk.X, pady=2)
-        ttk.Label(workers_frame, text="匹配线程：", font=('Microsoft YaHei', 9)).pack(side=tk.LEFT, padx=2)
-        q_btn3 = ttk.Label(workers_frame, text="❓", font=('Microsoft YaHei', 9), cursor="hand2")
-        q_btn3.pack(side=tk.LEFT, padx=0)
-        ToolTip(q_btn3, "模板匹配的并行线程数。\n"
-                        "1 = 单线程（默认，兼容性最好）；\n"
-                        "2~8 = 多线程并行匹配，显著提升识别速度。\n"
-                        "OpenCV 的模板匹配会释放 GIL，多线程可真正并行。\n"
-                        "建议：CPU 核心多时设 4~8，老设备保持 1。\n"
-                        f"当前 CPU 核心数：{os.cpu_count() or '未知'}")
-        self.match_workers_entry = ttk.Entry(workers_frame, width=6, textvariable=self.match_workers_var)
-        self.match_workers_entry.pack(side=tk.LEFT, padx=2)
-        self.match_workers_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
-        
-        # 重置默认 & 一键应用按钮（同一行）
-        btn_frame = ttk.Frame(device_card)
-        btn_frame.pack(fill=tk.X, padx=2, pady=5)
-        self.reset_btn = ttk.Button(btn_frame, text="重置默认", command=self.reset_defaults)
-        self.reset_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 2))
-        self.copy_params_btn = ttk.Button(btn_frame, text="一键应用到所有", command=self.copy_run_params)
-        self.copy_params_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(2, 0))
-        
-        # 第二列：场景选择
-        scene_card = ttk.LabelFrame(middle_frame, text="🎮 场景选择", padding="5")
-        scene_card.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=2)
-        
-        # 创建两列布局
-        scene_frame = ttk.Frame(scene_card)
-        scene_frame.pack(fill=tk.BOTH, expand=True)
-        
-        left_frame = ttk.Frame(scene_frame)
-        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=2)
-        
-        right_frame = ttk.Frame(scene_frame)
-        right_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=2)
-        
-        # 将场景平均分配到两列
-        presets_list = list(self.presets.keys())
-        mid = (len(presets_list) + 1) // 2
-        
-        # 保存所有Radiobutton引用以便锁定/解锁
+
+        self.refresh_btn = ttk.Button(topbar, text="刷新", width=5,
+                                      command=self.refresh_all_devices)
+        self.refresh_btn.pack(side=tk.LEFT, padx=(6, 0))
+        self.clear_device_btn = ttk.Button(topbar, text="清除", width=5,
+                                           command=self.clear_device)
+        self.clear_device_btn.pack(side=tk.LEFT, padx=(4, 0))
+
+        status_box = tk.Frame(topbar, bg="#ffffff")
+        status_box.pack(side=tk.RIGHT)
+        self.status_dot = tk.Label(status_box, text="●", bg="#ffffff", fg="#8a8a8a",
+                                   font=('Microsoft YaHei', 8))
+        self.status_dot.pack(side=tk.LEFT)
+        self.status_var = tk.StringVar(value="未运行")
+        tk.Label(status_box, textvariable=self.status_var, bg="#ffffff", fg="#555",
+                 font=('Microsoft YaHei', 8)).pack(side=tk.LEFT, padx=(3, 0))
+
+        # 中部：左侧场景选择 + 右侧运行日志
+        middle = tk.Frame(body, bg="#ffffff")
+        middle.pack(fill=tk.BOTH, expand=True, pady=(6, 0))
+
+        scene_card = tk.Frame(middle, bg=self._card_bg,
+                              highlightthickness=1, highlightbackground="#e0e0e0")
+        scene_card.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scene_head = tk.Frame(scene_card, bg=self._card_bg)
+        scene_head.pack(fill=tk.X, padx=8, pady=(6, 0))
+        ttk.Label(scene_head, text="场景选择",
+                  style="CardTitle.TLabel").pack(side=tk.LEFT)
+        ttk.Label(scene_head, text=f"共 {len(self.presets)} 个",
+                  style="CardMuted.TLabel").pack(side=tk.LEFT, padx=(5, 0))
+        self.copy_scene_btn = ttk.Button(scene_head, text="一键应用到所有",
+                                         command=self.copy_scene_selection)
+        self.copy_scene_btn.pack(side=tk.RIGHT)
+        ttk.Separator(scene_card, orient=tk.HORIZONTAL).pack(
+            fill=tk.X, padx=8, pady=(4, 0))
+
+        scene_grid = tk.Frame(scene_card, bg=self._card_bg)
+        scene_grid.pack(fill=tk.BOTH, expand=True, padx=6, pady=(3, 0))
+        for col in range(3):
+            scene_grid.columnconfigure(col, weight=1, uniform="scene")
+
+        # 保存所有场景卡片引用以便选中着色与锁定/解锁
         self.preset_radiobuttons = []
-        
-        for i, preset_name in enumerate(presets_list[:mid]):
-            rb = ttk.Radiobutton(left_frame, text=SCENE_DISPLAY_NAMES.get(preset_name, preset_name),
-                                variable=self.current_preset_var, value=preset_name,
-                                command=self.on_preset_change)
-            rb.pack(anchor=tk.W, padx=2, pady=1)
+        self._scene_tiles = []
+        for index, preset_name in enumerate(self.presets.keys()):
+            tile = tk.Frame(scene_grid, bg="#fbfbfb",
+                            highlightthickness=1, highlightbackground="#d8d8d8")
+            tile.grid(row=index // 3, column=index % 3,
+                      sticky="nsew", padx=2, pady=2)
+
+            rb = tk.Radiobutton(
+                tile,
+                text=preset_name,
+                variable=self.current_preset_var,
+                value=preset_name,
+                command=self.on_preset_change,
+                anchor=tk.W,
+                bg="#fbfbfb",
+                activebackground="#f1f1f1",
+                selectcolor="#ffffff",
+                bd=0,
+                highlightthickness=0,
+                padx=6,
+                pady=6,
+                font=('Microsoft YaHei', 9),
+                cursor="hand2",
+            )
+            rb.pack(fill=tk.BOTH, expand=True)
+            tile.bind("<Button-1>",
+                      lambda e, name=preset_name: self._select_scene(name))
             self.preset_radiobuttons.append(rb)
-        
-        for i, preset_name in enumerate(presets_list[mid:]):
-            rb = ttk.Radiobutton(right_frame, text=SCENE_DISPLAY_NAMES.get(preset_name, preset_name),
-                                variable=self.current_preset_var, value=preset_name,
-                                command=self.on_preset_change)
-            rb.pack(anchor=tk.W, padx=2, pady=1)
-            self.preset_radiobuttons.append(rb)
-        
-        # 复制场景选择按钮
-        self.copy_scene_btn = ttk.Button(scene_card, text="一键应用到所有", command=self.copy_scene_selection)
-        self.copy_scene_btn.pack(fill=tk.X, padx=2, pady=(5, 0))
-        
-        # 第三列：日志
-        log_card = ttk.LabelFrame(middle_frame, text="📋 运行日志", padding="5")
-        log_card.pack(side=tk.LEFT, fill=tk.BOTH, padx=2)
-        log_card.config(width=180)
+            self._scene_tiles.append((preset_name, tile, rb))
+
+        # 变量无论被界面还是配置/自动切场景改动，都同步卡片选中样式
+        self.current_preset_var.trace_add(
+            "write", lambda *_: self._refresh_scene_tiles())
+        self._refresh_scene_tiles()
+
+        log_card = tk.Frame(middle, bg=self._card_bg, width=212,
+                            highlightthickness=1, highlightbackground="#e0e0e0")
+        log_card.pack(side=tk.LEFT, fill=tk.BOTH, padx=(6, 0))
         log_card.pack_propagate(False)
-        
-        self.log_text = scrolledtext.ScrolledText(log_card, height=10, state=tk.DISABLED)
-        self.log_text.pack(fill=tk.BOTH, expand=True)
-        
-        # 底部：运行控制
-        bottom_frame = ttk.LabelFrame(main_frame, text="🚀 运行控制", padding="5")
-        bottom_frame.pack(fill=tk.X, pady=5)
 
-        control_frame = ttk.Frame(bottom_frame)
-        control_frame.pack(side=tk.LEFT, padx=2)
+        log_head = tk.Frame(log_card, bg=self._card_bg)
+        log_head.pack(fill=tk.X, padx=8, pady=(6, 0))
+        ttk.Label(log_head, text="运行日志",
+                  style="CardTitle.TLabel").pack(side=tk.LEFT)
+        ttk.Label(log_head, text="实时",
+                  style="CardMuted.TLabel").pack(side=tk.RIGHT)
+        ttk.Separator(log_card, orient=tk.HORIZONTAL).pack(
+            fill=tk.X, padx=8, pady=(4, 0))
 
-        # 四个按钮放同一行
-        self.start_btn = ttk.Button(control_frame, text="开始", command=self.start_loop, width=10)
-        self.start_btn.pack(side=tk.LEFT, padx=3)
+        self.log_text = scrolledtext.ScrolledText(
+            log_card, height=6, state=tk.DISABLED,
+            font=('Consolas', 8), bg="#ffffff", bd=1, relief=tk.SOLID)
+        self.log_text.pack(fill=tk.BOTH, expand=True, padx=6, pady=(4, 4))
 
-        self.stop_btn = ttk.Button(control_frame, text="停止", command=self.stop_loop, width=10, state=tk.DISABLED)
-        self.stop_btn.pack(side=tk.LEFT, padx=3)
+        run_pad = tk.Frame(log_card, bg=self._card_bg)
+        run_pad.pack(fill=tk.X, padx=6, pady=(0, 6))
+        run_pad.columnconfigure(0, weight=1, uniform="run")
+        run_pad.columnconfigure(1, weight=1, uniform="run")
 
-        self.start_all_btn = ttk.Button(control_frame, text="全部开始", command=self.parent.start_all_tabs, width=10)
-        self.start_all_btn.pack(side=tk.LEFT, padx=3)
-        ttk.Button(control_frame, text="全部停止", command=self.parent.stop_all_tabs, width=10).pack(side=tk.LEFT, padx=3)
+        self.start_btn = ttk.Button(run_pad, text="开始", command=self.start_loop)
+        self.start_btn.grid(row=0, column=0, sticky="ew", padx=(0, 3), pady=(0, 3))
+        self.stop_btn = ttk.Button(run_pad, text="停止", command=self.stop_loop,
+                                   state=tk.DISABLED)
+        self.stop_btn.grid(row=0, column=1, sticky="ew", padx=(3, 0), pady=(0, 3))
+        self.start_all_btn = ttk.Button(run_pad, text="全部开始",
+                                        command=self.parent.start_all_tabs)
+        self.start_all_btn.grid(row=1, column=0, sticky="ew", padx=(0, 3))
+        ttk.Button(run_pad, text="全部停止",
+                   command=self.parent.stop_all_tabs).grid(
+            row=1, column=1, sticky="ew", padx=(3, 0))
+
+        # 底部：运行参数
+        params = tk.Frame(body, bg=self._card_bg,
+                          highlightthickness=1, highlightbackground="#e0e0e0")
+        params.pack(fill=tk.X, pady=(6, 0))
+        params_row = tk.Frame(params, bg=self._card_bg)
+        params_row.pack(fill=tk.X, padx=8, pady=5)
+
+        threshold_label = ttk.Label(params_row, text="阈值", style="Card.TLabel")
+        threshold_label.pack(side=tk.LEFT)
+        ToolTip(threshold_label, "识别阈值控制图片匹配的严格程度。\n"
+                                 "阈值越低，匹配越宽松（容易误识别）；\n"
+                                 "阈值越高，匹配越严格（可能漏识别）。\n"
+                                 "建议范围：0.7 ~ 0.9，默认 0.8。")
+        self.threshold_entry = ttk.Entry(params_row, width=6)
+        self.threshold_entry.pack(side=tk.LEFT, padx=(3, 0))
+        self.threshold_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
+
+        ttk.Separator(params_row, orient=tk.VERTICAL).pack(
+            side=tk.LEFT, fill=tk.Y, padx=8)
+
+        count_label = ttk.Label(params_row, text="次数", style="Card.TLabel")
+        count_label.pack(side=tk.LEFT)
+        ToolTip(count_label, "当前设备标签页脚本的循环执行次数。\n"
+                             "设为 0 表示无限循环，直到手动停止。")
+        self.target_count_entry = ttk.Entry(params_row, width=6,
+                                            textvariable=self.target_count_var)
+        self.target_count_entry.pack(side=tk.LEFT, padx=(3, 0))
+        self.target_count_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
+
+        ttk.Separator(params_row, orient=tk.VERTICAL).pack(
+            side=tk.LEFT, fill=tk.Y, padx=8)
+
+        workers_label = ttk.Label(params_row, text="线程", style="Card.TLabel")
+        workers_label.pack(side=tk.LEFT)
+        ToolTip(workers_label, "模板匹配的并行线程数。\n"
+                               "1 = 单线程（默认，兼容性最好）；\n"
+                               "2~8 = 多线程并行匹配，显著提升识别速度。\n"
+                               "OpenCV 的模板匹配会释放 GIL，多线程可真正并行。\n"
+                               "建议：CPU 核心多时设 4~8，老设备保持 1。\n"
+                               f"当前 CPU 核心数：{os.cpu_count() or '未知'}")
+        self.match_workers_entry = ttk.Entry(params_row, width=5,
+                                             textvariable=self.match_workers_var)
+        self.match_workers_entry.pack(side=tk.LEFT, padx=(3, 0))
+        self.match_workers_entry.bind('<FocusOut>', lambda e: self.save_tab_config())
+
+        self.copy_params_btn = ttk.Button(params_row, text="一键应用到所有",
+                                          command=self.copy_run_params)
+        self.copy_params_btn.pack(side=tk.RIGHT)
+        self.reset_btn = ttk.Button(params_row, text="重置默认",
+                                    command=self.reset_defaults)
+        self.reset_btn.pack(side=tk.RIGHT, padx=(0, 6))
 
         self.on_preset_change(None)
+
+    def _set_run_status(self, running):
+        """更新顶部运行状态文字与圆点颜色。"""
+        self.status_var.set("运行中" if running else "未运行")
+        self.status_dot.config(fg="#3f9d52" if running else "#8a8a8a")
+
+    def _select_scene(self, preset_name):
+        """点击场景卡片时切换场景；运行中或已是当前场景则忽略。"""
+        if self.running or str(self.current_preset_var.get()) == preset_name:
+            return
+        self.current_preset_var.set(preset_name)
+        self.on_preset_change()
+
+    def _refresh_scene_tiles(self, *_):
+        """按当前场景刷新卡片底色、边框与字重，效果对齐网页预览。"""
+        current = str(self.current_preset_var.get())
+        for preset_name, tile, rb in self._scene_tiles:
+            if preset_name == current:
+                tile.config(bg="#e2e2e2", highlightbackground="#8f8f8f")
+                rb.config(bg="#e2e2e2", activebackground="#e2e2e2",
+                          font=('Microsoft YaHei', 9, 'bold'))
+            else:
+                tile.config(bg="#fbfbfb", highlightbackground="#d8d8d8")
+                rb.config(bg="#fbfbfb", activebackground="#f1f1f1",
+                          font=('Microsoft YaHei', 9))
     
     def reset_defaults(self):
         """把运行参数恢复成当前场景的预设默认值。"""
@@ -671,5 +731,6 @@ class DeviceTab(SceneRunnerMixin):
         self.thread = threading.Thread(target=self.run_loop_thread, daemon=True)
         self.thread.start()
         
+        self._set_run_status(True)
         self.log("已启动")
     
